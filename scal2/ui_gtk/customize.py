@@ -25,10 +25,10 @@ from scal2 import core
 from scal2.core import myRaise
 from scal2 import ui
 
-import gobject
-
-import gtk
-from gtk import gdk
+from gi.repository import GObject
+from gi.repository import GdkPixbuf
+from gi.repository import Gdk
+from gi.repository import Gtk
 
 from scal2.ui_gtk.utils import toolButtonFromStock, set_tooltip, dialog_add_button
 from scal2.ui_gtk import gtk_ud as ud
@@ -75,7 +75,7 @@ class CustomizableCalObj(ud.IntegratedCalObj):
         self.reorder_child(self.items[i], i-1)## for GtkBox (HBox and VBox)
         self.items.insert(i-1, self.items.pop(i))
     def keyPress(self, arg, event):
-        kname = gdk.keyval_name(event.keyval).lower()
+        kname = Gdk.keyval_name(event.keyval).lower()
         for item in self.items:
             if item.enable and kname in item.myKeys:
                 item.keyPress(arg, event)
@@ -87,12 +87,12 @@ class CustomizableCalObj(ud.IntegratedCalObj):
 class CustomizableCalBox(CustomizableCalObj):
     def appendItem(self, item):
         CustomizableCalObj.appendItem(self, item)
-        self.pack_start(item, item.expand, item.expand)
+        self.pack_start(item, item.expand, item.expand, 0)
         if item.enable:
             item.show()
 
 
-class CustomizeDialog(gtk.Dialog):
+class CustomizeDialog(Gtk.Dialog):
     def appendItemTree(self, item, parentIter):
         itemIter = self.model.append(parentIter)
         self.model.set(itemIter, 0, item.enable, 1, item.desc)
@@ -100,34 +100,34 @@ class CustomizeDialog(gtk.Dialog):
             if isinstance(item, CustomizableCalObj):
                 self.appendItemTree(child, itemIter)
     def __init__(self, widget):
-        gtk.Dialog.__init__(self)
+        Gtk.Dialog.__init__(self)
         self.set_title(_('Customize'))
-        self.set_has_separator(False)
+        #self.set_has_separator(False)## not in gtk3
         self.connect('delete-event', self.close)
-        dialog_add_button(self, gtk.STOCK_CLOSE, _('_Close'), 0, self.close)
+        dialog_add_button(self, Gtk.STOCK_CLOSE, _('_Close'), 0, self.close)
         ###
-        self.widget = widget
+        self._widget = widget
         self.activeOptionsWidget = None
         ###
-        self.model = gtk.TreeStore(bool, str) ## (gdk.Pixbuf, str)
-        treev = self.treev = gtk.TreeView(self.model)
+        self.model = Gtk.TreeStore(bool, str) ## (GdkPixbuf.Pixbuf, str)
+        treev = self.treev = Gtk.TreeView(self.model)
         ##
         treev.set_enable_tree_lines(True)
         treev.set_headers_visible(False)
         treev.connect('row-activated', self.rowActivated)
         ##
-        col = gtk.TreeViewColumn('Widget')
+        col = Gtk.TreeViewColumn('Widget')
         ##
-        cell = gtk.CellRendererToggle()
+        cell = Gtk.CellRendererToggle()
         cell.connect('toggled', self.enableCellToggled)
-        col.pack_start(cell, expand=False)
+        col.pack_start(cell, 0)
         col.add_attribute(cell, 'active', 0)
         ##
         treev.append_column(col)
-        col = gtk.TreeViewColumn('Widget')
+        col = Gtk.TreeViewColumn('Widget')
         ##
-        cell = gtk.CellRendererText()
-        col.pack_start(cell, expand=False)
+        cell = Gtk.CellRendererText()
+        col.pack_start(cell, 0)
         col.add_attribute(cell, 'text', 1)
         ##
         treev.append_column(col)
@@ -136,32 +136,32 @@ class CustomizeDialog(gtk.Dialog):
             if isinstance(item, CustomizableCalObj):
                 self.appendItemTree(item, None)
         ###
-        hbox = gtk.HBox()
-        vbox_l = gtk.VBox()
-        vbox_l.pack_start(treev, 1, 1)
-        hbox.pack_start(vbox_l, 1, 1)
+        hbox = Gtk.HBox()
+        vbox_l = Gtk.VBox()
+        vbox_l.pack_start(treev, 1, 1, 0)
+        hbox.pack_start(vbox_l, 1, 1, 0)
         ###
-        toolbar = gtk.Toolbar()
-        toolbar.set_orientation(gtk.ORIENTATION_VERTICAL)
-        size = gtk.ICON_SIZE_SMALL_TOOLBAR
+        toolbar = Gtk.Toolbar()
+        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        size = Gtk.IconSize.SMALL_TOOLBAR
         toolbar.set_icon_size(size)
         ## argument2 to image_new_from_stock does not affect
         ###
-        tb = toolButtonFromStock(gtk.STOCK_GO_UP, size)
+        tb = toolButtonFromStock(Gtk.STOCK_GO_UP, size)
         set_tooltip(tb, _('Move up'))
         tb.connect('clicked', self.upClicked)
         toolbar.insert(tb, -1)
         ###
-        tb = toolButtonFromStock(gtk.STOCK_GO_DOWN, size)
+        tb = toolButtonFromStock(Gtk.STOCK_GO_DOWN, size)
         set_tooltip(tb, _('Move down'))
         tb.connect('clicked', self.downClicked)
         toolbar.insert(tb, -1)
         ###
-        hbox.pack_start(toolbar, 0, 0)
-        self.vbox.pack_start(hbox, 1, 1)
+        hbox.pack_start(toolbar, 0, 0, 0)
+        self.vbox.pack_start(hbox, 1, 1, 0)
         self.vbox_l = vbox_l
         ###
-        self.vbox.connect('size-request', self.vboxSizeRequest)
+        self.vbox.connect('size-allocate', self.vboxSizeRequest)
         self.vbox.show_all()
         treev.connect('cursor-changed', self.treevCursorChanged)
     def vboxSizeRequest(self, widget, req):
@@ -173,7 +173,7 @@ class CustomizeDialog(gtk.Dialog):
             path = [path]
         elif not isinstance(path, (tuple, list)):
             raise TypeError('argument %s given to getItemByPath has bad type'%path)
-        item = self.widget.items[path[0]]
+        item = self._widget.items[path[0]]
         for i in path[1:]:
             item = item.items[i]
         return item
@@ -190,7 +190,7 @@ class CustomizeDialog(gtk.Dialog):
         item = self.getItemByPath(index_list)
         if item.optionsWidget:
             self.activeOptionsWidget = item.optionsWidget
-            self.vbox_l.pack_start(item.optionsWidget, 0, 0)
+            self.vbox_l.pack_start(item.optionsWidget, 0, 0, 0)
             item.optionsWidget.show()
     def upClicked(self, button):
         model = self.model
@@ -200,20 +200,20 @@ class CustomizeDialog(gtk.Dialog):
         i = index_list[-1]
         if len(index_list)==1:
             if i<=0 or i>=len(model):
-                gdk.beep()
+                Gdk.beep()
                 return
             ###
-            self.widget.moveItemUp(i)
+            self._widget.moveItemUp(i)
             model.swap(model.get_iter(i-1), model.get_iter(i))
             self.treev.set_cursor(i-1)
         else:
             if i<=0:
-                gdk.beep()
+                Gdk.beep()
                 return
             ###
             root = self.getItemByPath(index_list[:-1])
             if i>=len(root.items):
-                gdk.beep()
+                Gdk.beep()
                 return
             ###
             root.moveItemUp(i)
@@ -228,20 +228,20 @@ class CustomizeDialog(gtk.Dialog):
         i = index_list[-1]
         if len(index_list)==1:
             if i<0 or i>=len(model)-1:
-                gdk.beep()
+                Gdk.beep()
                 return
             ###
-            self.widget.moveItemUp(i+1)
+            self._widget.moveItemUp(i+1)
             model.swap(model.get_iter(i), model.get_iter(i+1))
             self.treev.set_cursor(i+1)
         else:
             if i<0:
-                gdk.beep()
+                Gdk.beep()
                 return
             ###
             root = self.getItemByPath(index_list[:-1])
             if i>=len(root.items)-1:
-                gdk.beep()
+                Gdk.beep()
                 return
             ###
             root.moveItemUp(i+1)
@@ -268,8 +268,8 @@ class CustomizeDialog(gtk.Dialog):
     def close(self, button=None, event=None):
         text = ''
         itemsData = []
-        self.widget.updateVars()
-        text = self.widget.confStr()
+        self._widget.updateVars()
+        text = self._widget.confStr()
         open(confPath, 'w').write(text) # FIXME
         self.hide()
         return True

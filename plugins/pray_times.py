@@ -52,7 +52,7 @@ from scal2.os_utils import getSoundPlayerList, playSound, kill
 from scal2.utils import myRaise
 #from scal2 import event_lib## needs core!! FIXME
 
-from gobject import timeout_add_seconds
+from gi.repository.GObject import timeout_add_seconds
 
 #if 'gtk' in sys.modules:
 from pray_times_gtk import *
@@ -305,13 +305,13 @@ if __name__=='__main__':
     #from scal2 import core
     #from scal2.locale_man import rtl
     #if rtl:
-    #    gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
+    #    Gtk.widget_set_default_direction(Gtk.TextDirection.RTL)
     dialog = LocationDialog()
-    dialog.connect('delete-event', gtk.main_quit)
-    #dialog.connect('response', gtk.main_quit)
+    dialog.connect('delete-event', Gtk.main_quit)
+    #dialog.connect('response', Gtk.main_quit)
     dialog.resize(600, 600)
     print dialog.run()
-    #gtk.main()
+    #Gtk.main()
 
 
 

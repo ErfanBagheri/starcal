@@ -4,45 +4,45 @@ from scal2.path import *
 from scal2.locale_man import tr as _
 from scal2 import ui
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk.utils import labelStockMenuItem
 
 
 @registerSignals
-class IconSelectButton(gtk.Button):
+class IconSelectButton(Gtk.Button):
     signals = [
         ('changed', [str]),
     ]
     def __init__(self, filename=''):
-        gtk.Button.__init__(self)
-        self.image = gtk.Image()
+        Gtk.Button.__init__(self)
+        self.image = Gtk.Image()
         self.add(self.image)
-        self.dialog = gtk.FileChooserDialog(
+        self.dialog = Gtk.FileChooserDialog(
             title=_('Select Icon File'),
-            action=gtk.FILE_CHOOSER_ACTION_OPEN,
+            action=Gtk.FileChooserAction.OPEN,
         )
-        okB = self.dialog.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
-        cancelB = self.dialog.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-        clearB = self.dialog.add_button(gtk.STOCK_CLEAR, gtk.RESPONSE_REJECT)
+        okB = self.dialog.add_button(Gtk.STOCK_OK, Gtk.ResponseType.OK)
+        cancelB = self.dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        clearB = self.dialog.add_button(Gtk.STOCK_CLEAR, Gtk.ResponseType.REJECT)
         if ui.autoLocale:
             cancelB.set_label(_('_Cancel'))
-            cancelB.set_image(gtk.image_new_from_stock(gtk.STOCK_CANCEL,gtk.ICON_SIZE_BUTTON))
+            cancelB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CANCEL,Gtk.IconSize.BUTTON))
             okB.set_label(_('_OK'))
-            okB.set_image(gtk.image_new_from_stock(gtk.STOCK_OK,gtk.ICON_SIZE_BUTTON))
+            okB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_OK,Gtk.IconSize.BUTTON))
             clearB.set_label(_('Clear'))
-            clearB.set_image(gtk.image_new_from_stock(gtk.STOCK_CLEAR,gtk.ICON_SIZE_BUTTON))
+            clearB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CLEAR,Gtk.IconSize.BUTTON))
         ###
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
         self.menu = menu
         menu.add(labelStockMenuItem(_('None'), None, self.menuItemActivate, ''))
         for item in ui.eventTags:
             icon = item.icon
             if icon:
-                menuItem = gtk.ImageMenuItem(item.desc)
-                menuItem.set_image(gtk.image_new_from_file(icon))
+                menuItem = Gtk.ImageMenuItem(item.desc)
+                menuItem.set_image(Gtk.Image.new_from_file(icon))
                 menuItem.connect('activate', self.menuItemActivate, icon)
                 menu.add(menuItem)
         menu.show_all()
@@ -62,9 +62,9 @@ class IconSelectButton(gtk.Button):
     menuItemActivate = lambda self, widget, icon: self.set_filename(icon)
     def dialogResponse(self, dialog, response=0):
         dialog.hide()
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             fname = dialog.get_filename()
-        elif response == gtk.RESPONSE_REJECT:
+        elif response == Gtk.ResponseType.REJECT:
             fname = ''
         else:
             return

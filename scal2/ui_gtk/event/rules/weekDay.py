@@ -4,24 +4,24 @@ from scal2 import core
 from scal2.locale_man import tr as _
 
 from scal2 import event_lib
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 
-class RuleWidget(gtk.HBox):
+class RuleWidget(Gtk.HBox):
     def __init__(self, rule):
         self.rule = rule
         ###
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
         self.set_homogeneous(True)
-        ls = [gtk.ToggleButton(item) for item in core.weekDayNameAb]
+        ls = [Gtk.ToggleButton(item) for item in core.weekDayNameAb]
         s = core.firstWeekDay
         for i in range(7):
-            self.pack_start(ls[(s+i)%7], 1, 1)
+            self.pack_start(ls[(s+i)%7], 1, 1, 0)
         self.cbList = ls
         self.start = s
     def setStart(self, s):
-        b = self.widget
+        b = self._widget
         ls = self.cbList
         for j in range(7):## or range(6)
             b.reorder_child(ls[(s+j)%7], j)

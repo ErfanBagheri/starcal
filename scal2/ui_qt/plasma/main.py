@@ -77,8 +77,8 @@ def removeXml(st):
 """
 
 def removePangoMarkup(text):
-    import pango
-    return pango.parse_markup(text)[1]
+    from gi.repository import Pango
+    return Pango.parse_markup(text)[1]
 
 
 class PClockLabel(PyKDE4.plasma.Plasma.Label):
@@ -89,7 +89,7 @@ class PClockLabel(PyKDE4.plasma.Plasma.Label):
         selectable is bool that passes to GtkLabel'''
         PyKDE4.plasma.Plasma.Label.__init__(self, parent)
         #self.setTextFormat(qc.Qt.PlainText)#??????????
-        ##self.set_direction(gtk.TEXT_DIR_LTR)##???????????
+        ##self.set_direction(Gtk.TextDirection.LTR)##???????????
         self.updateFormat()
         self.running = False
         ##self.connect('button-press-event', self.button_press)
@@ -159,8 +159,8 @@ class StarCalApplet(MainWin):
     def trayClicked(self):
         #print 'trayClicked', self.tbutton.isChecked()
         #self.emit('main-show')
-        #while gtk.events_pending():
-        #    gtk.main_iteration_do(False)
+        #while Gtk.events_pending():
+        #    Gtk.main_iteration_do(False)
         if self.tbutton.isChecked():
             #print self.papplet.applet.contentsRect().topLeft()##??????????????????
             #if ui.winX==0 and ui.winY==0:##??????????????????
@@ -189,7 +189,7 @@ class StarCalApplet(MainWin):
         if ui.showDigClockTr:
             if not clockTr0:
                 ##self.clockTr = PClockLabel()
-                ##self.trayHbox.pack_start(self.clockTr, 0, 0)
+                ##self.trayHbox.pack_start(self.clockTr, 0, 0, 0)
                 self.clockTr.show()
             else:
                 self.clockTr.format = preferences.clockFormat

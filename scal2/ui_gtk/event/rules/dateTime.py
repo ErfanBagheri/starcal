@@ -5,21 +5,21 @@ from scal2.locale_man import tr as _
 
 from scal2 import event_lib
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton, TimeButton
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
-class RuleWidget(gtk.HBox):
+class RuleWidget(Gtk.HBox):
     def __init__(self, rule):
         self.rule = rule
         ###
-        gtk.HBox.__init__(self)
+        Gtk.ComboBox.__init__(self)
         ###
         self.dateInput = DateButton()
-        self.pack_start(self.dateInput, 0, 0)
+        self.pack_start(self.dateInput, 0, 0, 0)
         ###
-        self.pack_start(gtk.Label('   '+_('Time')), 0, 0)
+        self.pack_start(Gtk.Label('   '+_('Time')), 0, 0, 0)
         self.timeInput = TimeButton()
-        self.pack_start(self.timeInput, 0, 0)
+        self.pack_start(self.timeInput, 0, 0, 0)
     def updateWidget(self):
         self.dateInput.set_value(self.rule.date)
         self.timeInput.set_value(self.rule.time)

@@ -27,9 +27,12 @@ from scal2.ui_gtk.font_utils import *
 from scal2.ui_gtk.color_utils import *
 
 
-import gobject, pango, cairo
-import gtk
-from gtk import gdk
+from gi.repository import cairo # as n_cairo
+
+from gi.repository.PangoCairo import show_layout
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
+from gi.repository import Gtk
 
 if not ui.fontCustom:
     ui.fontCustom = ui.fontDefault
@@ -58,6 +61,14 @@ def fillColor(cr, color):
     cr.fill()
 
 
+def drawRectangle(cr, x, y, w, h):
+    cr.move_to(x, y)
+    cr.line_to(x, y+h)
+    cr.line_to(x+w, y+h)
+    cr.line_to(x+w, y)
+    cr.close_path()
+
+
 def newTextLayout(
     widget,
     text='',
@@ -69,7 +80,7 @@ def newTextLayout(
     '''
         None return value should be expected and handled, only if maxSize is given
     '''
-    layout = widget.create_pango_layout('') ## a pango.Layout object
+    layout = widget.create_pango_layout('') ## a Pango.Layout object
     if not font:
         font = ui.getFont()
     layout.set_font_description(pfontEncode(font))
@@ -154,8 +165,26 @@ def newLimitedWidthTextLayout(widget, text, width, font=None, truncate=True, mar
 '''
 
 def newOutlineSquarePixbuf(color, size, innerSize=0, bgColor=None):
-    pmap = gdk.Pixmap(None, size, size, depth=24)
-    cr = pmap.cairo_create()
+    import Image, ImageDraw
+    im = Image.new('RGBA', (size, size))
+    draw = ImageDraw.Draw(im)
+    size = int(size)
+    if innerSize:
+        d = int((size-innerSize)/2.0)
+        draw.rectangle((0, 0, size, d))
+        draw.rectangle((size-d, 0, d, size))
+        draw.rectangle((0, size-d, size, d))
+        draw.rectangle((0, 0, d, size))
+    else:
+        draw.rectangle((0, 0, size, size))
+    data = im.tostring()
+    '''
+    #surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, size, size)
+    #cr = cairo.Context(surface)
+    #widget = gtk.DrawingArea()
+    #cr = widget.cairo_create()
+    surface = cairo.image_surface_create(cairo.FORMAT_RGB24, size, size)## None
+    cr = surface.cairo_create()
     ###
     if bgColor:
         cr.rectangle(0, 0, size, size)
@@ -177,26 +206,45 @@ def newOutlineSquarePixbuf(color, size, innerSize=0, bgColor=None):
     cr.close_path()
     fillColor(cr, color)
     ####
-    pbuf = gdk.Pixbuf(gdk.COLORSPACE_RGB, True, 8, size, size)
-    colormap = gtk.gdk.colormap_get_system()
+    #pbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, size, size)
+    #colormap = Gdk.colormap_get_system()
     #colormap = self.get_screen().get_system_colormap()
     #colormap = pmap.get_colormap()
-    pbuf.get_from_drawable(pmap, colormap, 0, 0, 0, 0, size, size)
+    #pbuf.get_from_drawable(pmap, colormap, 0, 0, 0, 0, size, size)
+    #pbuf.get_from_surface(surface)
+    
+    #pbuf = GdkPixbuf.Pixbuf.get_from_surface(surface)
+    data = surface.get_data()
+    '''
+    #open('/tmp/image-data', 'w').write(str(data))
+    print len(data),  4 * size * size
+    ## len(data) =  4 * size * size
+    pbuf = GdkPixbuf.Pixbuf.new_from_data(
+        data,
+        GdkPixbuf.Colorspace.RGB,
+        True,
+        8,
+        size,
+        size,
+        size * 4,
+        None,
+        None,
+    )
     if bgColor:
         pbuf = pbuf.add_alpha(True, *bgColor)
     return pbuf
 
 
-
+'''
 def newRoundedSquarePixbuf(color, size, roundR=0, bgColor=None):## a rounded square with specified color
-    #color = (255, 0, 0) ## FIXME
+    #color = (255, 0, 0, 0) ## FIXME
     #bgColor = (
     #    min(255, color[0]+1),
     #    min(255, color[1]+1),
     #    min(255, color[2]+1),
     #)
-    pmap = gdk.Pixmap(None, size, size, depth=24)
-    cr = pmap.cairo_create()
+    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, size, size)
+    cr = cairo.Context(surface)
     ###
     if bgColor:
         cr.rectangle(0, 0, size, size)
@@ -215,15 +263,24 @@ def newRoundedSquarePixbuf(color, size, roundR=0, bgColor=None):## a rounded squ
     cr.close_path()
     fillColor(cr, color)
     ####
-    pbuf = gdk.Pixbuf(gdk.COLORSPACE_RGB, True, 8, size, size)
-    colormap = gtk.gdk.colormap_get_system()
-    #colormap = self.get_screen().get_system_colormap()
     #colormap = pmap.get_colormap()
-    pbuf.get_from_drawable(pmap, colormap, 0, 0, 0, 0, size, size)
+    data = surface.get_data()
+    ## len(data) =  4 * size * size
+    pbuf = GdkPixbuf.Pixbuf.new_from_data(
+        data,
+        GdkPixbuf.Colorspace.RGB,
+        True,
+        8,
+        size,
+        size,
+        size * 4,
+        None,
+        None,
+    )
     if bgColor:
         pbuf = pbuf.add_alpha(True, *bgColor)
     return pbuf
-
+'''
 
 def drawRoundedRect(cr, cx0, cy0, cw, ch, ro):
     ro = min(ro, cw/2.0, ch/2.0)
@@ -288,9 +345,9 @@ class Button:
     def __init__(self, imageName, func, x, y, autoDir=True):
         self.imageName = imageName
         if imageName.startswith('gtk-'):
-            self.pixbuf = gdk.pixbuf_new_from_stock(imageName)
+            self.pixbuf = GdkPixbuf.Pixbuf.new_from_stock(imageName)
         else:
-            self.pixbuf = gdk.pixbuf_new_from_file(join(pixDir, imageName))
+            self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(join(pixDir, imageName))
         self.func = func
         self.width = self.pixbuf.get_width()
         self.height = self.pixbuf.get_height()
@@ -310,7 +367,7 @@ class Button:
         return (x, y)
     def draw(self, cr, w, h):
         x, y = self.getAbsPos(w, h)
-        cr.set_source_pixbuf(self.pixbuf, x, y)
+        Gdk.cairo_set_source_pixbuf(cr, self.pixbuf, x, y)
         cr.rectangle(x, y, self.width, self.height)
         cr.fill()
     def contains(self, px, py, w, h):

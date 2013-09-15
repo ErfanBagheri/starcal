@@ -66,7 +66,7 @@ def getUtcOffsetByDateSec(year, month, day, tz=None):
     except (ValueError, OverflowError):
         return tz._utcoffset.total_seconds()
     except pytz.exceptions.NonExistentTimeError:
-        return tz.utcoffset(datetime(year, month, day, 1, 0, 0)).total_seconds()
+        return tz.utcoffset(datetime(year, month, day, 1, 0, 0, 0)).total_seconds()
 
 
 def getUtcOffsetByDateHM(year, month, day, tz=None):
@@ -252,7 +252,7 @@ def floatHourToTime(fh):
 if __name__=='__main__':
     #print floatHourToTime(3.6)
     for tm in (
-        (8, 0, 0),
+        (8, 0, 0, 0),
         (8, 0),
         (8,),
         (8, 30),

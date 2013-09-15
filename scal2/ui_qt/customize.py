@@ -230,7 +230,7 @@ class CustomizeDialog(qt.QWidget):## QDialog
             qRootItem = self.tree.topLevelItem(parentIndex)
             qItem = qRootItem.takeChild(index+1)
             qRootItem.insertChild(index, qItem)
-            self.tree.setCurrentItem(qRootItem.child(index+1))
+            self.tree.setCurrentItem(qRootItem.get_child()(index+1))
     def moveItemUp(self, i):
         self.widget.removeWidget(self.items[i].widget)
         self.widget.insertWidget(i-1, self.items[i].widget)## QBoxLayout.insertWidget

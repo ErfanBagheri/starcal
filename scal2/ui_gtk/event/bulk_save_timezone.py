@@ -23,22 +23,22 @@ from scal2.locale_man import tr as _
 
 from scal2 import ui
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.utils import dialog_add_button, TimeZoneComboBoxEntry
 
-class BulkSaveTimeZoneDialog(gtk.Dialog):
+class BulkSaveTimeZoneDialog(Gtk.Dialog):
     def __init__(self):
-        gtk.Dialog.__init__(self)
+        Gtk.Dialog.__init__(self)
         self.set_title(_('Time Zone'))
         ####
-        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.RESPONSE_CANCEL)
-        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.RESPONSE_OK)
+        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
+        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
         ###
         self.connect('response', self.onResponse)
         ####
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup(''.join([
             _('"Time Zone" property is newly added to events')+'\n',
             _('But this property needs to be saved for current events')+'\n',
@@ -49,24 +49,24 @@ class BulkSaveTimeZoneDialog(gtk.Dialog):
             '</small>',
         ]))
         label.set_line_wrap(True)
-        self.vbox.pack_start(label, 1, 1)
+        self.vbox.pack_start(label, 1, 1, 0)
         ####
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         self.timeZoneInput = TimeZoneComboBoxEntry()
-        hbox.pack_start(gtk.Label(''), 1, 1)
-        hbox.pack_start(self.timeZoneInput, 0, 0)
-        hbox.pack_start(gtk.Label(''), 1, 1)
+        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(self.timeZoneInput, 0, 0, 0)
+        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
         hbox.set_border_width(20)
-        self.vbox.pack_start(hbox, 1, 1)
+        self.vbox.pack_start(hbox, 1, 1, 0)
         ####
-        self.errorLabel = gtk.Label()
-        self.vbox.pack_start(self.errorLabel, 1, 1)
+        self.errorLabel = Gtk.Label()
+        self.vbox.pack_start(self.errorLabel, 1, 1, 0)
         ####
-        self.vbox.pack_start(gtk.Label(''), 1, 1)
+        self.vbox.pack_start(Gtk.Label(''), 1, 1, 0)
         ####
         self.vbox.show_all()
     def onResponse(self, dialog, responseId):
-        if responseId == gtk.RESPONSE_OK:
+        if responseId == Gtk.ResponseType.OK:
             timeZone = self.timeZoneInput.get_text()
             try:
                 pytz.timezone(timeZone)
@@ -88,8 +88,8 @@ class BulkSaveTimeZoneDialog(gtk.Dialog):
                     self.hide()
         else:
             self.hide()
-        while gtk.events_pending():
-            gtk.main_iteration_do(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration_do(False)
             
 
 if __name__=='__main__':

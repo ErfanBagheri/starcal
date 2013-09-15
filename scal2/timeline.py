@@ -23,13 +23,13 @@ from math import sqrt, floor, ceil, log10
 from scal2.timeline_box import *
 from scal2 import core
 from scal2.locale_man import tr as _
-from scal2.locale_man import rtl, numEncode, textNumEncode, LRM
+from scal2.locale_man import rtl, numEncode, textNumEncode, addLRM
 
 from scal2.core import myRaise, getMonthName, getJdFromEpoch, getFloatJdFromEpoch, getEpochFromJd, jd_to, to_jd, \
                        getJhmsFromEpoch, getEpochFromDate, jwday
 
 from scal2.color_utils import hslToRgb
-from scal2.utils import ifloor, iceil
+from scal2.utils import ifloor, iceil, toStr
 from scal2 import ui
 from scal2.ui import getHolidaysJdList
 
@@ -194,7 +194,7 @@ def formatYear(y, prettyPower=False):
             pw_s = _(10) + u'ˆ' + _(pw)
             ## pw_s = _(10) + '<span rise="5" size="small">' + _(pw) + '</span>'## Pango Markup Language
             y_st = sign + fac_s + pw_s
-    return LRM + y_st
+    return toStr(addLRM(y_st))
 
 #def setRandomColorsToEvents():
 #    events = ui.events[:]
@@ -335,7 +335,7 @@ def calcTimeLineData(timeStart, timeWidth, pixelPerSec, borderTm):
                         _(m, fillZero=2),
                     )
                 else:# elif timeWidth < 60 or stepSec < 30:
-                    label = LRM + '%s"'%_(s, fillZero=2)
+                    label = toStr(addLRM('%s"'%_(s, fillZero=2)))
                 #else:
                 #    label = '%s:%s:%s'%(
                 #        _(h),

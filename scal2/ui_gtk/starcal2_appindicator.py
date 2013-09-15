@@ -27,7 +27,7 @@ from scal2.path import *
 from scal2 import locale_man
 from scal2.locale_man import tr as _
 
-import gtk
+from gi.repository import Gtk
 import appindicator
 
 from scal2.ui_gtk.utils import CopyLabelMenuItem
@@ -48,18 +48,18 @@ class IndicatorStatusIconWrapper(appindicator.Indicator):
         self.create_menu()
     '''
     def create_menu_simple(self):
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
         ###
         for item in [self.mainWin.getMainWinMenuItem()] + self.mainWin.getTrayPopupItems():
             item.show()
             menu.add(item)
         ###
         #if locale_man.rtl:
-            #menu.set_direction(gtk.TEXT_DIR_RTL)
+            #menu.set_direction(Gtk.TextDirection.RTL)
         self.set_menu(menu)
     '''
     def create_menu(self):
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
         ####
         for line in self.mainWin.getTrayTooltip().split('\n'):
             item = CopyLabelMenuItem(line)
@@ -70,11 +70,11 @@ class IndicatorStatusIconWrapper(appindicator.Indicator):
         item.show()
         menu.append(item)
         ####
-        submenu = gtk.Menu()
+        submenu = Gtk.Menu()
         for item in self.mainWin.getTrayPopupItems():
             item.show()
             submenu.add(item)
-        sitem = gtk.MenuItem(label=_('More'))
+        sitem = Gtk.MenuItem(label=_('More'))
         sitem.set_submenu(submenu)
         sitem.show()
         menu.append(sitem)

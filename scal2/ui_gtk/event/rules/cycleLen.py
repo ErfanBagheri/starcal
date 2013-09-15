@@ -5,21 +5,21 @@ from scal2.locale_man import tr as _
 
 from scal2 import event_lib
 from scal2.ui_gtk.mywidgets.multi_spin_button import IntSpinButton, TimeButton
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
-class RuleWidget(gtk.HBox):
+class RuleWidget(Gtk.HBox):
     def __init__(self, rule):
         self.rule = rule
         ###
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
         spin = IntSpinButton(0, 9999)
-        self.pack_start(spin, 0, 0)
+        self.pack_start(spin, 0, 0, 0)
         self.spin = spin
         ##
-        self.pack_start(gtk.Label(' '+_('days and')+' '), 0, 0)
+        self.pack_start(Gtk.Label(' '+_('days and')+' '), 0, 0, 0)
         tbox = TimeButton()
-        self.pack_start(tbox, 0, 0)
+        self.pack_start(tbox, 0, 0, 0)
         self.tbox = tbox
     def updateWidget(self):
         self.spin.set_value(self.rule.days)

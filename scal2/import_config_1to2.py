@@ -28,10 +28,10 @@ from scal2.locale_man import langDir
 from scal2.plugin_man import loadPlugin
 
 
-import pango
+from gi.repository import Pango
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.font_utils import gfontDecode
 from scal2.ui_gtk.color_utils import gdkColorToRgb
@@ -157,7 +157,7 @@ weekNumberMode=%r'''%(holidayWeekDays, firstWeekDayAuto, firstWeekDay, weekNumbe
             ):
                 text += '%s = %r\n'%(name, eval(name))
             open(ui_conf, 'w').write(text)
-        ui_gtk_conf = join(confDir, 'ui-gtk.conf')
+        ui_gtk_conf = join(confDir, 'ui-Gtk.conf')
         if overwrite or not isfile(ui_gtk_conf):
             from scal2.ui_gtk.utils import stock_arrow_repr
             open(ui_gtk_conf, 'w').write(\

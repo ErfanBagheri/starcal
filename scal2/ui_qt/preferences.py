@@ -161,7 +161,7 @@ qColorToRgb = lambda qc: (qc.red(), qc.green(), qc.blue(), qc.alpha())
 
 
 #def image_from_file(path):
-#    im = gtk.Image()
+#    im = Gtk.Image()
 #    im.set_from_file(path)
 #    return im
 
@@ -214,7 +214,7 @@ class ColorButton(qt.QPushButton):
         self.useAlpha = useAlpha
         self.borderWidth = borderWidth
         self.setFixedSize(width, height)
-        self.setQColor(qt.QColor(0, 0, 0))
+        self.setQColor(qt.QColor(0, 0, 0, 0))
         self.connect(self, qc.SIGNAL('clicked()') , self.onClick)
         ######
         self.setAcceptDrops(True)
@@ -940,7 +940,7 @@ class PluginTreeview(qt.QTreeWidget):
         text = toUnicode(plug.about) + u'\n' + _('Credits') + u':\n\t' + toUnicode('\n\t'.join(plug.authors))
         qt.QMessageBox.about(self, _('About Plugin'), text)
         """## ??????????????????????????
-        about = gtk.AboutDialog()
+        about = Gtk.AboutDialog()
         about.set_transient_for(self)
         about.set_name('')
         #about.set_name(plug.desc) ## or set_program_name
@@ -1001,7 +1001,7 @@ class PluginTreeview(qt.QTreeWidget):
         except:
             return
         if i<0 or i>=self.topLevelItemCount()-1:
-            gdk.beep()
+            Gdk.beep()
             return
         item = self.takeTopLevelItem(i)
         self.addTopLevelItem(item)
@@ -1518,7 +1518,7 @@ class PrefDialog(qt.QWidget):
         ################################ Tab 3 (Advanced) ##########################
         vbox = qt.QVBoxLayout()
         vbox.setMargin(0)
-        #sgroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        #sgroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         ######
         hbox = qt.QHBoxLayout()
         hbox.setMargin(0)
@@ -1657,7 +1657,7 @@ class PrefDialog(qt.QWidget):
         vboxAll.addWidget(notebook)
         vboxAll.addWidget(bbox)
         self.setLayout(vboxAll)
-        #notebook.set_tab_label_packing(vbox4, False, False, gtk.PACK_START)
+        #notebook.set_tab_label_packing(vbox4, False, False, Gtk.PACK_START)
         #notebook.set_property('homogeneous', True) #?????????
         #notebook.set_tab_reorderable(vbox1, True) #?????????
         #self.prefPages = (vbox1, vbox2, vbox3, vbox4)
@@ -1682,15 +1682,15 @@ class PrefDialog(qt.QWidget):
     """
     checkYmArrowsClicked = lambda self, check: self.ymArrowHboxW.setEnabled(check.checkState()==qt.Qt.Checked)
     def stockMenuItem(self, stock, func, *args):
-        item = gtk.MenuItem()
-        item.add(gtk.image_new_from_stock(stock, gtk.ICON_SIZE_MENU))
+        item = Gtk.MenuItem()
+        item.add(Gtk.Image.new_from_stock(stock, Gtk.IconSize.MENU))
         item.connect('activate', func, *args)
         return item
     def newArrowMenuItem(self, arrowType, func=None, *args):
-        item = gtk.MenuItem()
-        #ev = gtk.EventBox()
+        item = Gtk.MenuItem()
+        #ev = Gtk.EventBox()
         #ev.connect('activate', func, *args)
-        item.add(gtk.Arrow(arrowType, gtk.SHADOW_IN))
+        item.add(Gtk.Arrow(arrowType, Gtk.ShadowType.IN))
         if func!=None:
             item.connect('activate', func, *args)
         return item
@@ -1706,29 +1706,29 @@ class PrefDialog(qt.QWidget):
             if self.im_num==1:
                 self.ev1.remove(self.im1)
                 self.im1.destroy()
-                self.im1 = gtk.image_new_from_stock(stock, gtk.ICON_SIZE_SMALL_TOOLBAR)
+                self.im1 = Gtk.Image.new_from_stock(stock, Gtk.IconSize.SMALL_TOOLBAR)
                 self.im1.type = stock
                 self.ev1.add(self.im1)
                 self.im1.show()
             elif self.im_num==2:
                 self.ev2.remove(self.im2)
                 self.im2.destroy()
-                self.im2 = gtk.image_new_from_stock(stock, gtk.ICON_SIZE_SMALL_TOOLBAR)
+                self.im2 = Gtk.Image.new_from_stock(stock, Gtk.IconSize.SMALL_TOOLBAR)
                 self.im2.type = stock
                 self.ev2.add(self.im2)
                 self.im2.show()
-        elif isinstance(stock, gtk._gtk.ArrowType):
+        elif isinstance(stock, Gtk._Gtk.ArrowType):
             if self.im_num==1:
                 self.ev1.remove(self.im1)
                 self.im1.destroy()
-                self.im1 = gtk.Arrow(stock, gtk.SHADOW_IN)
+                self.im1 = Gtk.Arrow(stock, Gtk.ShadowType.IN)
                 self.im1.type = stock
                 self.ev1.add(self.im1)
                 self.im1.show()
             elif self.im_num==2:
                 self.ev2.remove(self.im2)
                 self.im2.destroy()
-                self.im2 = gtk.Arrow(stock, gtk.SHADOW_IN)
+                self.im2 = Gtk.Arrow(stock, Gtk.ShadowType.IN)
                 self.im2.type = stock
                 self.ev2.add(self.im2)
                 self.im2.show()
@@ -1836,8 +1836,8 @@ class PrefDialog(qt.QWidget):
             text += item.confStr()
         """for key in ('prevStock', 'nextStock'):
             value = eval(key)
-            if isinstance(key, gtk._gtk.ArrowType):
-                text += '%s=gtk.%s\n'%(key, value.value_name[4:])
+            if isinstance(key, Gtk._Gtk.ArrowType):
+                text += '%s=Gtk.%s\n'%(key, value.value_name[4:])
             else:
                 text += '%s=%r\n'%(key, value)"""
         text += 'adjustTimeCmd=%r\n'%adjustTimeCmd ##???????????
@@ -1846,9 +1846,9 @@ class PrefDialog(qt.QWidget):
         self.mainWin.onConfigChange()
         """
         if ui.bgUseDesk and ui.bgColor[3]==255:
-            msg = gtk.MessageDialog(buttons=gtk.BUTTONS_OK_CANCEL, message_format=_(
+            msg = Gtk.MessageDialog(buttons=Gtk.ButtonsType.OK_CANCEL, message_format=_(
             'If you want to have a transparent calendar (and see your desktop), change the opacity of calendar background color!'))
-            if msg.run()==gtk.RESPONSE_OK:
+            if msg.run()==Gtk.ResponseType.OK:
                 self.colorbBg.emit('clicked')
             msg.destroy()
         """

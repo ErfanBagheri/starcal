@@ -99,7 +99,7 @@ class LocationDialog(qt.QDialog):
         self.connect(gbox, qc.SIGNAL('toggled (bool)'), self.editCheckbToggled)
         self.gboxEdit = gbox
         vbox = VBox()
-        #group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        #group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         #####
         hbox = HBox()
         label = qt.QLabel(_('Name:'))
@@ -170,13 +170,13 @@ class LocationDialog(qt.QDialog):
         #self.connect(cancelB, qc.SIGNAL('clicked()'), self.reject)
         #self.connect(okB, qc.SIGNAL('clicked()'), self.accept)
         '''
-        cancelB = self.add_button(gtk.STOCK_CANCEL, self.EXIT_CANCEL)
-        okB = self.add_button(gtk.STOCK_OK, self.EXIT_OK)
+        cancelB = self.add_button(Gtk.STOCK_CANCEL, self.EXIT_CANCEL)
+        okB = self.add_button(Gtk.STOCK_OK, self.EXIT_OK)
         #if autoLocale:
         cancelB.setText(_('_Cancel'))
-        cancelB.set_image(gtk.image_new_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON))
+        cancelB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CANCEL, Gtk.IconSize.BUTTON))
         okB.setText(_('_OK'))
-        okB.set_image(gtk.image_new_from_stock(gtk.STOCK_OK, gtk.ICON_SIZE_BUTTON))
+        okB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_OK, Gtk.IconSize.BUTTON))
         '''
         self.vbox.addWidget(bbox)
         #######
@@ -278,7 +278,7 @@ class TextPlugUI:
         self.confDialog.vbox = qt.QVBoxLayout()
         self.confDialog.vbox.setMargin(0)
         self.confDialog.setLayout(self.confDialog.vbox)
-        #group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        #group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         ###
         hbox = HBox()
         label = qt.QLabel(_('Location'))
@@ -343,11 +343,11 @@ class TextPlugUI:
         bbox.connect(bbox, qc.SIGNAL('accepted()'), self.confDialogOk)
         ##############
         '''
-        submenu = gtk.Menu()
-        submenu.add(gtk.MenuItem('Item 1'))
-        submenu.add(gtk.MenuItem('Item 2'))
+        submenu = Gtk.Menu()
+        submenu.add(Gtk.MenuItem('Item 1'))
+        submenu.add(Gtk.MenuItem('Item 2'))
         #self.submenu = submenu
-        self.menuitem = gtk.MenuItem('Owghat')
+        self.menuitem = Gtk.MenuItem('Owghat')
         self.menuitem.set_submenu(submenu)
         self.menuitem.show_all()
         '''
@@ -410,7 +410,7 @@ class TextPlugUI:
         #buttons = buttonbox.get_children()## List of buttons of about dialogs
         #buttons[1].setText(_('C_redits'))
         #buttons[2].setText(_('_Close'))
-        #buttons[2].set_image(gtk.image_new_from_stock(gtk.STOCK_CLOSE,gtk.ICON_SIZE_BUTTON))
+        #buttons[2].set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CLOSE,Gtk.IconSize.BUTTON))
         about.exec_()
         about.destroy()
 

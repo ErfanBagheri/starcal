@@ -34,8 +34,9 @@ from scal2.core import log, myRaise, getMonthName, getMonthLen, pixDir
 from scal2 import ui
 from scal2.monthcal import getMonthStatus, getCurrentMonthStatus
 
-import gtk
-from gtk import gdk
+from gi.repository import GdkPixbuf
+from gi.repository import Gdk
+from gi.repository import Gtk
 
 from scal2.ui_gtk.drawing import *
 
@@ -52,39 +53,39 @@ from scal2.ui_gtk.customize import CustomizableCalObj
 #from scal2.ui_gtk import wallpaper
 
 
-class McalTypeParamBox(gtk.HBox):
+class McalTypeParamBox(Gtk.HBox):
     def __init__(self, mcal, index, mode, params, sgroupLabel, sgroupFont):
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
         self.mcal = mcal
         self.index = index
         self.mode = mode
         ######
-        label = gtk.Label(_(calTypes[mode].desc)+'  ')
+        label = Gtk.Label(label=_(calTypes[mode].desc)+'  ')
         label.set_alignment(0, 0.5)
-        self.pack_start(label, 0, 0)
+        self.pack_start(label, 0, 0, 0)
         sgroupLabel.add_widget(label)
         ###
-        self.pack_start(gtk.Label(''), 1, 1)
-        self.pack_start(gtk.Label(_('position')), 0, 0)
+        self.pack_start(Gtk.Label(''), 1, 1, 0)
+        self.pack_start(Gtk.Label(_('position')), 0, 0, 0)
         ###
         spin = FloatSpinButton(-99, 99, 1)
         self.spinX = spin
-        self.pack_start(spin, 0, 0)
+        self.pack_start(spin, 0, 0, 0)
         ###
         spin = FloatSpinButton(-99, 99, 1)
         self.spinY = spin
-        self.pack_start(spin, 0, 0)
+        self.pack_start(spin, 0, 0, 0)
         ####
-        self.pack_start(gtk.Label(''), 1, 1)
+        self.pack_start(Gtk.Label(''), 1, 1, 0)
         ###
         fontb = MyFontButton(mcal)
         self.fontb = fontb
-        self.pack_start(fontb, 0, 0)
+        self.pack_start(fontb, 0, 0, 0)
         sgroupFont.add_widget(fontb)
         ####
         colorb = MyColorButton()
         self.colorb = colorb
-        self.pack_start(colorb, 0, 0)
+        self.pack_start(colorb, 0, 0, 0)
         ####
         self.set(params)
         ####
@@ -108,7 +109,7 @@ class McalTypeParamBox(gtk.HBox):
         self.mcal.queue_draw()
 
 @registerSignals
-class MonthCal(gtk.Widget, CalBase):
+class MonthCal(Gtk.DrawingArea, CalBase):
     _name = 'monthCal'
     desc = _('Month Calendar')
     cx = [0, 0, 0, 0, 0, 0, 0]
@@ -155,109 +156,92 @@ class MonthCal(gtk.Widget, CalBase):
                 'font': ui.getFontSmall(),
                 'color': ui.textColor,
             })
-        sgroupLabel = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
-        sgroupFont = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        sgroupLabel = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        sgroupFont = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         for i, mode in enumerate(calTypes.active):
             #try:
             params = ui.mcalTypeParams[i]
             #except IndexError:
             ##
             hbox = McalTypeParamBox(self, i, mode, params, sgroupLabel, sgroupFont)
-            vbox.pack_start(hbox, 0, 0)
+            vbox.pack_start(hbox, 0, 0, 0)
         ###
         vbox.show_all()
     def __init__(self):
-        gtk.Widget.__init__(self)
-        CalBase.__init__(self)
+        Gtk.DrawingArea.__init__(self)
+        self.initCal()
         self.set_property('height-request', ui.mcalHeight)
         ######
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         spin = IntSpinButton(1, 9999)
         spin.set_value(ui.mcalHeight)
         spin.connect('changed', self.heightSpinChanged)
-        hbox.pack_start(gtk.Label(_('Height')), 0, 0)
-        hbox.pack_start(spin, 0, 0)
-        self.optionsWidget.pack_start(hbox, 0, 0)
+        hbox.pack_start(Gtk.Label(_('Height')), 0, 0, 0)
+        hbox.pack_start(spin, 0, 0, 0)
+        self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ####
-        hbox = gtk.HBox(spacing=3)
+        hbox = Gtk.HBox(spacing=3)
         ##
-        hbox.pack_start(gtk.Label(_('Left Margin')), 0, 0)
+        hbox.pack_start(Gtk.Label(_('Left Margin')), 0, 0, 0)
         spin = IntSpinButton(0, 99)
         spin.set_value(ui.mcalLeftMargin)
         spin.connect('changed', self.leftMarginSpinChanged)
-        hbox.pack_start(spin, 0, 0)
+        hbox.pack_start(spin, 0, 0, 0)
         ##
-        hbox.pack_start(gtk.Label(_('Top')), 0, 0)
+        hbox.pack_start(Gtk.Label(_('Top')), 0, 0, 0)
         spin = IntSpinButton(0, 99)
         spin.set_value(ui.mcalTopMargin)
         spin.connect('changed', self.topMarginSpinChanged)
-        hbox.pack_start(spin, 0, 0)
+        hbox.pack_start(spin, 0, 0, 0)
         ##
-        hbox.pack_start(gtk.Label(''), 1, 1)
-        self.optionsWidget.pack_start(hbox, 0, 0)
+        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ########
-        hbox = gtk.HBox(spacing=3)
+        hbox = Gtk.HBox(spacing=3)
         ####
         item = CheckPrefItem(ui, 'mcalGrid', _('Grid'))
         item.updateWidget()
-        gridCheck = item.widget
-        hbox.pack_start(gridCheck, 0, 0)
+        gridCheck = item._widget
+        hbox.pack_start(gridCheck, 0, 0, 0)
         gridCheck.item = item
         ####
         colorItem = ColorPrefItem(ui, 'mcalGridColor', True)
         colorItem.updateWidget()
-        hbox.pack_start(colorItem.widget, 0, 0)
-        gridCheck.colorb = colorItem.widget
+        hbox.pack_start(colorItem._widget, 0, 0, 0)
+        gridCheck.colorb = colorItem._widget
         gridCheck.connect('clicked', self.gridCheckClicked)
-        colorItem.widget.item = colorItem
-        colorItem.widget.connect('color-set', self.gridColorChanged)
-        colorItem.widget.set_sensitive(ui.mcalGrid)
+        colorItem._widget.item = colorItem
+        colorItem._widget.connect('color-set', self.gridColorChanged)
+        colorItem._widget.set_sensitive(ui.mcalGrid)
         ####
-        self.optionsWidget.pack_start(hbox, 0, 0)
+        self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ########
-        frame = gtk.Frame(_('Calendars'))
-        self.typeParamsVbox = gtk.VBox()
+        frame = Gtk.Frame()
+        frame.set_label(_('Calendars'))
+        self.typeParamsVbox = Gtk.VBox()
         frame.add(self.typeParamsVbox)
         frame.show_all()
-        self.optionsWidget.pack_start(frame, 0, 0)
+        self.optionsWidget.pack_start(frame, 0, 0, 0)
         self.optionsWidget.show_all()
         self.updateTypeParamsWidget()## FIXME
         ######################
         #self.kTime = 0
         ######################
-        self.connect('expose-event', self.drawAll)
+        self.connect('draw', self.drawAll)
         self.connect('button-press-event', self.buttonPress)
         #self.connect('screen-changed', self.screenChanged)
         self.connect('scroll-event', self.scroll)
         ######################
         self.updateTextWidth()
         ######################
-    def do_realize(self):
-        self.set_flags(self.flags() | gtk.REALIZED)
-        self.window = gdk.Window(
-            self.get_parent_window(),
-            width=self.allocation.width,
-            height=self.allocation.height,
-            window_type=gdk.WINDOW_CHILD,
-            wclass=gdk.INPUT_OUTPUT,
-            event_mask=self.get_events() \
-                | gdk.EXPOSURE_MASK | gdk.BUTTON1_MOTION_MASK | gdk.BUTTON_PRESS_MASK
-                | gdk.POINTER_MOTION_MASK | gdk.POINTER_MOTION_HINT_MASK,
-        )
-        self.window.set_user_data(self)
-        self.style.attach(self.window)#?????? Needed??
-        self.style.set_background(self.window, gtk.STATE_NORMAL)
-        self.window.move_resize(*self.allocation)
-    def drawAll(self, widget=None, event=None, cr=None, cursor=True):
+    def drawAll(self, widget=None, cr=None, cursor=True):
+        #event = Gtk.get_current_event()
         #?????? Must enhance (only draw few cells, not all cells)
-        #print now(), 'drawAll'#, tuple(event.area), tuple(self.allocation)
-        if event:
-            xu, yu, wu, hu = tuple(event.area)
-            #print 'expose-event area:', xu, yu, wu, hu
         self.calcCoord()
-        x, y, w, h = self.allocation
+        w = self.get_allocation().width
+        h = self.get_allocation().height
         if not cr:
-            cr = self.window.cairo_create()
+            cr = self.get_window().cairo_create()
             #cr.set_line_width(0)#??????????????
             #cr.scale(0.5, 0.5)
         wx = ui.winX
@@ -277,7 +261,7 @@ class MonthCal(gtk.Widget, CalBase):
                     ui.bgUseDesk = False ##??????????????????
                     #self.prefDialog.checkDeskBg.set_active(False)##??????????????????
                 else:
-                    cr.set_source_pixbuf(bg, 0, 0)
+                    Gdk.cairo_set_source_pixbuf(cr, bg, 0, 0, 0)
                     cr.paint()
             #else:
             #    print coord
@@ -305,7 +289,7 @@ class MonthCal(gtk.Widget, CalBase):
                     self.cx[i]-fontw/2.0,
                     (ui.mcalTopMargin-fonth)/2.0-1,
                 )
-                cr.show_layout(wday)
+                show_layout(cr, wday)
             ######## Drawing "Menu" label
             setColor(cr, ui.menuTextColor)
             text = newTextLayout(self, _('Menu'))
@@ -320,7 +304,7 @@ class MonthCal(gtk.Widget, CalBase):
                     (ui.mcalLeftMargin-fontw)/2.0,
                     (ui.mcalTopMargin-fonth)/2.0 - 1,
                 )
-            cr.show_layout(text)
+            show_layout(cr, text)
         if ui.mcalLeftMargin>0:
             ##### Drawing border left background
             if rtl:
@@ -353,7 +337,7 @@ class MonthCal(gtk.Widget, CalBase):
                         (ui.mcalLeftMargin-fontw)/2.0,
                         self.cy[i]-fonth/2.0 + 2,
                     )
-                cr.show_layout(lay)
+                show_layout(cr, lay)
         selectedCellPos = ui.cell.monthPos
         if ui.todayCell.inSameMonth(ui.cell):
             tx, ty = ui.todayCell.monthPos ## today x and y
@@ -387,7 +371,7 @@ class MonthCal(gtk.Widget, CalBase):
                         for index, icon in enumerate(iconList):
                             ## if len(iconList) > 1 ## FIXME
                             try:
-                                pix = gdk.pixbuf_new_from_file(icon)
+                                pix = GdkPixbuf.Pixbuf.new_from_file(icon)
                             except:
                                 myRaise(__file__)
                                 continue
@@ -397,7 +381,7 @@ class MonthCal(gtk.Widget, CalBase):
                             x1 = (self.cx[xPos] + self.dx/2.0)/scaleFact - fromRight - pix_w # right side
                             y1 = (self.cy[yPos] + self.dy/2.0)/scaleFact - pix_h # buttom side
                             cr.scale(scaleFact, scaleFact)
-                            cr.set_source_pixbuf(pix, x1, y1)
+                            Gdk.cairo_set_source_pixbuf(cr, pix, x1, y1)
                             cr.rectangle(x1, y1, pix_w, pix_h)
                             cr.fill()
                             cr.scale(1.0/scaleFact, 1.0/scaleFact)
@@ -423,7 +407,7 @@ class MonthCal(gtk.Widget, CalBase):
                     x0 - fontw/2.0 + params['pos'][0],
                     y0 - fonth/2.0 + params['pos'][1],
                 )
-                cr.show_layout(daynum)
+                show_layout(cr, daynum)
                 if not cellInactive:
                     for mode, params in ui.getMcalMinorTypeParams()[1:]:
                         daynum = newTextLayout(self, _(c.dates[mode][2], mode), params['font'])
@@ -433,7 +417,7 @@ class MonthCal(gtk.Widget, CalBase):
                             x0 - fontw/2.0 + params['pos'][0],
                             y0 - fonth/2.0 + params['pos'][1],
                         )
-                        cr.show_layout(daynum)                        
+                        show_layout(cr, daynum)                        
                     if cellHasCursor:
                         ##### Drawing Cursor Outline
                         cx0 = x0-self.dx/2.0+1
@@ -460,7 +444,7 @@ class MonthCal(gtk.Widget, CalBase):
         lay = newTextLayout(self)
         wm = 0 ## max width
         for i in xrange(7):
-            lay.set_text(core.weekDayName[i])
+            lay.set_markup(core.weekDayName[i])
             w = lay.get_pixel_size()[0] ## ????????
             #w = lay.get_pixel_extents()[0] ## ????????
             #print w,
@@ -472,7 +456,8 @@ class MonthCal(gtk.Widget, CalBase):
     def buttonPress(self, obj, event):
         ## self.winActivate() #?????????
         b = event.button
-        x, y, mask = event.window.get_pointer() # or self.get_pointer()
+        x, y, = self.get_pointer()
+        # foo, x, y, flags = self.get_window().get_pointer()
         self.pointer = (x, y)
         if b==2:
             return False
@@ -489,18 +474,19 @@ class MonthCal(gtk.Widget, CalBase):
         status = getCurrentMonthStatus()
         if yPos == -1 or xPos == -1:
             self.emit('popup-menu-main', event.time, event.x, event.y)
-            #self.menuMainWidth = self.menuMain.allocation.width ## menu.allocation[3]
+            #self.menuMainWidth = self.menuMain.get_allocation().width ## menu.get_allocation()[3]
         elif yPos >= 0 and xPos >= 0:
             cell = status[yPos][xPos]
             self.changeDate(*cell.dates[core.primaryMode])
-            if event.type==gdk._2BUTTON_PRESS:
+            if event.type==getattr(Gdk.EventType, '2BUTTON_PRESS'):
                 self.emit('2button-press')
             if b == 3 and cell.month == ui.cell.month:## right click on a normal cell
                 #self.emit('popup-menu-cell', event.time, *self.getCellPos())
                 self.emit('popup-menu-cell', event.time, event.x, event.y)
         return True
     def calcCoord(self):## calculates coordidates (x and y of cells centers)
-        x, y, w, h = self.allocation
+        w = self.get_allocation().width
+        h = self.get_allocation().height
         if rtl:
             self.cx = [
                 (w - ui.mcalLeftMargin) * (13.0 - 2*i) / 14.0
@@ -523,7 +509,7 @@ class MonthCal(gtk.Widget, CalBase):
     def keyPress(self, arg, event):
         if CalBase.keyPress(self, arg, event):
             return True
-        kname = gdk.keyval_name(event.keyval).lower()
+        kname = Gdk.keyval_name(event.keyval).lower()
         #if kname.startswith('alt'):
         #    return True
         ## How to disable Alt+Space of metacity ?????????????????????
@@ -552,7 +538,7 @@ class MonthCal(gtk.Widget, CalBase):
         elif kname in ('page_down', 'j', 'n'):
             self.monthPlus(1)
         elif kname in ('f10', 'm'):
-            if event.state & gdk.SHIFT_MASK:
+            if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
                 # Simulate right click (key beside Right-Ctrl)
                 self.emit('popup-menu-cell', event.time, *self.getCellPos())
             else:
@@ -575,7 +561,7 @@ class MonthCal(gtk.Widget, CalBase):
     def getMainMenuPos(self):## FIXME
         if rtl:
             return (
-                int(self.allocation.width - ui.mcalLeftMargin/2.0),
+                int(self.get_allocation().width - ui.mcalLeftMargin/2.0),
                 int(ui.mcalTopMargin/2.0),
             )
         else:
@@ -595,14 +581,14 @@ class MonthCal(gtk.Widget, CalBase):
 
 
 if __name__=='__main__':
-    win = gtk.Dialog()
+    win = Gtk.Dialog()
     cal = MonthCal()
     win.add_events(
-        gdk.POINTER_MOTION_MASK | gdk.FOCUS_CHANGE_MASK | gdk.BUTTON_MOTION_MASK |
-        gdk.BUTTON_PRESS_MASK | gdk.BUTTON_RELEASE_MASK | gdk.SCROLL_MASK |
-        gdk.KEY_PRESS_MASK | gdk.VISIBILITY_NOTIFY_MASK | gdk.EXPOSURE_MASK
+        Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.FOCUS_CHANGE_MASK | Gdk.EventMask.BUTTON_MOTION_MASK |
+        Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.SCROLL_MASK |
+        Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.VISIBILITY_NOTIFY_MASK | Gdk.EventMask.EXPOSURE_MASK
     )
-    win.vbox.pack_start(cal, 1, 1)
+    win.vbox.pack_start(cal, 1, 1, 0)
     win.vbox.show_all()
     win.resize(600, 400)
     win.run()

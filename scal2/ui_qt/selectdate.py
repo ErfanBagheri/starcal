@@ -155,9 +155,9 @@ class SelectDateDialog(qt.QWidget):
         self.connect(bbox, qc.SIGNAL('accepted()'), self.ok)
         """if ui.autoLocale:
             okB.set_label(_('_OK'))
-            okB.set_image(gtk.image_new_from_stock(gtk.STOCK_OK,gtk.ICON_SIZE_BUTTON))
+            okB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_OK,Gtk.IconSize.BUTTON))
             canB.set_label(_('_Cancel'))
-            canB.set_image(gtk.image_new_from_stock(gtk.STOCK_CANCEL,gtk.ICON_SIZE_BUTTON))"""
+            canB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CANCEL,Gtk.IconSize.BUTTON))"""
         self.vbox.addWidget(bbox)
         #######
         #okB.connect('clicked', self.ok)

@@ -25,8 +25,8 @@ from scal2 import locale_man
 from scal2.locale_man import tr as _
 from scal2.locale_man import numDecode, textNumEncode, textNumDecode
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.decorators import *
 
@@ -38,16 +38,16 @@ def myRaise():
         print i
 
 @registerType
-class NumRangesEntry(gtk.Entry):
+class NumRangesEntry(Gtk.Entry):
     def __init__(self, _min, _max, page_inc=10):
         self._min = _min
         self._max = _max
         self.digs = locale_man.digits[locale_man.langSh]
         self.page_inc = page_inc
         ####
-        gtk.Entry.__init__(self)
+        Gtk.Entry.__init__(self)
         self.connect('key-press-event', self.keyPress)
-        self.set_direction(gtk.TEXT_DIR_LTR)
+        self.set_direction(Gtk.TextDirection.LTR)
         self.set_alignment(0.5)
     def insertText(self, s, clearSeceltion=True):
         selection = self.get_selection_bounds()
@@ -108,7 +108,7 @@ class NumRangesEntry(gtk.Entry):
         )
     def keyPress(self, obj, gevent):
         kval = gevent.keyval
-        kname = gdk.keyval_name(gevent.keyval).lower()
+        kname = Gdk.keyval_name(gevent.keyval).lower()
         #print kval, kname
         if kname in (
             'tab', 'escape', 'backspace', 'delete', 'insert',
@@ -150,14 +150,14 @@ class NumRangesEntry(gtk.Entry):
         elif ord('0') <= kval <= ord('9'):
             self.insertText(self.digs[kval-ord('0')])
         else:
-            uniVal = gtk.gdk.keyval_to_unicode(kval)
+            uniVal = Gdk.keyval_to_unicode(kval)
             #print 'uniVal=%r'%uniVal
             if uniVal!=0:
                 ch = unichr(uniVal)
                 #print 'ch=%r'%ch
                 if ch in self.digs:
                     self.insertText(ch)
-                if gevent.state & gdk.CONTROL_MASK:## Shortcuts like Ctrl + [A, C, X, V]
+                if gevent.get_state() & Gdk.ModifierType.CONTROL_MASK:## Shortcuts like Ctrl + [A, C, X, V]
                     return False
             else:
                 print kval, kname
@@ -174,7 +174,7 @@ if __name__=='__main__':
     from scal2 import core
     ###
     entry = NumRangesEntry(0, 9999)
-    win = gtk.Dialog()
+    win = Gtk.Dialog()
     win.vbox.add(entry)
     win.vbox.show_all()
     win.resize(100, 40)

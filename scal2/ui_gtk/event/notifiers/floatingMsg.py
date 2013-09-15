@@ -20,31 +20,31 @@
 from scal2.locale_man import tr as _
 from scal2.ui_gtk.mywidgets.floatingMsg import *
 
-class NotifierWidget(gtk.HBox):
+class NotifierWidget(Gtk.HBox):
     def __init__(self, notifier):
         self.notifier = notifier
         ##
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
         ## [_] Fill Screen Width       Speed [__]      BG Color [__]     Text Color [__]
         ##
-        self.fillWidthCb = gtk.CheckButton(_('Fill Width'))
-        self.pack_start(self.fillWidthCb, 0, 0)
-        self.pack_start(gtk.Label(''), 1, 1)
+        self.fillWidthCb = Gtk.CheckButton(_('Fill Width'))
+        self.pack_start(self.fillWidthCb, 0, 0, 0)
+        self.pack_start(Gtk.Label(''), 1, 1, 0)
         ##
         self.speedSpin = IntSpinButton(1, 999)
-        self.pack_start(gtk.Label(_('Speed')), 0, 0)
-        self.pack_start(self.speedSpin, 0, 0)
-        self.pack_start(gtk.Label(''), 1, 1)
+        self.pack_start(Gtk.Label(_('Speed')), 0, 0, 0)
+        self.pack_start(self.speedSpin, 0, 0, 0)
+        self.pack_start(Gtk.Label(''), 1, 1, 0)
         ##
         self.bgColorButton = MyColorButton()
-        self.pack_start(gtk.Label(_('BG Color')), 0, 0)
-        self.pack_start(self.bgColorButton, 0, 0)
-        self.pack_start(gtk.Label(''), 1, 1)
+        self.pack_start(Gtk.Label(_('BG Color')), 0, 0, 0)
+        self.pack_start(self.bgColorButton, 0, 0, 0)
+        self.pack_start(Gtk.Label(''), 1, 1, 0)
         ##
         self.textColorButton = MyColorButton()
-        self.pack_start(gtk.Label(_('Text Color')), 0, 0)
-        self.pack_start(self.textColorButton, 0, 0)
-        self.pack_start(gtk.Label(''), 1, 1)
+        self.pack_start(Gtk.Label(_('Text Color')), 0, 0, 0)
+        self.pack_start(self.textColorButton, 0, 0, 0)
+        self.pack_start(Gtk.Label(''), 1, 1, 0)
     def updateWidget(self):
         self.fillWidthCb.set_active(self.notifier.fillWidth)
         self.speedSpin.set_value(self.notifier.speed)

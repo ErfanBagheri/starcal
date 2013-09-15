@@ -27,8 +27,9 @@ from scal2.core import convert, getMonthName
 
 from scal2 import ui
 
-import gtk, gobject
-from gtk import gdk
+from gi.repository import GObject
+from gi.repository import Gdk
+from gi.repository import Gtk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButtonOption
@@ -38,51 +39,55 @@ from scal2.ui_gtk.utils import openWindow, dialog_add_button, DateTypeCombo
 
 
 @registerSignals
-class SelectDateDialog(gtk.Dialog):
+class SelectDateDialog(Gtk.Dialog):
     signals = [
         ('response-date', [int, int, int]),
     ]
     def __init__(self):
-        gtk.Dialog.__init__(self, title=_('Select Date...'))
-        self.set_has_separator(False)
+        Gtk.Dialog.__init__(self)
+        self.set_title(_('Select Date...'))
+        #self.set_has_separator(False)
         #self.set_skip_taskbar_hint(True)
         self.connect('delete-event', self.hideMe)
         self.mode = core.primaryMode
         ###### Reciving dropped day!
-        self.drag_dest_set(gdk.MODIFIER_MASK,\
-            (('a', 0, 0),), gdk.ACTION_COPY)
+        self.drag_dest_set(
+            Gtk.DestDefaults.ALL,
+            (),
+            Gdk.DragAction.COPY,
+        )
         self.drag_dest_add_text_targets()
         self.connect('drag-data-received', self.dragRec)
         ######
-        hb0 = gtk.HBox(spacing=4)
-        hb0.pack_start(gtk.Label(_('Date Mode')), 0, 0)
+        hb0 = Gtk.HBox(spacing=4)
+        hb0.pack_start(Gtk.Label(_('Date Mode')), 0, 0, 0)
         combo = DateTypeCombo()
         combo.set_active(self.mode)
-        hb0.pack_start(combo, 0, 0)
-        self.vbox.pack_start(hb0, 0, 0)
+        hb0.pack_start(combo, 0, 0, 0)
+        self.vbox.pack_start(hb0, 0, 0, 0)
         #######################
-        hbox = gtk.HBox(spacing=5)
-        rb1 = gtk.RadioButton()
+        hbox = Gtk.HBox(spacing=5)
+        rb1 = Gtk.RadioButton()
         rb1.num = 1
-        hbox.pack_start(rb1, 0, 0)
+        hbox.pack_start(rb1, 0, 0, 0)
         self.ymdBox = YearMonthDayBox()
-        hbox.pack_start(self.ymdBox, 0, 0)
-        self.vbox.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.ymdBox, 0, 0, 0)
+        self.vbox.pack_start(hbox, 0, 0, 0)
         ########
-        hb2 = gtk.HBox(spacing=4)
-        hb2.pack_start(gtk.Label('yyyy/mm/dd'), 0, 0)
+        hb2 = Gtk.HBox(spacing=4)
+        hb2.pack_start(Gtk.Label('yyyy/mm/dd'), 0, 0, 0)
         dateInput = DateButtonOption(hist_size=16)
-        hb2.pack_start(dateInput, 0, 0)
-        rb2 = gtk.RadioButton()
+        hb2.pack_start(dateInput, 0, 0, 0)
+        rb2 = Gtk.RadioButton()
         rb2.num = 2
-        rb2.set_group(rb1)
-        hb2i = gtk.HBox(spacing=5)
-        hb2i.pack_start(rb2, 0, 0)
-        hb2i.pack_start(hb2, 0, 0)
-        self.vbox.pack_start(hb2i, 0, 0)
+        rb2.set_group([rb1])
+        hb2i = Gtk.HBox(spacing=5)
+        hb2i.pack_start(rb2, 0, 0, 0)
+        hb2i.pack_start(hb2, 0, 0, 0)
+        self.vbox.pack_start(hb2i, 0, 0, 0)
         #######
-        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), 2, self.hideMe)
-        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), 1, self.ok)
+        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), 2, self.hideMe)
+        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), 1, self.ok)
         #######
         self.comboMode = combo
         self.dateInput = dateInput

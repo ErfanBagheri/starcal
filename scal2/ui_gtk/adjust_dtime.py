@@ -25,8 +25,8 @@ from time import localtime
 from time import time as now
 
 import sys
-from gobject import timeout_add
-import gtk
+from gi.repository.GObject import timeout_add
+from gi.repository import Gtk
 
 
 from math import ceil
@@ -40,93 +40,93 @@ from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton, TimeButton
 
 
 def error_exit(text, parent=None):
-    d = gtk.MessageDialog(parent, gtk.DIALOG_DESTROY_WITH_PARENT,\
-        gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, text.strip())
+    d = Gtk.MessageDialog(parent, Gtk.DialogFlags.DESTROY_WITH_PARENT,\
+        Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, text.strip())
     d.set_title('Error')
     d.run()
     sys.exit(1)
 
-class AdjusterDialog(gtk.Dialog):
+class AdjusterDialog(Gtk.Dialog):
     xpad = 15
     def __init__(self):
-        gtk.Dialog.__init__(self)
+        Gtk.Dialog.__init__(self)
         self.set_title(_('Adjust System Date & Time'))##????????
-        self.set_icon(self.render_icon(gtk.STOCK_PREFERENCES, gtk.ICON_SIZE_BUTTON))
+        self.set_icon(self.render_icon(Gtk.STOCK_PREFERENCES, Gtk.IconSize.BUTTON))
         #########
-        self.buttonCancel = self.add_button(gtk.STOCK_CANCEL, 0)
+        self.buttonCancel = self.add_button(Gtk.STOCK_CANCEL, 0)
         #self.buttonCancel.connect('clicked', lambda w: sys.exit(0))
         self.buttonSet = self.add_button(_('Set System Time'), 1)
         #self.buttonSet.connect('clicked', self.setSysTimeClicked)
         #########
-        hbox = gtk.HBox()
-        self.label_cur = gtk.Label(_('Current:'))
-        hbox.pack_start(self.label_cur, 0, 0)
-        self.vbox.pack_start(hbox, 0, 0)
+        hbox = Gtk.HBox()
+        self.label_cur = Gtk.Label(label=_('Current:'))
+        hbox.pack_start(self.label_cur, 0, 0, 0)
+        self.vbox.pack_start(hbox, 0, 0, 0)
         #########
-        hbox = gtk.HBox()
-        self.radioMan = gtk.RadioButton(None, _('Set _Manully:'), True)
+        hbox = Gtk.HBox()
+        self.radioMan = Gtk.RadioButton(None, _('Set _Manully:'), True)
         self.radioMan.connect('clicked', self.radioManClicked)
-        hbox.pack_start(self.radioMan, 0, 0)
-        self.vbox.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.radioMan, 0, 0, 0)
+        self.vbox.pack_start(hbox, 0, 0, 0)
         ######
-        vb = gtk.VBox()
-        sg = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        vb = Gtk.VBox()
+        sg = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         ###
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         ##
-        l = gtk.Label('')
+        l = Gtk.Label(label='')
         l.set_property('width-request', self.xpad)
-        hbox.pack_start(l, 0, 0)
+        hbox.pack_start(l, 0, 0, 0)
         ##
-        self.ckeckbEditTime = gtk.CheckButton(_('Edit Time'))
+        self.ckeckbEditTime = Gtk.CheckButton(_('Edit Time'))
         self.editTime = False
         self.ckeckbEditTime.connect('clicked', self.ckeckbEditTimeClicked)
-        hbox.pack_start(self.ckeckbEditTime, 0, 0)
+        hbox.pack_start(self.ckeckbEditTime, 0, 0, 0)
         sg.add_widget(self.ckeckbEditTime)
         self.timeInput = TimeButton() ## ??????? options
-        hbox.pack_start(self.timeInput, 0, 0)
-        vb.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.timeInput, 0, 0, 0)
+        vb.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         ##
-        l = gtk.Label('')
+        l = Gtk.Label(label='')
         l.set_property('width-request', self.xpad)
-        hbox.pack_start(l, 0, 0)
+        hbox.pack_start(l, 0, 0, 0)
         ##
-        self.ckeckbEditDate = gtk.CheckButton(_('Edit Date'))
+        self.ckeckbEditDate = Gtk.CheckButton(_('Edit Date'))
         self.editDate = False
         self.ckeckbEditDate.connect('clicked', self.ckeckbEditDateClicked)
-        hbox.pack_start(self.ckeckbEditDate, 0, 0)
+        hbox.pack_start(self.ckeckbEditDate, 0, 0, 0)
         sg.add_widget(self.ckeckbEditDate)
         self.dateInput = DateButton() ## ??????? options
-        hbox.pack_start(self.dateInput, 0, 0)
-        vb.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.dateInput, 0, 0, 0)
+        vb.pack_start(hbox, 0, 0, 0)
         ###
         self.vbox.pack_start(vb, 0, 0, 10)#?????
         self.vboxMan = vb
         ######
-        hbox = gtk.HBox()
-        self.radioNtp = gtk.RadioButton(self.radioMan, _('Set from _NTP:'), True)
+        hbox = Gtk.HBox()
+        self.radioNtp = Gtk.RadioButton(self.radioMan, _('Set from _NTP:'), True)
         self.radioNtp.connect('clicked', self.radioNtpClicked)
-        hbox.pack_start(self.radioNtp, 0, 0)
-        self.vbox.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.radioNtp, 0, 0, 0)
+        self.vbox.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         ##
-        l = gtk.Label('')
+        l = Gtk.Label(label='')
         l.set_property('width-request', self.xpad)
-        hbox.pack_start(l, 0, 0)
+        hbox.pack_start(l, 0, 0, 0)
         ##
-        hbox.pack_start(gtk.Label(_('Server:')+' '), 0, 0)
-        combo = gtk.combo_box_entry_new_text()
-        combo.child.connect('changed', self.updateSetButtonSensitive)
-        hbox.pack_start(combo, 1, 1)
-        self.ntpServerEntry = combo.child
+        hbox.pack_start(Gtk.Label(_('Server:')+' '), 0, 0, 0)
+        combo = Gtk.ComboBoxText.new_with_entry()
+        combo.get_child().connect('changed', self.updateSetButtonSensitive)
+        hbox.pack_start(combo, 1, 1, 0)
+        self.ntpServerEntry = combo.get_child()
         for s in ui.ntpServers:
             combo.append_text(s)
         combo.set_active(0)
         self.hboxNtp = hbox
-        self.vbox.pack_start(hbox, 0, 0)
+        self.vbox.pack_start(hbox, 0, 0, 0)
         ######
         self.radioManClicked()
         #self.radioNtpClicked()

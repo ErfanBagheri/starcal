@@ -4,8 +4,8 @@ from scal2.path import deskDir
 from scal2.locale_man import tr as _
 from scal2 import ui
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.utils import WizardWindow, GtkBufferFile
 from scal2.json_utils import *
@@ -14,32 +14,34 @@ class EventsImportWindow(WizardWindow):
     def __init__(self, manager):
         self.manager = manager
         WizardWindow.__init__(self, _('Import Events'))
-        self.set_type_hint(gdk.WINDOW_TYPE_HINT_DIALOG)
+        self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         #self.set_property('skip-taskbar-hint', True)
         #self.set_modal(True)
         #self.set_transient_for(manager)
         #self.set_destroy_with_parent(True)
         self.resize(400, 200)
-    class FirstStep(gtk.VBox):
+    class FirstStep(Gtk.VBox):
         def __init__(self, win):
-            gtk.VBox.__init__(self, spacing=20)
+            Gtk.VBox.__init__(self)
+            self.set_spacing(20)
             self.win = win
             self.buttons = (
                 (_('Cancel'), self.cancelClicked),
                 (_('Next'), self.nextClicked),
             )
             ####
-            hbox = gtk.HBox(spacing=10)
-            frame = gtk.Frame(_('Format'))
+            hbox = Gtk.HBox(spacing=10)
+            frame = Gtk.Frame()
+            frame.set_label(_('Format'))
             #frame.set_border_width(10)
-            radioBox = gtk.VBox(spacing=10)
+            radioBox = Gtk.VBox(spacing=10)
             radioBox.set_border_width(10)
             ##
-            self.radioJson = gtk.RadioButton(label=_('JSON (StarCalendar)'))
-            #self.radioIcs = gtk.RadioButton(label='iCalendar', group=self.radioJson)
+            self.radioJson = Gtk.RadioButton(label=_('JSON (StarCalendar)'))
+            #self.radioIcs = Gtk.RadioButton(label='iCalendar', group=self.radioJson)
             ##
-            radioBox.pack_start(self.radioJson, 0, 0)
-            #radioBox.pack_start(self.radioIcs, 0, 0)
+            radioBox.pack_start(self.radioJson, 0, 0, 0)
+            #radioBox.pack_start(self.radioIcs, 0, 0, 0)
             ##
             self.radioJson.set_active(True)
             #self.radioJson.connect('clicked', self.formatRadioChanged)
@@ -47,15 +49,15 @@ class EventsImportWindow(WizardWindow):
             ##
             frame.add(radioBox)
             hbox.pack_start(frame, 0, 0, 10)
-            hbox.pack_start(gtk.Label(''), 1, 1)
-            self.pack_start(hbox, 0, 0)
+            hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+            self.pack_start(hbox, 0, 0, 0)
             ####
-            hbox = gtk.HBox()
-            hbox.pack_start(gtk.Label(_('File')+':'), 0, 0)
-            self.fcb = gtk.FileChooserButton(_('Import: Select File'))
+            hbox = Gtk.HBox()
+            hbox.pack_start(Gtk.Label(_('File')+':'), 0, 0, 0)
+            self.fcb = Gtk.FileChooserButton(_('Import: Select File'))
             self.fcb.set_current_folder(deskDir)
-            hbox.pack_start(self.fcb, 1, 1)
-            self.pack_start(hbox, 0, 0)
+            hbox.pack_start(self.fcb, 1, 1, 0)
+            self.pack_start(hbox, 0, 0, 0)
             ####
             self.show_all()
         def run(self):
@@ -73,26 +75,27 @@ class EventsImportWindow(WizardWindow):
             else:
                 return
             self.win.showStep(1, format, fpath)
-    class SecondStep(gtk.VBox):
+    class SecondStep(Gtk.VBox):
         def __init__(self, win):
-            gtk.VBox.__init__(self, spacing=20)
+            Gtk.VBox.__init__(self)
+            self.set_spacing(20)
             self.win = win
             self.buttons = (
                 (_('Back'), self.backClicked),
                 (_('Close'), self.closeClicked),
             )
             ####
-            self.textview = gtk.TextView()
-            self.pack_start(self.textview, 1, 1)
+            self.textview = Gtk.TextView()
+            self.pack_start(self.textview, 1, 1, 0)
             ####
             self.show_all()
         def redirectStdOutErr(self):
-            t_table = gtk.TextTagTable()
-            tag_out = gtk.TextTag('output')
+            t_table = Gtk.TextTagTable()
+            tag_out = Gtk.TextTag('output')
             t_table.add(tag_out)
-            tag_err = gtk.TextTag('error')
+            tag_err = Gtk.TextTag('error')
             t_table.add(tag_err)
-            self.buffer = gtk.TextBuffer(t_table)
+            self.buffer = Gtk.TextBuffer(t_table)
             self.textview.set_buffer(self.buffer)
             self.out_fp = GtkBufferFile(self.buffer, tag_out)
             sys.stdout = self.out_fp

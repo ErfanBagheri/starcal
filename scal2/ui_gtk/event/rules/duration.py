@@ -6,8 +6,8 @@ from scal2.locale_man import tr as _
 from scal2 import event_lib
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton, TimeButton
 from scal2.ui_gtk.event import common
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 class RuleWidget(common.DurationInputBox):
     def __init__(self, rule):

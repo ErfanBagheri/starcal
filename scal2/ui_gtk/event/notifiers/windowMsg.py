@@ -5,13 +5,13 @@ from scal2.locale_man import tr as _
 from scal2 import event_lib
 from scal2 import ui
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
-class NotifierWidget(gtk.Entry):
+class NotifierWidget(Gtk.Entry):
     def __init__(self, notifier):
         self.notifier = notifier
-        gtk.Entry.__init__(self)
+        Gtk.Entry.__init__(self)
     def updateWidget(self):
         self.set_text(self.notifier.extraMessage)
     def updateVars(self):
@@ -23,7 +23,7 @@ def hideWindow(widget, dialog):
 
 def notify(notifier, finishFunc):## FIXME
     event = notifier.event
-    dialog = gtk.Dialog()
+    dialog = Gtk.Dialog()
     ####
     lines = []
     lines.append(event.getText())
@@ -33,22 +33,22 @@ def notify(notifier, finishFunc):## FIXME
     ####
     dialog.set_title(event.getText())
     ####
-    hbox = gtk.HBox()
+    hbox = Gtk.HBox()
     hbox.set_spacing(15)
     hbox.set_border_width(10)
     if event.icon:
-        hbox.pack_start(gtk.image_new_from_file(event.icon), 0, 0)
+        hbox.pack_start(Gtk.image_new_from_file(event.icon), 0, 0, 0)
         dialog.set_icon_from_file(event.icon)
-    label = gtk.Label(text)
+    label = Gtk.Label(label=text)
     label.set_selectable(True)
-    hbox.pack_start(label, 1, 1)
+    hbox.pack_start(label, 1, 1, 0)
     dialog.vbox.pack_start(hbox)
     ####
-    okB = dialog.add_button(gtk.STOCK_OK, 3)
+    okB = dialog.add_button(Gtk.STOCK_OK, 3)
     okB.connect('clicked', hideWindow, dialog)
     if ui.autoLocale:
         okB.set_label(_('_OK'))
-        okB.set_image(gtk.image_new_from_stock(gtk.STOCK_OK, gtk.ICON_SIZE_BUTTON))
+        okB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_OK, Gtk.IconSize.BUTTON))
     ####
     dialog.vbox.show_all()
     dialog.connect('response', lambda w, e: finishFunc())

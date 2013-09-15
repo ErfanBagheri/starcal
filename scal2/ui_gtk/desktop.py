@@ -20,16 +20,16 @@
 # Also avalable in /usr/share/common-licenses/GPL on Debian systems
 # or /usr/share/licenses/common/GPL3/license.txt on ArchLinux
 
-import gtk
-root = gtk.gdk.get_default_root_window()
+from gi.repository import Gtk
+root = Gdk.get_default_root_window()
 wid = 0
 
 #
 # Restricts the given coordinates to visible values.
 #
 def _crop_coords(x, y, w, h):
-    sw = gtk.gdk.screen_width()
-    sh = gtk.gdk.screen_height()
+    sw = Gdk.Screen.width()
+    sh = Gdk.Screen.height()
     x = min(x, sw-1)
     y = min(y, sh-1)
     return (x, y, min(sw-x, w), min(sh-y, h))
@@ -40,14 +40,14 @@ def _crop_coords(x, y, w, h):
 # Captures solid color wallpapers. Requires GNOME.
 #
 def get_wallcolor(width, height):
-    import gconf
-    client = gconf.client_get_default()
-    client.add_dir("/desktop/gnome/background", gconf.CLIENT_PRELOAD_RECURSIVE)
+    from gi.repository import GConf
+    client = GConf.Client.get_default()
+    client.add_dir("/desktop/gnome/background", GConf.ClientPreloadType.PRELOAD_RECURSIVE)
     value = client.get("/desktop/gnome/background/primary_color")
     color = value.get_string()
 
-    pbuf = gtk.gdk.Pixbuf(0, 1, 8, width, height)
-    c = gtk.gdk.color_parse(color)
+    pbuf = GdkPixbuf.Pixbuf(0, 1, 8, width, height)
+    c = Gdk.color_parse(color)
     fillr = (c.red / 256) << 24
     fillg = (c.green / 256) << 16
     fillb = (c.blue / 256) << 8
@@ -65,7 +65,7 @@ def get_wallpaper_fallback(x, y, width, height):
 
     x, y, width, height = _crop_coords(x, y, width, height)
 
-    pbuf = gtk.gdk.Pixbuf(0, 1, 8, width, height)
+    pbuf = GdkPixbuf.Pixbuf(0, 1, 8, width, height)
     pbuf.get_from_drawable(root, root.get_colormap(),
                            x, y, 0, 0, width, height)
     return pbuf
@@ -80,14 +80,14 @@ def get_wallpaper(x, y, width, height):
 
     # get wallpaper
     pmap_id = get_wallpaper_id()
-    if hasattr(gtk.gdk, "gdk_pixmap_foreign_new"):
-        pmap = gtk.gdk.gdk_pixmap_foreign_new(pmap_id)
+    if hasattr(Gtk.gdk, "gdk_pixmap_foreign_new"):
+        pmap = Gdk.gdk_pixmap_foreign_new(pmap_id)
     else:
-        pmap = gtk.gdk.pixmap_foreign_new(pmap_id)
+        pmap = Gdk.pixmap_foreign_new(pmap_id)
     pwidth, pheight = pmap.get_size()
 
     # create pixbuf
-    pbuf = gtk.gdk.Pixbuf(0, 1, 8, width, height)
+    pbuf = GdkPixbuf.Pixbuf(0, 1, 8, width, height)
 
     # tile wallpaper over pixbuf
     sx = -(x % pwidth)

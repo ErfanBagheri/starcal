@@ -21,8 +21,10 @@ import sys, os
 from time import time as now
 from time import localtime
 
-import gtk
-from gtk import gdk
+from gi.repository import GObject
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 
 from scal2.ui_gtk.font_utils import *
 from scal2.ui_gtk.color_utils import *
@@ -42,22 +44,22 @@ def show_event(widget, event):
 time_rem = lambda: int(1000*(1.01-now()%1))
 
 
-class MyFontButton(gtk.FontButton):
+class MyFontButton(Gtk.FontButton):
     def __init__(self, parent):
-        gtk.FontButton.__init__(self)
+        Gtk.FontButton.__init__(self)
         ##########
         self.drag_source_set(
-            gdk.MODIFIER_MASK,
-            (('text/plain', 0, 0),),
-            gdk.ACTION_COPY,
+            Gdk.ModifierType.MODIFIER_MASK,
+            (),
+            Gdk.DragAction.COPY,
         )
         self.drag_source_add_text_targets()
         self.connect('drag-data-get', self.dragDataGet)
         self.connect('drag-begin', self.dragBegin, parent)
         self.drag_dest_set(
-            gdk.MODIFIER_MASK,
-            (('text/plain', 0, 1),),
-            gdk.ACTION_COPY,
+            Gtk.DestDefaults.ALL,
+            (),
+            Gdk.DragAction.COPY,
         )
         self.drag_dest_add_text_targets()
         self.connect('drag-data-received', self.dragDataRec)
@@ -71,24 +73,25 @@ class MyFontButton(gtk.FontButton):
         text = selection.get_text()
         #\print 'fontButtonDragDataRec    text=', text
         if text:
-            pfont = pango.FontDescription(text)
+            pfont = Pango.FontDescription(text)
             if pfont.get_family() and pfont.get_size() > 0:
-                gtk.FontButton.set_font_name(fontb, text)
+                Gtk.FontButton.set_font_name(fontb, text)
         return True
     def dragBegin(self, fontb, context, parent):
         #print 'fontBottonDragBegin'## caled before dragCalDataGet
-        textLay = newTextLayout(self, gtk.FontButton.get_font_name(self))
+        textLay = newTextLayout(self, Gtk.FontButton.get_font_name(self))
         w, h = textLay.get_pixel_size()
-        pmap = gdk.Pixmap(None, w, h, 24)
+        '''
+        pmap = Gdk.Pixmap(None, w, h, 24)
         pmap.draw_layout(
             pmap.new_gc(),
             0,
             0,
             textLay,
-            gdk.Color(0, 0, 0),# foreground
-            gdk.Color(-1, -1, -1),# background
+            Gdk.Color(0, 0, 0, 0),# foreground
+            Gdk.Color(-1, -1, -1),# background
         )
-        pbuf = gdk.Pixbuf(gdk.COLORSPACE_RGB, True, 8, w, h)
+        pbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, w, h)
         pbuf.get_from_drawable(
             pmap,
             parent.get_screen().get_system_colormap(),
@@ -100,20 +103,21 @@ class MyFontButton(gtk.FontButton):
             -1,
         )
         #fontb.drag_source_set_icon_pixbuf(pbuf)
+        '''
         context.set_icon_pixbuf(pbuf, -16, -10)
         return True
-    get_font_name = lambda self: gfontDecode(gtk.FontButton.get_font_name(self))
+    get_font_name = lambda self: gfontDecode(Gtk.FontButton.get_font_name(self))
     def set_font_name(self, font):
         if isinstance(font, basestring):## For compatibility
-            gtk.FontButton.set_font_name(self, font)
+            Gtk.FontButton.set_font_name(self, font)
         else:
-            gtk.FontButton.set_font_name(self, gfontEncode(font))
+            Gtk.FontButton.set_font_name(self, gfontEncode(font))
 
 
 
-class MyColorButton(gtk.ColorButton): ## for tooltip text
+class MyColorButton(Gtk.ColorButton): ## for tooltip text
     def __init__(self):
-        gtk.ColorButton.__init__(self)
+        Gtk.ColorButton.__init__(self)
         self.connect('color-set', self.update_tooltip)
     def update_tooltip(self, colorb=None):
         try:
@@ -123,7 +127,7 @@ class MyColorButton(gtk.ColorButton): ## for tooltip text
                 text = '%s\n%s\n%s\n%s'%(r, g, b, a)
             else:
                 text = '%s\n%s\n%s'%(r, g, b)
-            ##self.get_tooltip_window().set_direction(gtk.TEXT_DIR_LTR)
+            ##self.get_tooltip_window().set_direction(Gtk.TextDirection.LTR)
             ##print self.get_tooltip_window()
             self.set_tooltip_text(text) ##???????????????? Right to left
             #self.tt_label.set_label(text)##???????????? Dosent work
@@ -134,33 +138,33 @@ class MyColorButton(gtk.ColorButton): ## for tooltip text
     def set_color(self, color):## color is a tuple of (r, g, b)
         if len(color)==3:
             r, g, b = color
-            gtk.ColorButton.set_color(self, rgbToGdkColor(*color))
+            Gtk.ColorButton.set_color(self, rgbToGdkColor(*color))
             self.set_alpha(255)
         elif len(color)==4:
-            gtk.ColorButton.set_color(self, rgbToGdkColor(*color[:3]))
-            gtk.ColorButton.set_alpha(self, color[3]*257)
+            Gtk.ColorButton.set_color(self, rgbToGdkColor(*color[:3]))
+            Gtk.ColorButton.set_alpha(self, color[3]*257)
         else:
             raise ValueError
         self.update_tooltip()
     def set_alpha(self, alpha):## alpha in range(256)
         if alpha==None:
             alpha = 255
-        gtk.ColorButton.set_alpha(self, alpha*257)
+        Gtk.ColorButton.set_alpha(self, alpha*257)
         self.update_tooltip()
     def get_color(self):
-        color = gtk.ColorButton.get_color(self)
+        color = Gtk.ColorButton.get_color(self)
         return (int(color.red/257), int(color.green/257), int(color.blue/257))
     def get_alpha(self):
-        return int(gtk.ColorButton.get_alpha(self)/257)
+        return int(Gtk.ColorButton.get_alpha(self)/257)
 
 
-class TextFrame(gtk.Frame):
+class TextFrame(Gtk.Frame):
     def __init__(self):
-        gtk.Frame.__init__(self)
+        Gtk.Frame.__init__(self)
         self.set_border_width(4)
         ####
-        self.textview = gtk.TextView()
-        self.textview.set_wrap_mode(gtk.WRAP_WORD)
+        self.textview = Gtk.TextView()
+        self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
         self.add(self.textview)
         ####
         self.buff = self.textview.get_buffer()
@@ -169,13 +173,13 @@ class TextFrame(gtk.Frame):
 
 
 if __name__=='__main__':
-    d = gtk.Dialog()
+    d = Gtk.Dialog()
     clock = FClockLabel()
     clock.start()
-    d.vbox.pack_start(clock, 1, 1)
-    d.connect('delete-event', lambda widget, event: gtk.main_quit())
+    d.vbox.pack_start(clock, 1, 1, 0)
+    d.connect('delete-event', lambda widget, event: Gtk.main_quit())
     d.show_all()
-    gtk.main()
+    Gtk.main()
 
 
 

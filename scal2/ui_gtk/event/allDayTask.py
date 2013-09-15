@@ -25,49 +25,49 @@ from scal2 import ui
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton, IntSpinButton
 from scal2.ui_gtk.event import common
 
-import gtk
+from gi.repository import Gtk
 
 class EventWidget(common.EventWidget):
     def __init__(self, event):## FIXME
         common.EventWidget.__init__(self, event)
         ######
-        sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        sizeGroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         ######
-        hbox = gtk.HBox()
-        label = gtk.Label(_('Start'))
+        hbox = Gtk.HBox()
+        label = Gtk.Label(label=_('Start'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
-        hbox.pack_start(label, 0, 0)
+        hbox.pack_start(label, 0, 0, 0)
         self.startDateInput = DateButton()
-        hbox.pack_start(self.startDateInput, 0, 0)
+        hbox.pack_start(self.startDateInput, 0, 0, 0)
         ##
-        self.pack_start(hbox, 0, 0)
+        self.pack_start(hbox, 0, 0, 0)
         ######
-        hbox = gtk.HBox()
-        self.endTypeCombo = gtk.combo_box_new_text()
+        hbox = Gtk.HBox()
+        self.endTypeCombo = Gtk.ComboBoxText()
         for item in ('Duration', 'End'):
             self.endTypeCombo.append_text(_(item))
         self.endTypeCombo.connect('changed', self.endTypeComboChanged)
         sizeGroup.add_widget(self.endTypeCombo)
-        hbox.pack_start(self.endTypeCombo, 0, 0)
+        hbox.pack_start(self.endTypeCombo, 0, 0, 0)
         ####
-        self.durationBox = gtk.HBox()
+        self.durationBox = Gtk.HBox()
         self.durationSpin = IntSpinButton(1, 999)
-        self.durationBox.pack_start(self.durationSpin, 0, 0)
-        self.durationBox.pack_start(gtk.Label(_(' days')), 0, 0)
-        hbox.pack_start(self.durationBox, 0, 0)
+        self.durationBox.pack_start(self.durationSpin, 0, 0, 0)
+        self.durationBox.pack_start(Gtk.Label(_(' days')), 0, 0, 0)
+        hbox.pack_start(self.durationBox, 0, 0, 0)
         ####
         self.endDateInput = DateButton()
-        hbox.pack_start(self.endDateInput, 0, 0)
+        hbox.pack_start(self.endDateInput, 0, 0, 0)
         ####
-        hbox.pack_start(gtk.Label(''), 1, 1)
-        self.pack_start(hbox, 0, 0)
+        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        self.pack_start(hbox, 0, 0, 0)
         #############
         self.notificationBox = common.NotificationBox(event)
-        self.pack_start(self.notificationBox, 0, 0)
+        self.pack_start(self.notificationBox, 0, 0, 0)
         #############
         #self.filesBox = common.FilesBox(self.event)
-        #self.pack_start(self.filesBox, 0, 0)
+        #self.pack_start(self.filesBox, 0, 0, 0)
     def endTypeComboChanged(self, combo=None):
         active = self.endTypeCombo.get_active()
         if active==0:## duration

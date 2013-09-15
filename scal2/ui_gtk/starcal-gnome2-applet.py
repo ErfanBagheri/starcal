@@ -27,8 +27,8 @@ from scal2.locale_man import tr as _
 
 from scal2.ui_gtk.starcal2 import *
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 import gnomeapplet
 ## import gnomeapplet module AFTRE scal2.* modules, to prevent crash on first run (after boot up)
@@ -67,13 +67,13 @@ class StarCalApplet(MainWin):
         self.hide()
         return True
     def trayInit(self):
-        self.image = gtk.Image()
-        self.tooltips = gtk.Tooltips()
-        ## self.sicon = gtk.EventBox()
-        self.sicon = gtk.ToggleButton()
+        self.image = Gtk.Image()
+        self.tooltips = Gtk.Tooltips()
+        ## self.sicon = Gtk.EventBox()
+        self.sicon = Gtk.ToggleButton()
         #self.sicon.__getattribute__ = getattribute
         self.sicon.set_from_pixbuf = self.image.set_from_pixbuf
-        self.sicon.set_relief(gtk.RELIEF_NONE)
+        self.sicon.set_relief(Gtk.ReliefStyle.NONE)
         self.sicon.connect('toggled', self.trayClicked)
         self.sicon.connect('button_press_event', self.appletButtonPress)
         menuData = (
@@ -100,28 +100,28 @@ class StarCalApplet(MainWin):
         #popup = self.applet.get_popup_component()
         #print type(popup)
         ###################################
-        hbox = gtk.HBox()
-        hbox.set_direction(gtk.TEXT_DIR_LTR)
-        hbox.pack_start(self.image, 0, 0)
+        hbox = Gtk.HBox()
+        hbox.set_direction(Gtk.TextDirection.LTR)
+        hbox.pack_start(self.image, 0, 0, 0)
         if ui.showDigClockTr:
             #if self.is_composited
             self.clockTr = FClockLabel(preferences.clockFormat)##?????????????
-            hbox.pack_start(self.clockTr, 0, 0)
+            hbox.pack_start(self.clockTr, 0, 0, 0)
         self.sicon.add(hbox)
         self.applet.add(self.sicon)
         self.trayHbox = hbox
         #######
         self.applet.show_all()
         #self.applet.set_background_widget(self.applet)#????????
-        self.trayPix = gdk.Pixbuf(gdk.COLORSPACE_RGB, True, 8, ui.traySize, ui.traySize)
+        self.trayPix = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, ui.traySize, ui.traySize)
     def trayClicked(self, toggle):
-        ##print tuple(self.menu.allocation)
+        ##print tuple(self.menu.get_allocation())
         if toggle.get_active():
             if ui.winX, ui.winY == (-1, -1):
                 try:
-                    x0, y0 = self.applet.window.get_origin()
-                    ui.winX = x0 + (self.applet.allocation.width-ui.winWidth)/2
-                    ui.winY = y0 + self.applet.allocation.height - 3
+                    x0, y0 = self.applet.get_window().get_origin()
+                    ui.winX = x0 + (self.applet.get_allocation().width-ui.winWidth)/2
+                    ui.winY = y0 + self.applet.get_allocation().height - 3
                 except:
                     core.myRaise(__file__)
             self.move(ui.winX, ui.winY)
@@ -145,13 +145,13 @@ class StarCalApplet(MainWin):
         return MainWin.trayUpdate(self, gdate=gdate, checkTrayMode=False)
     def onChangeBg(self, applet, typ, color, pixmap):
         applet.set_style(None)
-        rc_style = gtk.RcStyle()
+        rc_style = Gtk.RcStyle()
         applet.modify_style(rc_style)
         if (typ == gnomeapplet.COLOR_BACKGROUND):
-            applet.modify_bg(gtk.STATE_NORMAL, color)
+            applet.modify_bg(Gtk.StateType.NORMAL, color)
         elif (typ == gnomeapplet.PIXMAP_BACKGROUND):
             style = applet.style
-            style.bg_pixmap[gtk.STATE_NORMAL] = pixmap
+            style.bg_pixmap[Gtk.StateType.NORMAL] = pixmap
             applet.set_style(style)
     def quit(self, widget=None, event=None):
         ui.saveLiveConf()
@@ -166,14 +166,14 @@ def starcalAppletFactory(applet, iid):
 
 
 if len(sys.argv)>1 and sys.argv[1] in ('-w', '--window'):
-    main_window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    main_window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
     main_window.set_title(core.APP_DESC+' Gnome Applet')
-    main_window.connect('destroy', gtk.main_quit)
+    main_window.connect('destroy', Gtk.main_quit)
     app = gnomeapplet.Applet()
     starcalAppletFactory(app, None)
     app.reparent(main_window)
     main_window.show_all()
-    sys.exit(gtk.main())
+    sys.exit(Gtk.main())
 
 if __name__ == '__main__':
     gnomeapplet.bonobo_factory(

@@ -3,11 +3,11 @@ import sys
 
 from scal2 import ui
 
-import gobject
-from gobject import timeout_add
+from gi.repository import GObject
+from gi.repository.GObject import timeout_add
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk import gtk_ud as ud
@@ -35,22 +35,22 @@ class ConButtonBase:
 
 
 @registerSignals
-class ConButton(gtk.Button, ConButtonBase):
+class ConButton(Gtk.Button, ConButtonBase):
     signals =[ 
         ('con-clicked', []),
     ]
     def __init__(self, *args, **kwargs):
-        gtk.Button.__init__(self, *args, **kwargs)
+        Gtk.Button.__init__(self, *args, **kwargs)
         ConButtonBase.__init__(self)
 
 
 
 
 if __name__=='__main__':
-    win = gtk.Dialog()
+    win = Gtk.Dialog()
     button = ConButton('Press')
     button.connect('con-clicked', lambda obj: sys.stdout.write('%.4f\n'%now()))
-    win.vbox.pack_start(button, 1, 1)
+    win.vbox.pack_start(button, 1, 1, 0)
     win.vbox.show_all()
     win.resize(100, 100)
     win.run()

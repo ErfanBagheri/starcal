@@ -104,8 +104,8 @@ class ExportDialog(qt.QFileDialog):
     def save(self, path):
         print 'save', path
         self.setCursor(qc.Qt.WaitCursor)
-        #while gtk.events_pending():## FIXME
-        #    gtk.main_iteration_do(False)
+        #while Gtk.events_pending():## FIXME
+        #    Gtk.main_iteration_do(False)
         if path in (None, ''):
             return
         print 'Exporting to html file "%s"'%path

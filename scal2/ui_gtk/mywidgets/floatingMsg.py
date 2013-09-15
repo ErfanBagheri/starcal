@@ -20,8 +20,8 @@
 import time
 from time import time as now
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk.drawing import *
@@ -29,22 +29,22 @@ from scal2.ui_gtk.mywidgets import MyColorButton
 from scal2.ui_gtk.mywidgets.multi_spin_button import IntSpinButton
 
 
-rootWin = gtk.gdk.get_default_root_window()
-screenWidth = rootWin.get_size()[0]
+rootWin = Gdk.get_default_root_window()
+screenWidth = rootWin.get_width()
 
 @registerType
-class FloatingMsg(gtk.Widget):
+class FloatingMsg(Gtk.DrawingArea):
     def on_realize(self, widget):
         self.animateStart()
     def __init__(self, text,
                        speed=100,
                        bgColor=(255, 255, 0),
-                       textColor=(0, 0, 0),
+                       textColor=(0, 0, 0, 0),
                        refreshTime=10,
                        finishFunc=None,
                        finishOnClick=True,
                        createWindow=True):
-        gtk.Widget.__init__(self)
+        Gtk.DrawingArea.__init__(self)
         ## speed: pixels per second
         self.speed = speed
         self.bgColor = bgColor
@@ -69,11 +69,11 @@ class FloatingMsg(gtk.Widget):
         self.index = 0
         self.height = 30
         ########
-        self.connect('expose-event', self.onExposeEvent)
+        self.connect('draw', self.onExposeEvent)
         self.connect('realize', self.on_realize)
         ########
         if createWindow:
-            self.win = gtk.Window(gtk.WINDOW_POPUP)#gtk.WINDOW_POPUP ## ????????????????
+            self.win = Gtk.Window(Gtk.WindowType.POPUP)#Gtk.WindowType.POPUP ## ????????????????
             self.win.add(self)
             self.win.set_decorated(False)
             self.win.set_property('skip-taskbar-hint', True)
@@ -104,30 +104,30 @@ class FloatingMsg(gtk.Widget):
         if self.finishFunc:
             self.finishFunc()
     def do_realize(self):
-        self.set_flags(self.flags() | gtk.REALIZED)
-        self.window = gdk.Window(
+        self.set_flags(self.flags() | Gtk.REALIZED)
+        self.window = Gdk.Window(
             self.get_parent_window(),
-            width=self.allocation.width,
-            height=self.allocation.height,
-            window_type=gdk.WINDOW_CHILD,
-            wclass=gdk.INPUT_OUTPUT,
-            event_mask=self.get_events() | gdk.EXPOSURE_MASK | gdk.BUTTON1_MOTION_MASK | gdk.BUTTON_PRESS_MASK
-                                         | gdk.POINTER_MOTION_MASK | gdk.POINTER_MOTION_HINT_MASK
+            width=self.get_allocation().width,
+            height=self.get_allocation().height,
+            window_type=Gdk.WINDOW_CHILD,
+            wclass=Gdk.INPUT_OUTPUT,
+            event_mask=self.get_events() | Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON1_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK
+                                         | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.POINTER_MOTION_HINT_MASK
         )
-        self.window.set_user_data(self)
+        self.get_window().set_user_data(self)
         self.style.attach(self.window)#?????? Needed??
-        self.style.set_background(self.window, gtk.STATE_NORMAL)
-        self.window.move_resize(*self.allocation)
+        self.style.set_background(self.window, Gtk.StateType.NORMAL)
+        self.get_window().move_resize(*self.get_allocation())
     def onExposeEvent(self, widget, event):
-        self.cr = self.window.cairo_create()
+        cr = self.cr = self.get_window().cairo_create()
         #######
-        self.cr.rectangle(0, 0, screenWidth, self.height)
-        setColor(self.cr, self.bgColor)
-        self.cr.fill()
+        cr.rectangle(0, 0, screenWidth, self.height)
+        setColor(cr, self.bgColor)
+        cr.fill()
         #######
-        self.cr.move_to(self.xpos, 0)
-        setColor(self.cr, self.textColor)
-        self.cr.show_layout(self.layout)
+        cr.move_to(self.xpos, 0)
+        setColor(cr, self.textColor)
+        show_layout(cr, self.layout)
     def animateStart(self):
         self.updateLine()
         self.startTime = now()
@@ -135,7 +135,7 @@ class FloatingMsg(gtk.Widget):
     def animateUpdate(self):
         if self.isFinished:
             return
-        gobject.timeout_add(self.refreshTime, self.animateUpdate)
+        GObject.timeout_add(self.refreshTime, self.animateUpdate)
         self.xpos = self.startXpos + (now()-self.startTime)*self.speed*self.rtlSign
         if self.xpos>screenWidth or self.xpos<-self.textWidth:
             if self.index >= self.linesNum-1:
@@ -146,17 +146,17 @@ class FloatingMsg(gtk.Widget):
                 self.updateLine()
         self.queue_draw()
     def show(self):
-        gtk.Widget.show(self)
+        Gtk.DrawingArea.show(self)
         self.win.show()
 
 
 @registerType
-class MyLabel(gtk.Widget):
+class MyLabel(Gtk.DrawingArea):
     def __init__(self, bgColor, textColor):
-        gtk.Widget.__init__(self)
+        Gtk.DrawingArea.__init__(self)
         self.bgColor = bgColor
         self.textColor = textColor
-        self.connect('expose-event', self.onExposeEvent)
+        self.connect('draw', self.onExposeEvent)
     def set_label(self, text):
         self.text = text
         self.layout = newTextLayout(self, text)
@@ -167,30 +167,30 @@ class MyLabel(gtk.Widget):
         self.rtl = self.isRtl()
         self.rtlSign = 1 if self.rtl else -1
     def do_realize(self):
-        self.set_flags(self.flags() | gtk.REALIZED)
-        self.window = gdk.Window(
+        self.set_flags(self.flags() | Gtk.REALIZED)
+        self.window = Gdk.Window(
             self.get_parent_window(),
-            width=self.allocation.width,
-            height=self.allocation.height,
-            window_type=gdk.WINDOW_CHILD,
-            wclass=gdk.INPUT_OUTPUT,
-            event_mask=self.get_events() | gdk.EXPOSURE_MASK | gdk.BUTTON1_MOTION_MASK | gdk.BUTTON_PRESS_MASK
-                                         | gdk.POINTER_MOTION_MASK | gdk.POINTER_MOTION_HINT_MASK
+            width=self.get_allocation().width,
+            height=self.get_allocation().height,
+            window_type=Gdk.WINDOW_CHILD,
+            wclass=Gdk.INPUT_OUTPUT,
+            event_mask=self.get_events() | Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON1_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK
+                                         | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.POINTER_MOTION_HINT_MASK
         )
-        self.window.set_user_data(self)
+        self.get_window().set_user_data(self)
         self.style.attach(self.window)#?????? Needed??
-        self.style.set_background(self.window, gtk.STATE_NORMAL)
-        self.window.move_resize(*self.allocation)
+        self.style.set_background(self.window, Gtk.StateType.NORMAL)
+        self.get_window().move_resize(*self.get_allocation())
     def onExposeEvent(self, widget, event):
-        self.cr = self.window.cairo_create()
+        cr = self.cr = self.get_window().cairo_create()
         #######
-        self.cr.rectangle(0, 0, self.width, self.height)
-        setColor(self.cr, self.bgColor)
-        self.cr.fill()
+        cr.rectangle(0, 0, self.width, self.height)
+        setColor(cr, self.bgColor)
+        cr.fill()
         #######
-        self.cr.move_to(0, 0)
-        setColor(self.cr, self.textColor)
-        self.cr.show_layout(self.layout)
+        cr.move_to(0, 0)
+        setColor(cr, self.textColor)
+        show_layout(cr, self.layout)
     def isRtl(self):
         for i in range(len(self.text)):
             if self.layout.index_to_pos(i)[2] != 0:
@@ -199,15 +199,16 @@ class MyLabel(gtk.Widget):
 
 
 @registerType
-class NoFillFloatingMsgWindow(gtk.Window):
+class NoFillFloatingMsgWindow(Gtk.Window):
     def __init__(self, text,
                        speed=100,
                        bgColor=(255, 255, 0),
-                       textColor=(0, 0, 0),
+                       textColor=(0, 0, 0, 0),
                        refreshTime=10,
                        finishFunc=None,
                        finishOnClick=True):
-        gtk.Window.__init__(self, gtk.WINDOW_POPUP)#gtk.WINDOW_POPUP ## ????????????????
+        Gtk.Window.__init__(self)
+        self.set_type_hint(Gtk.WindowType.POPUP)#Gtk.WindowType.POPUP ## ????????????????
         self.set_decorated(False)
         self.set_property('skip-taskbar-hint', True)
         self.set_keep_above(True)
@@ -250,7 +251,7 @@ class NoFillFloatingMsgWindow(gtk.Window):
     def animateUpdate(self):
         if self.isFinished:
             return
-        gobject.timeout_add(self.refreshTime, self.animateUpdate)
+        GObject.timeout_add(self.refreshTime, self.animateUpdate)
         xpos = int(self.startXpos + (now()-self.startTime)*self.speed*self.label.rtlSign)
         self.move(xpos, 0)
         self.resize(1, 1)
@@ -270,9 +271,9 @@ if __name__=='__main__':
     if len(sys.argv)<2:
         sys.exit(1)
     text = ' '.join(sys.argv[1:])
-    msg = NoFillFloatingMsgWindow(text, speed=200, finishFunc=gtk.main_quit)
-    #msg = FloatingMsg(text, speed=200, finishFunc=gtk.main_quit)
+    msg = NoFillFloatingMsgWindow(text, speed=200, finishFunc=Gtk.main_quit)
+    #msg = FloatingMsg(text, speed=200, finishFunc=Gtk.main_quit)
     msg.show()
-    gtk.main()
+    Gtk.main()
 
 

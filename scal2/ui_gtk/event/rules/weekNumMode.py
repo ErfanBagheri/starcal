@@ -4,17 +4,18 @@ from scal2 import core
 from scal2.locale_man import tr as _
 
 from scal2 import event_lib
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
-class RuleWidget(gtk.ComboBox):
+class RuleWidget(Gtk.ComboBox):
     def __init__(self, rule):
         self.rule = rule
         ###
-        ls = gtk.ListStore(str)
-        gtk.ComboBox.__init__(self, ls)
+        ls = Gtk.ListStore(str)
+        Gtk.ComboBox.__init__(self)
+        self.set_model(ls)
         ###
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.pack_start(cell, True)
         self.add_attribute(cell, 'text', 0)
         ###

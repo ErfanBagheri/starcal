@@ -627,10 +627,10 @@ class DateAndTimeEventRule(DateEventRule):
         self.time = (h, m, s)
     def setJdExact(self, jd):
         self.setJd(jd)
-        self.time = (0, 0, 0)
+        self.time = (0, 0, 0, 0)
     def setDate(self, date):
         self.date = date
-        self.time = (0, 0, 0)
+        self.time = (0, 0, 0, 0)
     getDate = lambda self, mode: convert(self.date[0], self.date[1], self.date[2], self.getMode(), mode)
     getData = lambda self: {
         'date': dateEncode(self.date),
@@ -692,8 +692,8 @@ class DayTimeRangeEventRule(EventRule):
     )
     def __init__(self, parent):
         EventRule.__init__(self, parent)
-        self.dayTimeStart = (0, 0, 0)
-        self.dayTimeEnd = (24, 0, 0)
+        self.dayTimeStart = (0, 0, 0, 0)
+        self.dayTimeEnd = (24, 0, 0, 0)
     def setRange(self, start, end):
         self.dayTimeStart = tuple(start)
         self.dayTimeEnd = tuple(end)
@@ -873,7 +873,7 @@ class CycleLenEventRule(EventRule):
     def __init__(self, parent):
         EventRule.__init__(self, parent)
         self.days = 7
-        self.extraTime = (0, 0, 0)
+        self.extraTime = (0, 0, 0, 0)
     def getData(self):
         return {
             'days': self.days,
@@ -1022,7 +1022,7 @@ class FloatingMsgNotifier(EventNotifier):
         self.fillWidth = False
         self.speed = 100
         self.bgColor = (255, 255, 0)
-        self.textColor = (0, 0, 0)
+        self.textColor = (0, 0, 0, 0)
 
 @classes.notifier.register
 class WindowMsgNotifier(EventNotifier):
@@ -2141,7 +2141,7 @@ class LifeTimeEvent(SingleStartEndEvent):
         self.getAddRule('start').setJdExact(jd)
     def addRule(self, rule):
         if rule.name in ('start', 'end'):
-            rule.time = (0, 0, 0)
+            rule.time = (0, 0, 0, 0)
         SingleStartEndEvent.addRule(self, rule)
     def modifyPos(self, newStartEpoch):
         start = self['start']
@@ -2728,7 +2728,7 @@ class EventGroup(EventContainer):
         if core.debugMode:
             print 'updateOccurrence, id=%s, title=%s, count=%s, time=%s'%(
                 self.id,
-                self.title,
+                toStr(self.title),
                 self.occurCount,
                 now()-stm0,
             )
@@ -3927,7 +3927,7 @@ def getWeekOccurrenceData(curAbsWeekNumber, groups):
                         else:## FIXME
                             data.append({
                                 'weekDay':weekDay,
-                                'time':hmsRangeToStr(h1, min1, s1, 24, 0, 0),
+                                'time':hmsRangeToStr(h1, min1, s1, 24, 0, 0, 0),
                                 'text':text,
                                 'icon':icon,
                                 'ids': ids,
@@ -4013,7 +4013,7 @@ def getMonthOccurrenceData(curYear, curMonth, groups):
                         else:## FIXME
                             data.append({
                                 'day':d,
-                                'time':hmsRangeToStr(h1, min1, s1, 24, 0, 0),
+                                'time':hmsRangeToStr(h1, min1, s1, 24, 0, 0, 0),
                                 'text':text,
                                 'icon':icon,
                                 'ids': ids,

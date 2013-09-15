@@ -34,21 +34,21 @@ from scal2.mywidgets.multi_spin import *
 
 from scal2 import ui
 
-from gobject import timeout_add
-import gtk
-from gtk import gdk
+from gi.repository.GObject import timeout_add
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk import gtk_ud as ud
 
 @registerSignals
-class MultiSpinButton(gtk.SpinButton):
+class MultiSpinButton(Gtk.SpinButton):
     signals = [
         ('first-min', []),
         ('first-max', []),
     ]
     def __init__(self, sep, fields, arrow_select=True, page_inc=10):
-        gtk.SpinButton.__init__(self)
+        Gtk.SpinButton.__init__(self)
         ####
         self.field = ContainerField(sep, *fields)
         self.arrow_select = arrow_select
@@ -57,18 +57,18 @@ class MultiSpinButton(gtk.SpinButton):
         self.digs = locale_man.getDigits()
         ###
         ####
-        self.set_direction(gtk.TEXT_DIR_LTR) ## self is a gtk.Entry
+        self.set_direction(Gtk.TextDirection.LTR) ## self is a Gtk.Entry
         self.set_width_chars(self.field.getMaxWidth())
         self.set_value(0)
         self.set_digits(0)
-        gtk.SpinButton.set_range(self, -2, 2)
+        Gtk.SpinButton.set_range(self, -2, 2)
         self.set_increments(1, page_inc)
         #self.connect('activate', lambda obj: self.update())
         self.connect('activate', self._entry_activate)
         self.connect('key-press-event', self._key_press)
         self.connect('scroll-event', self._scroll)
-        self.connect('button-press-event', self._button_press)
-        self.connect('button-release-event', self._button_release)
+        #self.connect('button-press-event', self._button_press)
+        #self.connect('button-release-event', self._button_release)
         self.connect('output', lambda obj: True)##Disable auto-numeric-validating(the entry text is not a numebr)
         ####
         #self.select_region(0, 0)
@@ -110,7 +110,7 @@ class MultiSpinButton(gtk.SpinButton):
         self.set_position(pos)
     def _key_press(self, widget, gevent):
         kval = gevent.keyval
-        kname = gdk.keyval_name(kval).lower()
+        kname = Gdk.keyval_name(kval).lower()
         size = len(self.field)
         sep = self.field.sep
         step_inc, page_inc = self.get_increments()
@@ -161,18 +161,20 @@ class MultiSpinButton(gtk.SpinButton):
         else:
             #print kname, kval
             return False
-    def _button_press(self, widget, gevent):
+    def _button_press(self, widget, gevent):## FIXME not working on gtk3
         gwin = gevent.window
         #print gwin.get_data('name')
-        #r = self.allocation ; print 'allocation', r[0], r[2]
+        #r = self.get_allocation() ; print 'allocation', r[0], r[2]
         if not self.has_focus():
             self.grab_focus()
         if self.get_editable():
             self.update()
-        width, height = self.size_request()
+        size = self.size_request()
+        width = size.width
+        height = size.height
         step_inc, page_inc = self.get_increments()
         if gwin.get_position()[1] == 0:## the panel window (containing up and down arrows)
-            ## gwin.xid == self.window.get_children()[0].xid ## the same as _gtk_spin_button_get_panel
+            ## gwin.xid == self.get_window().get_children()[0].xid ## the same as _gtk_spin_button_get_panel
             if gevent.y*2 < height:
                 if gevent.button==1:
                     self._arrow_press(step_inc)
@@ -185,7 +187,7 @@ class MultiSpinButton(gtk.SpinButton):
                     self._arrow_press(-page_inc)
             return True
         else:
-            if gevent.type==gdk._2BUTTON_PRESS:
+            if gevent.type==getattr(Gdk.EventType, '2BUTTON_PRESS'):
                 pass ## FIXME
                 ## select the numeric part containing cursor
                 #return True
@@ -218,12 +220,12 @@ class MultiSpinButton(gtk.SpinButton):
     def _arrow_enter_notify(self, gtkWin):
         if gtkWin!=None:
             print '_arrow_enter_notify'
-            gtkWin.set_background(gdk.Color(-1, 0, 0))
+            gtkWin.set_background(Gdk.Color(-1, 0, 0, 0))
             gtkWin.show()
     def _arrow_leave_notify(self, gtkWin):
         if gtkWin!=None:
             print '_arrow_leave_notify'
-            gtkWin.set_background(gdk.Color(-1, -1, -1))
+            gtkWin.set_background(Gdk.Color(-1, -1, -1))
     #"""
 
 class SingleSpinButton(MultiSpinButton):
@@ -477,7 +479,7 @@ class TimerButton(TimeButton):
 ##########################################################################
 
 @registerSignals
-class MultiSpinOptionBox(gtk.HBox):
+class MultiSpinOptionBox(Gtk.HBox):
     signals = [
         ('activate', [])
     ]
@@ -488,14 +490,15 @@ class MultiSpinOptionBox(gtk.HBox):
         return False
     def __init__(self, sep, fields, spacing=0, is_hbox=False, hist_size=10, **kwargs):
         if not is_hbox:
-            gtk.HBox.__init__(self, spacing=spacing)
+            Gtk.HBox.__init__(self)
+            self.set_spacing(spacing)
         self.spin = MultiSpinButton(sep, fields, **kwargs)
-        self.pack_start(self.spin, 1, 1)
+        self.pack_start(self.spin, 1, 1, 0)
         self.hist_size = hist_size
-        self.option = gtk.Button()
-        self.option.add(gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_IN))
-        self.pack_start(self.option, 1, 1)
-        self.menu = gtk.Menu()
+        self.option = Gtk.Button()
+        self.option.add(Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.IN))
+        self.pack_start(self.option, 1, 1, 0)
+        self.menu = Gtk.Menu()
         #self.menu.show()
         self.option.connect('button-press-event', self.option_pressed)
         self.menuItems = []
@@ -521,7 +524,7 @@ class MultiSpinOptionBox(gtk.HBox):
         else:
             n += 1
         #m.prepend([text])#self.combo.prepend_text(text)
-        item = gtk.MenuItem(text)
+        item = Gtk.MenuItem(text)
         item.connect('activate', lambda obj: self.spin.set_text(text))
         item.text = text
         self.menu.add(item)
@@ -585,7 +588,7 @@ class HourMinuteButtonOption(MultiSpinOptionBox):
 
 def getDateTimeWidget():
     btn = DateTimeButton()
-    btn.set_value((2011, 1, 1))
+    btn.set_value((2011, 1, 1, 0))
     return btn
 
 def getIntWidget():
@@ -599,7 +602,7 @@ def getFloatWidget():
     return btn
 
 def getFloatBuiltinWidget():
-    btn = gtk.SpinButton()
+    btn = Gtk.SpinButton()
     btn.set_range(0, 90)
     btn.set_digits(2)
     btn.set_increments(0.01, 1)
@@ -607,10 +610,10 @@ def getFloatBuiltinWidget():
 
 
 if __name__=='__main__':
-    d = gtk.Dialog()
+    d = Gtk.Dialog()
     btn = getFloatWidget()
     btn.set_editable(True)
-    d.vbox.pack_start(btn, 1, 1)
+    d.vbox.pack_start(btn, 1, 1, 0)
     d.vbox.show_all()
     d.run()
     print btn.get_value()

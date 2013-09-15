@@ -32,10 +32,13 @@ from subprocess import Popen
 
 from time import time as now
 
-from gobject import timeout_add
+from gi.repository.GObject import timeout_add
 
-import gtk
-from gtk import gdk
+from gi.repository import GObject
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
+from gi.repository import Gtk
+
 
 
 def hideList(widgets):
@@ -52,7 +55,7 @@ def set_tooltip(widget, text):
         widget.set_tooltip_text(text)## PyGTK 2.12 or above
     except AttributeError:
         try:
-            widget.set_tooltip(gtk.Tooltips(), text)
+            widget.set_tooltip(Gtk.Tooltips(), text)
         except:
             myRaise(__file__)
 
@@ -61,7 +64,7 @@ buffer_get_text = lambda b: b.get_text(b.get_start_iter(), b.get_end_iter())
 def imageFromFile(path):## the file must exist
     if not isabs(path):
         path = join(pixDir, path)
-    im = gtk.Image()
+    im = Gtk.Image()
     try:
         im.set_from_file(path)
     except:
@@ -74,12 +77,12 @@ def pixbufFromFile(path):## the file may not exist
     if not isabs(path):
         path = join(pixDir, path)
     try:
-        return gdk.pixbuf_new_from_file(path)
+        return GdkPixbuf.Pixbuf.new_from_file(path)
     except:
         myRaise()
         return None
 
-toolButtonFromStock = lambda stock, size: gtk.ToolButton(gtk.image_new_from_stock(stock, size))
+toolButtonFromStock = lambda stock, size: Gtk.ToolButton(Gtk.Image.new_from_stock(stock, size))
 
 def setupMenuHideOnLeave(menu):
     def menuLeaveNotify(m, e):
@@ -92,25 +95,32 @@ def setupMenuHideOnLeave(menu):
 
 
 def labelStockMenuItem(label, stock=None, func=None, *args):
-    item = gtk.ImageMenuItem(_(label))
+    item = Gtk.ImageMenuItem(_(label))
+    item.set_use_underline(True)
     if stock:
-        item.set_image(gtk.image_new_from_stock(stock, gtk.ICON_SIZE_MENU))
+        item.set_image(Gtk.Image.new_from_stock(stock, Gtk.IconSize.MENU))
     if func:
         item.connect('activate', func, *args)
     return item
 
 def labelImageMenuItem(label, image, func=None, *args):
-    item = gtk.ImageMenuItem(_(label))
+    item = Gtk.ImageMenuItem(_(label))
+    item.set_use_underline(True)
     item.set_image(imageFromFile(image))
     if func:
         item.connect('activate', func, *args)
     return item
 
 def labelMenuItem(label, func=None, *args):
-    item = gtk.MenuItem(_(label))
+    item = Gtk.MenuItem(_(label))
+    item.set_use_underline(True)
     if func:
         item.connect('activate', func, *args)
     return item
+
+getStyleColor = lambda widget, state=Gtk.StateType.NORMAL:\
+    widget.get_style_context().get_color(state)
+    
 
 def modify_bg_all(widget, state, gcolor):
     print widget.__class__.__name__
@@ -153,7 +163,7 @@ def dialog_add_button(dialog, stock, label, resId, onClicked=None, tooltip=''):
     if ui.autoLocale:
         if label:
             b.set_label(label)
-        b.set_image(gtk.image_new_from_stock(stock, gtk.ICON_SIZE_BUTTON))
+        b.set_image(Gtk.Image.new_from_stock(stock, Gtk.IconSize.BUTTON))
     if onClicked:
         b.connect('clicked', onClicked)
     if tooltip:
@@ -161,28 +171,28 @@ def dialog_add_button(dialog, stock, label, resId, onClicked=None, tooltip=''):
     return b
 
 def confirm(msg, parent=None):
-    win = gtk.MessageDialog(
+    win = Gtk.MessageDialog(
         parent=parent,
         flags=0,
-        type=gtk.MESSAGE_INFO,
-        buttons=gtk.BUTTONS_NONE,
+        type=Gtk.MessageType.INFO,
+        buttons=Gtk.ButtonsType.NONE,
         message_format=msg,
     )
-    dialog_add_button(win, gtk.STOCK_CANCEL, _('_Cancel'), gtk.RESPONSE_CANCEL)
-    dialog_add_button(win, gtk.STOCK_OK, _('_OK'), gtk.RESPONSE_OK)
-    ok = win.run() == gtk.RESPONSE_OK
+    dialog_add_button(win, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
+    dialog_add_button(win, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
+    ok = win.run() == Gtk.ResponseType.OK
     win.destroy()
     return ok
 
 def showError(msg, parent=None):
-    win = gtk.MessageDialog(
+    win = Gtk.MessageDialog(
         parent=parent,
         flags=0,
-        type=gtk.MESSAGE_ERROR,
-        buttons=gtk.BUTTONS_NONE,
+        type=Gtk.MessageType.ERROR,
+        buttons=Gtk.ButtonsType.NONE,
         message_format=msg,
     )
-    dialog_add_button(win, gtk.STOCK_CLOSE, _('_Close'), gtk.RESPONSE_OK)
+    dialog_add_button(win, Gtk.STOCK_CLOSE, _('_Close'), Gtk.ResponseType.OK)
     win.run()
     win.destroy()
 
@@ -209,7 +219,7 @@ def processDroppedDate(text, dtype):
                 ## FIXME
                 print 'Dropped unknown text "%s"'%text
                 #print etime
-                #context.drag_status(gdk.ACTION_DEFAULT, etime)
+                #context.drag_status(Gdk.DragAction.DEFAULT, etime)
                 #context.drop_reply(False, etime)
                 #context.drag_abort(etime)##Segmentation fault
                 #context.drop_finish(False, etime)
@@ -230,7 +240,7 @@ def processDroppedDate(text, dtype):
 
 
 
-class AboutDialog(gtk.AboutDialog):
+class AboutDialog(Gtk.AboutDialog):
     def __init__(
         self,
         name='',
@@ -241,7 +251,7 @@ class AboutDialog(gtk.AboutDialog):
         license='',
         website='',
     ):
-        gtk.AboutDialog.__init__(self)
+        Gtk.AboutDialog.__init__(self)
         self.set_name(name)## or set_program_name FIXME
         self.set_version(version)
         self.set_title(title) ## must call after set_name and set_version !
@@ -257,16 +267,17 @@ class AboutDialog(gtk.AboutDialog):
             buttons = buttonbox.get_children()## List of buttons of about dialogs
             buttons[1].set_label(_('C_redits'))
             buttons[2].set_label(_('_Close'))
-            buttons[2].set_image(gtk.image_new_from_stock(gtk.STOCK_CLOSE,gtk.ICON_SIZE_BUTTON))
+            buttons[2].set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CLOSE,Gtk.IconSize.BUTTON))
             buttons[0].set_label(_('_License'))
 
-class WeekDayComboBox(gtk.ComboBox):
+class WeekDayComboBox(Gtk.ComboBox):
     def __init__(self):
-        ls = gtk.ListStore(str)
-        gtk.ComboBox.__init__(self, ls)
+        ls = Gtk.ListStore(str)
+        Gtk.ComboBox.__init__(self)
+        self.set_model(ls)
         self.firstWeekDay = core.firstWeekDay
         ###
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.pack_start(cell, True)
         self.add_attribute(cell, 'text', 0)
         ###
@@ -279,14 +290,15 @@ class WeekDayComboBox(gtk.ComboBox):
         self.set_active((value-self.firstWeekDay)%7)
 
 
-class MonthComboBox(gtk.ComboBox):
+class MonthComboBox(Gtk.ComboBox):
     def __init__(self, includeEvery=False):
         self.includeEvery = includeEvery
         ###
-        ls = gtk.ListStore(str)
-        gtk.ComboBox.__init__(self, ls)
+        ls = Gtk.ListStore(str)
+        Gtk.ComboBox.__init__(self)
+        self.set_model(ls)
         ###
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.pack_start(cell, True)
         self.add_attribute(cell, 'text', 0)
     def build(self, mode):
@@ -311,7 +323,7 @@ class MonthComboBox(gtk.ComboBox):
         else:
             self.set_active(value - 1)
 
-class DirectionComboBox(gtk.ComboBox):
+class DirectionComboBox(Gtk.ComboBox):
     keys = ['ltr', 'rtl', 'auto']
     descs = [
         _('Left to Right'),
@@ -319,10 +331,11 @@ class DirectionComboBox(gtk.ComboBox):
         _('Auto'),
     ]
     def __init__(self):
-        ls = gtk.ListStore(str)
-        gtk.ComboBox.__init__(self, ls)
+        ls = Gtk.ListStore(str)
+        Gtk.ComboBox.__init__(self)
+        self.set_model(ls)
         ###
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.pack_start(cell, True)
         self.add_attribute(cell, 'text', 0)
         ###
@@ -334,12 +347,13 @@ class DirectionComboBox(gtk.ComboBox):
     def setValue(self, value):
         self.set_active(self.keys.index(value))
 
-class DateTypeCombo(gtk.ComboBox):
+class DateTypeCombo(Gtk.ComboBox):
     def __init__(self):## , showInactive=True FIXME
-        ls = gtk.ListStore(int, str)
-        gtk.ComboBox.__init__(self, ls)
+        ls = Gtk.ListStore(int, str)
+        Gtk.ComboBox.__init__(self)
+        self.set_model(ls)
         ###
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.pack_start(cell, True)
         self.add_attribute(cell, 'text', 1)
         ###
@@ -349,24 +363,25 @@ class DateTypeCombo(gtk.ComboBox):
         ls = self.get_model()
         for i in range(len(ls)):
             if ls[i][0]==mode:
-                gtk.ComboBox.set_active(self, i)
+                Gtk.ComboBox.set_active(self, i)
                 return
     def get_active(self):
-        i = gtk.ComboBox.get_active(self)
+        i = Gtk.ComboBox.get_active(self)
         if i is None:
             return
         return self.get_model()[i][0]
 
-class TimeZoneComboBoxEntry(gtk.ComboBoxEntry):
+class TimeZoneComboBoxEntry(Gtk.ComboBoxText):
     def __init__(self):
-        model = gtk.TreeStore(str, bool)
-        gtk.ComboBoxEntry.__init__(self, model, 0)
+        model = Gtk.TreeStore(str, bool)
+        Gtk.ComboBoxText.new_with_entry(self)
+        Gtk.ComboBoxText.__init__(self, model, 0)
         self.add_attribute(self.get_cells()[0], 'sensitive', 1)
         self.connect('changed', self.onChanged)
-        self.child.set_text(str(core.localTz))
+        self.get_child().set_text(str(core.localTz))
         ###
-        self.get_text = self.child.get_text
-        self.set_text = self.child.set_text
+        self.get_text = self.get_child().get_text
+        self.set_text = self.get_child().set_text
         #####
         recentIter = model.append(None, [
             _('Recent...'),
@@ -431,43 +446,45 @@ def openWindow(win):
     win.set_keep_above(ui.winKeepAbove)
     win.present()
 
-class CopyLabelMenuItem(gtk.MenuItem):
+class CopyLabelMenuItem(Gtk.MenuItem):
     def __init__(self, label):
-        gtk.MenuItem.__init__(self, label=label, use_underline=False)
-        self.clipboard = gtk.clipboard_get(gtk.gdk.SELECTION_CLIPBOARD)
+        Gtk.MenuItem.__init__(self)
+        self.set_label(label)
+        self.set_use_underline(False)
+        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self.connect('activate', self.on_activate)
     def on_activate(self, item):
         self.clipboard.set_text(self.get_property('label'))
 
-class WizardWindow(gtk.Window):
+class WizardWindow(Gtk.Window):
     stepClasses = []
     def __init__(self, title):
-        gtk.Window.__init__(self)
+        Gtk.Window.__init__(self)
         self.set_title(title)
         self.connect('delete-event', lambda obj, e: self.destroy())
         self.connect('key-press-event', self.keyPress)
-        self.vbox = gtk.VBox()
+        self.vbox = Gtk.VBox()
         self.add(self.vbox)
         ####
         self.steps = []
         for cls in self.stepClasses:
             step = cls(self)
             self.steps.append(step)
-            self.vbox.pack_start(step, 1, 1)
+            self.vbox.pack_start(step, 1, 1, 0)
         self.stepIndex = 0
         ####
-        self.buttonBox = gtk.HButtonBox()
-        self.buttonBox.set_layout(gtk.BUTTONBOX_END)
+        self.buttonBox = Gtk.HButtonBox()
+        self.buttonBox.set_layout(Gtk.ButtonBoxStyle.END)
         self.buttonBox.set_spacing(15)
         self.buttonBox.set_border_width(15)
-        self.vbox.pack_start(self.buttonBox, 0, 0)
+        self.vbox.pack_start(self.buttonBox, 0, 0, 0)
         ####
         self.showStep(0)
         self.vbox.show()
         #self.vbox.pack_end(
         #print id(self.get_action_area())
     def keyPress(self, arg, event):
-        kname = gdk.keyval_name(event.keyval).lower()
+        kname = Gdk.keyval_name(event.keyval).lower()
         if kname=='escape':
             self.destroy()
         return True
@@ -483,16 +500,16 @@ class WizardWindow(gtk.Window):
             child.destroy()
         for label, func in step.buttons:
             #print label, func
-            button = gtk.Button(label)
+            button = Gtk.Button(label)
             button.connect('clicked', func)
             bbox.add(button)
-            #bbox.pack_start(button, 0, 0)
+            #bbox.pack_start(button, 0, 0, 0)
         bbox.show_all()
 
 if __name__=='__main__':
-    diolog = gtk.Dialog()
+    diolog = Gtk.Dialog()
     w = TimeZoneComboBoxEntry()
-    diolog.vbox.pack_start(w, 0, 0)
+    diolog.vbox.pack_start(w, 0, 0, 0)
     diolog.vbox.show_all()
     diolog.run()
 

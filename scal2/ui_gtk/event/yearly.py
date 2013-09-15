@@ -23,8 +23,8 @@ from scal2.core import convert
 from scal2.locale_man import tr as _
 
 from scal2 import event_lib
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.utils import MonthComboBox
 from scal2.ui_gtk.mywidgets.multi_spin_button import YearSpinButton, DaySpinButton
@@ -35,35 +35,35 @@ class EventWidget(common.EventWidget):
     def __init__(self, event):## FIXME
         common.EventWidget.__init__(self, event)
         ################
-        hbox = gtk.HBox()
-        hbox.pack_start(gtk.Label(_('Month')), 0, 0)
+        hbox = Gtk.HBox()
+        hbox.pack_start(Gtk.Label(_('Month')), 0, 0, 0)
         self.monthCombo = MonthComboBox()
         self.monthCombo.build(event.mode)
-        hbox.pack_start(self.monthCombo, 0, 0)
-        hbox.pack_start(gtk.Label(''), 1, 1)
-        #self.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.monthCombo, 0, 0, 0)
+        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        #self.pack_start(hbox, 0, 0, 0)
         ###
-        #hbox = gtk.HBox()
-        hbox.pack_start(gtk.Label(_('Day')), 0, 0)
+        #hbox = Gtk.HBox()
+        hbox.pack_start(Gtk.Label(_('Day')), 0, 0, 0)
         self.daySpin = DaySpinButton()
-        hbox.pack_start(self.daySpin, 0, 0)
-        hbox.pack_start(gtk.Label(''), 1, 1)
-        self.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.daySpin, 0, 0, 0)
+        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        self.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = gtk.HBox()
-        self.startYearCheck = gtk.CheckButton(_('Start Year'))
-        hbox.pack_start(self.startYearCheck, 0, 0)
+        hbox = Gtk.HBox()
+        self.startYearCheck = Gtk.CheckButton(_('Start Year'))
+        hbox.pack_start(self.startYearCheck, 0, 0, 0)
         self.startYearSpin = YearSpinButton()
-        hbox.pack_start(self.startYearSpin, 0, 0)
-        hbox.pack_start(gtk.Label(''), 1, 1)
-        self.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.startYearSpin, 0, 0, 0)
+        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        self.pack_start(hbox, 0, 0, 0)
         self.startYearCheck.connect('clicked', self.startYearCheckClicked)
         ####
         self.notificationBox = common.NotificationBox(event)
-        self.pack_start(self.notificationBox, 0, 0)
+        self.pack_start(self.notificationBox, 0, 0, 0)
         ####
         #self.filesBox = common.FilesBox(self.event)
-        #self.pack_start(self.filesBox, 0, 0)
+        #self.pack_start(self.filesBox, 0, 0, 0)
     startYearCheckClicked = lambda self, obj=None: self.startYearSpin.set_sensitive(self.startYearCheck.get_active())
     def updateWidget(self):## FIXME
         common.EventWidget.updateWidget(self)
@@ -84,7 +84,7 @@ class EventWidget(common.EventWidget):
         self.event.setDay(int(self.daySpin.get_value()))
         if self.startYearCheck.get_active():
             startRule = self.event.getAddRule('start')
-            startRule.date = (self.startYearSpin.get_value(), 1, 1)
+            startRule.date = (self.startYearSpin.get_value(), 1, 1, 0)
         else:
             try:
                 del self.event['start']

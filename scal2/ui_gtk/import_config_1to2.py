@@ -26,30 +26,30 @@ from os.path import join, isfile, isdir
 from scal2.path import *
 from scal2.import_config_1to2 import importConfigFrom15, getOldVersion, langDir, langConfDir
 
-import gtk
+from gi.repository import Gtk
 
-gtk.window_set_default_icon_from_file('%s/starcal2.png'%pixDir)
+Gtk.window_set_default_icon_from_file('%s/starcal2.png'%pixDir)
 
 langNameList = []
 langCodeList = []
 
 langDefaultCode = ''
 
-win = gtk.Dialog(title=APP_DESC+' - First Run', buttons=(gtk.STOCK_OK, gtk.RESPONSE_OK, gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
-langHbox = gtk.HBox()
-langHbox.pack_start(gtk.Label('Select Language:'), 0, 0)
+win = Gtk.Dialog(title=APP_DESC+' - First Run', buttons=(Gtk.STOCK_OK, Gtk.ResponseType.OK, Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+langHbox = Gtk.HBox()
+langHbox.pack_start(Gtk.Label('Select Language:'), 0, 0, 0)
 
 
 importCheckb = None
 oldVersion = getOldVersion()
 if oldVersion and '1.5.0' < oldVersion < '1.6.0':## FIXME
-    importCheckb = gtk.CheckButton('Import configurations from %s %s'%(APP_DESC, oldVersion))
+    importCheckb = Gtk.CheckButton('Import configurations from %s %s'%(APP_DESC, oldVersion))
     importCheckb.connect('clicked', lambda cb: langHbox.set_sensitive(not cb.get_active()))
     importCheckb.set_active(True)
     win.vbox.pack_start(importCheckb)
 
 
-langCombo = gtk.combo_box_new_text()
+langCombo = Gtk.ComboBoxText()
 for fname in os.listdir(langDir):
     fpath = join(langDir, fname)
     if not os.path.isfile(fpath):
@@ -69,11 +69,11 @@ if langDefaultCode and (langDefaultCode in langCodeList):
 else:
     langCombo.set_active(0)
 
-langHbox.pack_start(langCombo, 1, 1)
+langHbox.pack_start(langCombo, 1, 1, 0)
 win.vbox.pack_start(langHbox)
 win.vbox.show_all()
 
-if win.run()==gtk.RESPONSE_OK:
+if win.run()==Gtk.ResponseType.OK:
     #print 'RESPONSE_OK'
     if importCheckb and importCheckb.get_active():
         importConfigFrom15()

@@ -29,11 +29,11 @@ from scal2.locale_man import tr as _
 
 from scal2 import ui
 
-import gobject
-from gobject import timeout_add
+from gi.repository import GObject
+from gi.repository.GObject import timeout_add
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk.utils import set_tooltip
@@ -43,24 +43,64 @@ from scal2.ui_gtk import gtk_ud as ud
 from scal2.ui_gtk.customize import CustomizableCalObj
 
 
+
+class BaseLabel(Gtk.EventBox):
+    highlightColor = (176, 176, 176)
+    def __init__(self):
+        Gtk.EventBox.__init__(self)
+        ##########
+        #self.menu.connect('map', lambda obj: self.drag_highlight())
+        #self.menu.connect('unmap', lambda obj: self.drag_unhighlight())
+        #########
+        #self.connect('enter-notify-event', self.highlight)
+        #self.connect('leave-notify-event', self.unhighlight)## FIXME
+    def highlight(self, widget=None, event=None):
+        #self.drag_highlight()
+        window = self.get_window()
+        if window==None:
+            return
+        cr = window.cairo_create()
+        cr.set_source_rgb(*self.highlightColor)
+        w = self.get_allocation().width
+        h = self.get_allocation().height
+        cr.rectangle(0, 0, w, 1)
+        cr.fill()
+        cr.rectangle(0, h-1, w, 1)
+        cr.fill()
+        cr.rectangle(0, 0, 1, h)
+        cr.fill()
+        cr.rectangle(w-1, 0, 1, h)
+        cr.fill()
+        cr.clip()
+    def unhighlight(self, widget=None, event=None):
+        window = self.get_window()
+        #self.drag_unhighlight()
+        if window==None:
+            return
+        w = self.get_allocation().width
+        h = self.get_allocation().height
+        window.clear_area(0, 0, w, 1)## no clear_area in gtk3 FIXME
+        window.clear_area(0, h-1, w, 1)
+        window.clear_area(0, 0, 1, h)
+        window.clear_area(w-1, 0, 1, h)
+
 @registerSignals
-class MonthLabel(gtk.EventBox, ud.IntegratedCalObj):
-    highlightColor = gdk.Color(45000, 45000, 45000)
+class MonthLabel(BaseLabel, ud.IntegratedCalObj):
     getItemStr = lambda self, i: _(i+1, fillZero=2)
     getActiveStr = lambda self, s: '<span color="%s">%s</span>'%(ui.menuActiveLabelColor, s)
     #getActiveStr = lambda self, s: '<b>%s</b>'%s
     def __init__(self, mode, active=0):
-        gtk.EventBox.__init__(self)
+        BaseLabel.__init__(self)
         #self.set_border_width(1)#???????????
         self.initVars()
         self.mode = mode
         s = _(getMonthName(self.mode, active+1))
         if ui.boldYmLabel:
             s = '<b>%s</b>'%s
-        self.label = gtk.Label(s)
+        self.label = Gtk.Label(label=s)
         self.label.set_use_markup(True)
         self.add(self.label)
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
         menu.set_border_width(0)
         menuLabels = []
         for i in range(12):
@@ -70,11 +110,11 @@ class MonthLabel(gtk.EventBox, ud.IntegratedCalObj):
                 text = _(getMonthName(self.mode, i+1))
             if i==active:
                 text = self.getActiveStr(text)
-            label = gtk.Label(text)
-            #label.set_justify(gtk.JUSTIFY_LEFT)
+            label = Gtk.Label(label=text)
+            #label.set_justify(Gtk.Justification.LEFT)
             label.set_alignment(0, 0.5)
             label.set_use_markup(True)
-            item = gtk.MenuItem()
+            item = Gtk.MenuItem()
             item.set_right_justified(True) ##?????????
             item.add(label)
             item.connect('activate', self.itemActivate, i)
@@ -86,16 +126,10 @@ class MonthLabel(gtk.EventBox, ud.IntegratedCalObj):
         self.connect('button-press-event', self.buttonPress)
         self.active = active
         self.setActive(active)
-        ##########
-        #self.menu.connect('map', lambda obj: self.drag_highlight())
-        #self.menu.connect('unmap', lambda obj: self.drag_unhighlight())
-        #########
-        self.connect('enter-notify-event', self.highlight)
-        self.connect('leave-notify-event', self.unhighlight)
         ####### update menu width
         if rtl:
-            get_menu_pos = lambda widget: (ud.screenW, 0, True)
-            menu.popup(None, None, get_menu_pos, 3, 0)
+            get_menu_pos = lambda widget, menu: (ud.screenW, 0, True)
+            menu.popup(None, None, get_menu_pos, None, 3, 0)
             menu.hide()
     def setActive(self, active):
     ## (Performance) update menu here, or make menu entirly before popup ????????????????
@@ -138,45 +172,20 @@ class MonthLabel(gtk.EventBox, ud.IntegratedCalObj):
         self.onDateChange()
     def buttonPress(self, widget, event):
         if event.button==3:
-            x, y = self.window.get_origin()
-            y += self.allocation.height
+            foo, x, y = self.get_window().get_origin()
+            ## foo == 1 FIXME
+            y += self.get_allocation().height
             if rtl:
-                mw = self.menu.allocation.width
-                #print 'menu.allocation.width', mw
+                mw = self.menu.get_allocation().width
+                #print 'menu.get_allocation().width', mw
                 if mw>1:
-                    x -= (mw - self.allocation.width)
+                    x -= (mw - self.get_allocation().width)
             #x -= 7 ## ????????? because of menu padding
-            self.menu.popup(None, None, lambda widget: (x, y, True), event.button, event.time)
+            self.menu.popup(None, None, lambda widget, menu: (x, y, True), None, event.button, event.time)
             ui.updateFocusTime()
             return True
         else:
             return False
-    def highlight(self, widget=None, event=None):
-        #self.drag_highlight()
-        if self.window==None:
-            return
-        cr = self.window.cairo_create()
-        cr.set_source_color(self.highlightColor)
-        #print tuple(self.allocation), tuple(self.label.allocation)
-        x, y, w, h = self.allocation
-        cr.rectangle(0, 0, w, 1)
-        cr.fill()
-        cr.rectangle(0, h-1, w, 1)
-        cr.fill()
-        cr.rectangle(0, 0, 1, h)
-        cr.fill()
-        cr.rectangle(w-1, 0, 1, h)
-        cr.fill()
-        cr.clip()
-    def unhighlight(self, widget=None, event=None):
-        #self.drag_unhighlight()
-        if self.window==None:
-            return
-        x, y, w, h = self.allocation
-        self.window.clear_area(0, 0, w, 1)
-        self.window.clear_area(0, h-1, w, 1)
-        self.window.clear_area(0, 0, 1, h)
-        self.window.clear_area(w-1, 0, 1, h)
     def onDateChange(self, *a, **ka):
         ud.IntegratedCalObj.onDateChange(self, *a, **ka)
         self.setActive(ui.cell.dates[self.mode][1]-1)
@@ -184,15 +193,14 @@ class MonthLabel(gtk.EventBox, ud.IntegratedCalObj):
 
 
 @registerSignals
-class IntLabel(gtk.EventBox):
-    highlightColor = gdk.Color(45000, 45000, 45000)
+class IntLabel(BaseLabel):
     #getActiveStr = lambda self, s: '<b>%s</b>'%s
     getActiveStr = lambda self, s: '<span color="%s">%s</span>'%(ui.menuActiveLabelColor, s)
     signals = [
         ('changed', [int]),
     ]
     def __init__(self, height=9, active=0):
-        gtk.EventBox.__init__(self)
+        BaseLabel.__init__(self)
         #self.set_border_width(1)#???????????
         self.height = height
         #self.delay = delay
@@ -200,13 +208,13 @@ class IntLabel(gtk.EventBox):
             s = '<b>%s</b>'%_(active)
         else:
             s = _(active)
-        self.label = gtk.Label(s)
+        self.label = Gtk.Label(label=s)
         self.label.set_use_markup(True)
         self.add(self.label)
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
         ##########
-        item = gtk.MenuItem()
-        arrow = gtk.Arrow(gtk.ARROW_UP, gtk.SHADOW_IN)
+        item = Gtk.MenuItem()
+        arrow = Gtk.Arrow(Gtk.ArrowType.UP, Gtk.ShadowType.IN)
         item.add(arrow)
         arrow.set_property('height-request', 10)
         #item.set_border_width(0)
@@ -224,17 +232,17 @@ class IntLabel(gtk.EventBox):
         ##########
         menuLabels = []
         for i in range(height):
-            label = gtk.Label()
+            label = Gtk.Label()
             label.set_use_markup(True)
-            item = gtk.MenuItem()
+            item = Gtk.MenuItem()
             item.add(label)
             item.connect('activate', self.itemActivate, i)
             menu.append(item)
             menuLabels.append(label)
         menu.connect('scroll-event', self.menuScroll)
         ##########
-        item = gtk.MenuItem()
-        arrow = gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_IN)
+        item = Gtk.MenuItem()
+        arrow = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.IN)
         arrow.set_property('height-request', 10)
         item.add(arrow)
         menu.append(item)
@@ -252,13 +260,6 @@ class IntLabel(gtk.EventBox):
         self.ymPressTime = 0
         self.etime = 0
         self.step = 0
-        ##########
-        #self.menu.connect('map', lambda obj: self.drag_highlight())
-        #self.menu.connect('unmap', lambda obj: self.drag_unhighlight())
-        #########
-        #self.modify_base(gtk.STATE_NORMAL, gdk.Color(-1, 0, 0))#??????????
-        self.connect('enter-notify-event', self.highlight)
-        self.connect('leave-notify-event', self.unhighlight)
     def setActive(self, active):
         if ui.boldYmLabel:
             self.label.set_label('<b>%s</b>'%_(active))
@@ -280,10 +281,10 @@ class IntLabel(gtk.EventBox):
     def buttonPress(self, widget, event):
         if event.button==3:
             self.updateMenu()
-            x, y = self.window.get_origin()
-            y += self.allocation.height
+            foo, x, y = self.get_window().get_origin()
+            y += self.get_allocation().height
             x -= 7 ## ????????? because of menu padding
-            self.menu.popup(None, None, lambda widget: (x, y, True), event.button, event.time)
+            self.menu.popup(None, None, lambda widget, menu: (x, y, True), None, event.button, event.time)
             ui.updateFocusTime()
             return True
         else:
@@ -319,31 +320,6 @@ class IntLabel(gtk.EventBox):
             self.updateMenu(self.start+1)
         else:
             return False
-    def highlight(self, widget=None, event=None):
-        #self.drag_highlight()
-        if self.window==None:
-            return
-        cr = self.window.cairo_create()
-        cr.set_source_color(self.highlightColor)
-        x, y, w, h = self.allocation
-        cr.rectangle(0, 0, w, 1)
-        cr.fill()
-        cr.rectangle(0, h-1, w, 1)
-        cr.fill()
-        cr.rectangle(0, 0, 1, h)
-        cr.fill()
-        cr.rectangle(w-1, 0, 1, h)
-        cr.fill()
-        cr.clip()
-    def unhighlight(self, widget=None, event=None):
-        #self.drag_unhighlight()
-        if self.window==None:
-            return
-        x, y, w, h = self.allocation
-        self.window.clear_area(0, 0, w, 1)
-        self.window.clear_area(0, h-1, w, 1)
-        self.window.clear_area(0, 0, 1, h)
-        self.window.clear_area(w-1, 0, 1, h)
 
 
 @registerSignals
@@ -371,27 +347,29 @@ def newSmallNoFocusButton(stock, func, tooltip=''):
     arrow = ConButton()
     arrow.set_relief(2)
     arrow.set_can_focus(False)
-    arrow.set_image(gtk.image_new_from_stock(stock, gtk.ICON_SIZE_SMALL_TOOLBAR))
+    arrow.set_image(Gtk.Image.new_from_stock(stock, Gtk.IconSize.SMALL_TOOLBAR))
     arrow.connect('con-clicked', func)
     if tooltip:
         set_tooltip(arrow, tooltip)
     return arrow
 
-class YearLabelButtonBox(gtk.HBox):
+class YearLabelButtonBox(Gtk.HBox):
     def __init__(self, mode, **kwargs):
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
         ###
         self.pack_start(
-            newSmallNoFocusButton(gtk.STOCK_REMOVE, self.prevClicked, _('Previous Year')),
+            newSmallNoFocusButton(Gtk.STOCK_REMOVE, self.prevClicked, _('Previous Year')),
+            0,
             0,
             0,
         )
         ###
         self.label = YearLabel(mode, **kwargs)
-        self.pack_start(self.label, 0, 0)
+        self.pack_start(self.label, 0, 0, 0)
         ###
         self.pack_start(
-            newSmallNoFocusButton(gtk.STOCK_ADD, self.nextClicked, _('Next Year')),
+            newSmallNoFocusButton(Gtk.STOCK_ADD, self.nextClicked, _('Next Year')),
+            0,
             0,
             0,
         )
@@ -403,21 +381,23 @@ class YearLabelButtonBox(gtk.HBox):
         self.label.onDateChange()
     changeMode = lambda self, mode: self.label.changeMode(mode)
 
-class MonthLabelButtonBox(gtk.HBox):
+class MonthLabelButtonBox(Gtk.HBox):
     def __init__(self, mode, **kwargs):
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
         ###
         self.pack_start(
-            newSmallNoFocusButton(gtk.STOCK_REMOVE, self.prevClicked, _('Previous Month')),
+            newSmallNoFocusButton(Gtk.STOCK_REMOVE, self.prevClicked, _('Previous Month')),
+            0,
             0,
             0,
         )
         ###
         self.label = MonthLabel(mode, **kwargs)
-        self.pack_start(self.label, 0, 0)
+        self.pack_start(self.label, 0, 0, 0)
         ###
         self.pack_start(
-            newSmallNoFocusButton(gtk.STOCK_ADD, self.nextClicked, _('Next Month')),
+            newSmallNoFocusButton(Gtk.STOCK_ADD, self.nextClicked, _('Next Month')),
+            0,
             0,
             0,
         )
@@ -431,11 +411,11 @@ class MonthLabelButtonBox(gtk.HBox):
 
 
 @registerSignals
-class YearMonthLabelBox(gtk.HBox, CustomizableCalObj):
+class YearMonthLabelBox(Gtk.HBox, CustomizableCalObj):
     _name = 'labelBox'
     desc = _('Year & Month Labels')
     def __init__(self):
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
         self.initVars()
         #self.set_border_width(2)
     def onConfigChange(self, *a, **kw):
@@ -448,28 +428,30 @@ class YearMonthLabelBox(gtk.HBox, CustomizableCalObj):
         mode = core.primaryMode
         ##
         box = YearLabelButtonBox(mode)
-        self.pack_start(box, 0, 0)
+        self.pack_start(box, 0, 0, 0)
         self.appendItem(box.label)
         ##
-        self.pack_start(gtk.VSeparator(), 1, 1)
+        vsep = Gtk.VSeparator()
+        self.pack_start(vsep, 1, 1, 0)
         ##
         box = MonthLabelButtonBox(mode)
-        self.pack_start(box, 0, 0)
+        self.pack_start(box, 0, 0, 0)
         self.appendItem(box.label)
         monthLabels.append(box.label)
         ####
         for i, mode in list(enumerate(calTypes.active))[1:]:
-            self.pack_start(gtk.VSeparator(), 1, 1)
+            vsep = Gtk.VSeparator()
+            self.pack_start(vsep, 1, 1, 0)
             label = YearLabel(mode)
-            self.pack_start(label, 0, 0)
+            self.pack_start(label, 0, 0, 0)
             self.appendItem(label)
             ###############
-            label = gtk.Label('')
+            label = Gtk.Label(label='')
             label.set_property('width-request', 5)
-            self.pack_start(label, 0, 0)
+            self.pack_start(label, 0, 0, 0)
             ###############
             label = MonthLabel(mode)
-            self.pack_start(label, 0, 0)
+            self.pack_start(label, 0, 0, 0)
             monthLabels.append(label)
             self.appendItem(label)
         ####
@@ -494,16 +476,17 @@ class YearMonthLabelBox(gtk.HBox, CustomizableCalObj):
 
 
 if __name__=='__main__':
-    win = gtk.Dialog()
+    win = Gtk.Dialog()
     box = YearMonthLabelBox()
     win.add_events(
-        gdk.POINTER_MOTION_MASK | gdk.FOCUS_CHANGE_MASK | gdk.BUTTON_MOTION_MASK |
-        gdk.BUTTON_PRESS_MASK | gdk.BUTTON_RELEASE_MASK | gdk.SCROLL_MASK |
-        gdk.KEY_PRESS_MASK | gdk.VISIBILITY_NOTIFY_MASK | gdk.EXPOSURE_MASK
+        Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.FOCUS_CHANGE_MASK | Gdk.EventMask.BUTTON_MOTION_MASK |
+        Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.SCROLL_MASK |
+        Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.VISIBILITY_NOTIFY_MASK | Gdk.EventMask.EXPOSURE_MASK
     )
-    win.vbox.pack_start(box, 1, 1)
+    win.vbox.pack_start(box, 1, 1, 0)
     win.vbox.show_all()
-    win.resize(600, 400)
+    win.resize(600, 50)
+    win.set_title(box.desc)
     box.onConfigChange()
     win.run()
 

@@ -30,22 +30,22 @@ from scal2.ui_gtk.event import common
 from scal2.ui_gtk.event.rules.weekNumMode import RuleWidget as WeekNumModeRuleWidget
 from scal2.ui_gtk.utils import showError, WeekDayComboBox
 
-import gtk
-from gtk import gdk
+from gi.repository import Gtk
+from gi.repository import Gdk
 
-class EventWidget(gtk.VBox):
+class EventWidget(Gtk.VBox):
     def __init__(self, event):## FIXME
-        gtk.VBox.__init__(self)
+        Gtk.VBox.__init__(self)
         self.event = event
         assert event.parent.name == 'universityTerm' ## FIXME
-        sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        sizeGroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         #####
         if not event.parent.courses:
             showError(event.parent.noCourseError)
             raise RuntimeError('No courses added')
         self.courseIds = []
         self.courseNames = []
-        combo = gtk.combo_box_new_text()
+        combo = Gtk.ComboBoxText()
         for course in event.parent.courses:
             self.courseIds.append(course[0])
             self.courseNames.append(course[1])
@@ -53,85 +53,85 @@ class EventWidget(gtk.VBox):
         #combo.connect('changed', self.updateSummary)
         self.courseCombo = combo
         ##
-        hbox = gtk.HBox()
-        label = gtk.Label(_('Course'))
+        hbox = Gtk.HBox()
+        label = Gtk.Label(label=_('Course'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
-        hbox.pack_start(label, 0, 0)
-        hbox.pack_start(combo, 0, 0)
+        hbox.pack_start(label, 0, 0, 0)
+        hbox.pack_start(combo, 0, 0, 0)
         ##
-        self.pack_start(hbox, 0, 0)
+        self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = gtk.HBox()
-        label = gtk.Label(_('Week'))
+        hbox = Gtk.HBox()
+        label = Gtk.Label(label=_('Week'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
-        hbox.pack_start(label, 0, 0)
+        hbox.pack_start(label, 0, 0, 0)
         self.weekNumModeCombo = WeekNumModeRuleWidget(event['weekNumMode'])
-        hbox.pack_start(self.weekNumModeCombo, 0, 0)
-        self.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.weekNumModeCombo, 0, 0, 0)
+        self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = gtk.HBox()
-        label = gtk.Label(_('Week Day'))
+        hbox = Gtk.HBox()
+        label = Gtk.Label(label=_('Week Day'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
-        hbox.pack_start(label, 0, 0)
+        hbox.pack_start(label, 0, 0, 0)
         self.weekDayCombo = WeekDayComboBox()
         #self.weekDayCombo.connect('changed', self.updateSummary)
-        hbox.pack_start(self.weekDayCombo, 0, 0)
-        self.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.weekDayCombo, 0, 0, 0)
+        self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = gtk.HBox()
-        label = gtk.Label(_('Time'))
+        hbox = Gtk.HBox()
+        label = Gtk.Label(label=_('Time'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
-        hbox.pack_start(label, 0, 0)
+        hbox.pack_start(label, 0, 0, 0)
         ##
         self.dayTimeStartCombo = HourMinuteButtonOption()
         self.dayTimeEndCombo = HourMinuteButtonOption()
         ##
-        #self.dayTimeStartCombo.child.set_direction(gtk.TEXT_DIR_LTR)
-        #self.dayTimeEndCombo.child.set_direction(gtk.TEXT_DIR_LTR)
+        #self.dayTimeStartCombo.get_child().set_direction(Gtk.TextDirection.LTR)
+        #self.dayTimeEndCombo.get_child().set_direction(Gtk.TextDirection.LTR)
         ##
-        hbox.pack_start(self.dayTimeStartCombo, 0, 0)
-        hbox.pack_start(gtk.Label(' ' + _('to') + ' '), 0, 0)
-        hbox.pack_start(self.dayTimeEndCombo, 0, 0)
-        self.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.dayTimeStartCombo, 0, 0, 0)
+        hbox.pack_start(Gtk.Label(' ' + _('to') + ' '), 0, 0, 0)
+        hbox.pack_start(self.dayTimeEndCombo, 0, 0, 0)
+        self.pack_start(hbox, 0, 0, 0)
         ###########
-        #hbox = gtk.HBox()
-        #label = gtk.Label(_('Summary'))
+        #hbox = Gtk.HBox()
+        #label = Gtk.Label(label=_('Summary'))
         #label.set_alignment(0, 0.5)
         #sizeGroup.add_widget(label)
-        #hbox.pack_start(label, 0, 0)
-        #self.summaryEntry = gtk.Entry()
-        #hbox.pack_start(self.summaryEntry, 1, 1)
-        #self.pack_start(hbox, 0, 0)
+        #hbox.pack_start(label, 0, 0, 0)
+        #self.summaryEntry = Gtk.Entry()
+        #hbox.pack_start(self.summaryEntry, 1, 1, 0)
+        #self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = gtk.HBox()
-        label = gtk.Label(_('Description'))
+        hbox = Gtk.HBox()
+        label = Gtk.Label(label=_('Description'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
-        hbox.pack_start(label, 0, 0)
+        hbox.pack_start(label, 0, 0, 0)
         self.descriptionInput = TextFrame()
-        hbox.pack_start(self.descriptionInput, 1, 1)
-        self.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.descriptionInput, 1, 1, 0)
+        self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = gtk.HBox()
-        label = gtk.Label(_('Icon'))
+        hbox = Gtk.HBox()
+        label = Gtk.Label(label=_('Icon'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
-        hbox.pack_start(label, 0, 0)
+        hbox.pack_start(label, 0, 0, 0)
         self.iconSelect = IconSelectButton()
         #print join(pixDir, self.icon)
-        hbox.pack_start(self.iconSelect, 0, 0)
-        hbox.pack_start(gtk.Label(''), 1, 1)
-        self.pack_start(hbox, 0, 0)
+        hbox.pack_start(self.iconSelect, 0, 0, 0)
+        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        self.pack_start(hbox, 0, 0, 0)
         ######
         self.notificationBox = common.NotificationBox(event)
-        self.pack_start(self.notificationBox, 0, 0)
+        self.pack_start(self.notificationBox, 0, 0, 0)
         ######
         #self.filesBox = common.FilesBox(self.event)
-        #self.pack_start(self.filesBox, 0, 0)
+        #self.pack_start(self.filesBox, 0, 0, 0)
         ######
         self.courseCombo.set_active(0)
         #self.updateSummary()

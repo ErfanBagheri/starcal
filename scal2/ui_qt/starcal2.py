@@ -492,7 +492,7 @@ class FClockLabel(qt.QLabel):
         qt.QLabel.__init__(self, parent)
         self.setSizePolicy(qt.QSizePolicy.Fixed, qt.QSizePolicy.Fixed)
         #self.setTextFormat(qc.Qt.PlainText)#??????????
-        ##self.set_direction(gtk.TEXT_DIR_LTR)##???????????
+        ##self.set_direction(Gtk.TextDirection.LTR)##???????????
         self.updateFormat()
         self.running = False
         ##self.connect('button-press-event', self.button_press)
@@ -710,34 +710,34 @@ class YearMonthLabelBox(HBox, MainWinItem): ## FIXME
     def updateArrows(self):
         if showYmArrows:
             if isinstance(preferences.prevStock, str):
-                self.arrowPY.set_image(gtk.image_new_from_stock(preferences.prevStock, gtk.ICON_SIZE_SMALL_TOOLBAR))
-                self.arrowPM.set_image(gtk.image_new_from_stock(preferences.prevStock, gtk.ICON_SIZE_SMALL_TOOLBAR))
-            elif isinstance(preferences.prevStock, gtk._gtk.ArrowType):
-                if self.arrowPY.child!=None:
-                    self.arrowPY.remove(self.arrowPY.child)
-                arrow = gtk.Arrow(preferences.prevStock, gtk.SHADOW_IN)
+                self.arrowPY.set_image(Gtk.Image.new_from_stock(preferences.prevStock, Gtk.IconSize.SMALL_TOOLBAR))
+                self.arrowPM.set_image(Gtk.Image.new_from_stock(preferences.prevStock, Gtk.IconSize.SMALL_TOOLBAR))
+            elif isinstance(preferences.prevStock, Gtk._Gtk.ArrowType):
+                if self.arrowPY.get_child()!=None:
+                    self.arrowPY.remove(self.arrowPY.get_child())
+                arrow = Gtk.Arrow(preferences.prevStock, Gtk.ShadowType.IN)
                 self.arrowPY.add(arrow)
                 arrow.show()
                 ######
-                if self.arrowPM.child!=None:
-                    self.arrowPM.remove(self.arrowPM.child)
-                arrow = gtk.Arrow(preferences.prevStock, gtk.SHADOW_IN)
+                if self.arrowPM.get_child()!=None:
+                    self.arrowPM.remove(self.arrowPM.get_child())
+                arrow = Gtk.Arrow(preferences.prevStock, Gtk.ShadowType.IN)
                 self.arrowPM.add(arrow)
                 arrow.show()
             #################
             if isinstance(preferences.nextStock, str):
-                self.arrowNY.set_image(gtk.image_new_from_stock(preferences.nextStock, gtk.ICON_SIZE_SMALL_TOOLBAR))
-                self.arrowNM.set_image(gtk.image_new_from_stock(preferences.nextStock, gtk.ICON_SIZE_SMALL_TOOLBAR))
-            elif isinstance(preferences.nextStock, gtk._gtk.ArrowType):
-                if self.arrowNY.child!=None:
-                    self.arrowNY.remove(self.arrowNY.child)
-                arrow = gtk.Arrow(preferences.nextStock, gtk.SHADOW_IN)
+                self.arrowNY.set_image(Gtk.Image.new_from_stock(preferences.nextStock, Gtk.IconSize.SMALL_TOOLBAR))
+                self.arrowNM.set_image(Gtk.Image.new_from_stock(preferences.nextStock, Gtk.IconSize.SMALL_TOOLBAR))
+            elif isinstance(preferences.nextStock, Gtk._Gtk.ArrowType):
+                if self.arrowNY.get_child()!=None:
+                    self.arrowNY.remove(self.arrowNY.get_child())
+                arrow = Gtk.Arrow(preferences.nextStock, Gtk.ShadowType.IN)
                 self.arrowNY.add(arrow)
                 arrow.show()
                 ######
-                if self.arrowNM.child!=None:
-                    self.arrowNM.remove(self.arrowNM.child)
-                arrow = gtk.Arrow(preferences.nextStock, gtk.SHADOW_IN)
+                if self.arrowNM.get_child()!=None:
+                    self.arrowNM.remove(self.arrowNM.get_child())
+                arrow = Gtk.Arrow(preferences.nextStock, Gtk.ShadowType.IN)
                 self.arrowNM.add(arrow)
                 arrow.show()
     """
@@ -1311,7 +1311,7 @@ class MainWin(qt.QMainWindow):
     def startResize(self, widget, event):
         self.menuMain.hide()
         x, y, mask = rootWindow.get_pointer()
-        self.begin_resize_drag(gdk.WINDOW_EDGE_SOUTH_EAST, event.button, x, y, event.time)
+        self.begin_resize_drag(Gdk.WINDOW_EDGE_SOUTH_EAST, event.button, x, y, event.time)
         return True
     """
     def changeDate(self, year, month, day):
@@ -1415,7 +1415,7 @@ class MainWin(qt.QMainWindow):
                 if self.trayMode==3:
                     self.clockTr = FClockLabel(preferences.clockFormat)
                     try:
-                        self.trayHbox.pack_start(self.clockTr, 0, 0)
+                        self.trayHbox.pack_start(self.clockTr, 0, 0, 0)
                     except AttributeError:
                         self.clockTr.destroy()
                         self.clockTr = None
@@ -1607,7 +1607,7 @@ class MainWin(qt.QMainWindow):
 ################# end of function and class defenitions ########################
 
 
-## gtk.link_button_set_uri_hook(core.openUrl) FIXME ?????????????
+## Gtk.link_button_set_uri_hook(core.openUrl) FIXME ?????????????
 
 ## Maybe this file be imported from plasma applet file
 def main():
@@ -1645,11 +1645,11 @@ def main():
         show = ui.showMain or not mainWin.sysTray
     #if show:
     #    mainWin.show()
-    mainWin.show() ## main.raise_() ## ~= gtk.Window.show(self)
+    mainWin.show() ## main.raise_() ## ~= Gtk.Window.show(self)
     if not show:
         #mainWin.hide()## FIXME
         qc.QTimer.singleShot(100, mainWin.hide)
-    ##rootWindow.set_cursor(gdk.Cursor(gdk.LEFT_PTR))#???????????
+    ##rootWindow.set_cursor(Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR))#???????????
     return app.exec_()
 
 

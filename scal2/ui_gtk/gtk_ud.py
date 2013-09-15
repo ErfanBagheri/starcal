@@ -30,15 +30,16 @@ from scal2 import core
 from scal2 import ui
 from scal2.format_time import compileTmFormat
 
-import gtk
-from gtk import gdk
+from gi.overrides.GObject import Object
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk.font_utils import gfontDecode, pfontEncode
 
 
 @registerSignals
-class IntegratedCalObj(gtk.Object):
+class IntegratedCalObj(Object):
     _name = ''
     desc = ''
     signals = [
@@ -80,13 +81,13 @@ class IntegatedWindowList(IntegratedCalObj):
     _name = 'windowList'
     desc = 'Window List'
     def __init__(self):
-        gtk.Object.__init__(self)
+        Object.__init__(self)
         self.initVars()
     def onConfigChange(self, *a, **ka):
         ui.cellCache.clear()
         settings.set_property(
             'gtk-font-name',
-            pfontEncode(ui.getFont()),
+            pfontEncode(ui.getFont()).to_string(),
         )
         ####
         IntegratedCalObj.onConfigChange(self, *a, **ka)
@@ -99,11 +100,11 @@ windowList = IntegatedWindowList()
 ###########
 
 if rtl:
-    gtk.widget_set_default_direction(gtk.TEXT_DIR_RTL)
+    Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
 
-gtk.window_set_default_icon_from_file(ui.logo)
+Gtk.Window.set_default_icon_from_file(ui.logo)
 
-settings = gtk.settings_get_default()
+settings = Gtk.Settings.get_default()
 
 ## ui.timeout_initial = settings.get_property('gtk-timeout-initial') ## == 200 FIXME
 ## ui.timeout_repeat = settings.get_property('gtk-timeout-repeat') ## == 20 too small!! FIXME
@@ -113,9 +114,9 @@ ui.initFonts(gfontDecode(settings.get_property('gtk-font-name')))
 
 ###########
 textDirDict = {
-    'ltr': gtk.TEXT_DIR_LTR,
-    'rtl': gtk.TEXT_DIR_RTL,
-    'auto': gtk.TEXT_DIR_NONE,
+    'ltr': Gtk.TextDirection.LTR,
+    'rtl': Gtk.TextDirection.RTL,
+    'auto': Gtk.TextDirection.NONE,
 }
 
 ##############################
@@ -160,14 +161,14 @@ wcalToolbarData = {
 
 ############################################################
 
-sysConfPath = join(sysConfDir, 'ui-gtk.conf')
+sysConfPath = join(sysConfDir, 'ui-Gtk.conf')
 if os.path.isfile(sysConfPath):
     try:
         exec(open(sysConfPath).read())
     except:
         myRaise(__file__)
 
-confPath = join(confDir, 'ui-gtk.conf')
+confPath = join(confDir, 'ui-Gtk.conf')
 if os.path.isfile(confPath):
     try:
         exec(open(confPath).read())
@@ -188,10 +189,12 @@ for cmd in ('gksudo', 'kdesudo', 'gksu', 'gnomesu', 'kdesu'):
 
 ############################################################
 
-rootWindow = gdk.get_default_root_window() ## Good Place?????
+rootWindow = Gdk.get_default_root_window() ## Good Place?????
 ##import atexit
-##atexit.register(rootWindow.set_cursor, gdk.Cursor(gdk.LEFT_PTR)) ## ?????????????????????
-#rootWindow.set_cursor(cursor=gdk.Cursor(gdk.WATCH)) ## ???????????????????
-screenW, screenH = rootWindow.get_size()
+##atexit.register(rootWindow.set_cursor, Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)) ## ?????????????????????
+#rootWindow.set_cursor(cursor=Gdk.Cursor.new(Gdk.CursorType.WATCH)) ## ???????????????????
+screenW = rootWindow.get_width()
+screenH = rootWindow.get_height()
+
 
 

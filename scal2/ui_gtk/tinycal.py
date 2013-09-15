@@ -21,7 +21,7 @@ import sys, os
 
 from math import pi
 import struct
-import os.path, cairo
+import os.path
 
 from scal2.locale_man import tr as _
 from scal2.locale_man import rtl, rtlSgn
@@ -33,9 +33,10 @@ from scal2.core import myRaise, getMonthName, getMonthLen,\
 
 from scal2 import ui
 
-import gobject, pango
-import gtk
-from gtk import gdk
+from gi.repository import GObject
+from gi.repository import Gdk
+from gi.repository import Gtk
+
 
 from scal2.ui_gtk import preferences
 from scal2.ui_gtk.preferences import pfontEncode
@@ -72,7 +73,7 @@ class TextObject():
         else:
             cr.move_to(self.x, self.y)
         fillColor(cr, self.color)
-        cr.show_layout(self.layout)
+        show_layout(cr, self.layout)
     def setFont(self, font):
         self.layout.set_font_description(pfontEncode(font))
     def getText(self):
@@ -116,9 +117,9 @@ class PlainStrObject(TextObject):
 
 
 
-class TinyCal(gtk.Window):## (gtk.DrawingArea OR gtk.Widget)
+class TinyCal(Gtk.Window):
     def __init__(self):
-        gtk.Window.__init__(self)
+        Gtk.Window.__init__(self)
         self.set_title(core.APP_DESC+' Tiny')
         self.set_decorated(False)
         self.set_property('skip-taskbar-hint', None)

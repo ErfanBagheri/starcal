@@ -2,13 +2,13 @@
 import sys, os, subprocess
 from time import time as now
 
-import gtk
+from gi.repository import Gtk
 
 localeGen = '/etc/locale.gen'
 
 def error(text, parent=None):
-  d = gtk.MessageDialog(parent, gtk.DIALOG_DESTROY_WITH_PARENT,\
-    gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, text.strip())
+  d = Gtk.MessageDialog(parent, Gtk.DialogFlags.DESTROY_WITH_PARENT,\
+    Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, text.strip())
   d.set_title('Error')
   d.run()
 

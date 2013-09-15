@@ -91,7 +91,7 @@ def drawBoxText(cr, box, x, y, w, h, widget):
         avgCharW = float(textW if rotateBoxLabel == 0 else max(textW, textH)) / textLen
         if avgCharW > 3:## FIXME
             font = list(ui.getFont())
-            layout = widget.create_pango_layout(box.text) ## a pango.Layout object
+            layout = widget.create_pango_layout(box.text) ## a Pango.Layout object
             layout.set_font_description(pfontEncode(font))
             layoutW, layoutH = layout.get_pixel_size()
             #print 'orig font size: %s'%font[3]
@@ -115,7 +115,7 @@ def drawBoxText(cr, box, x, y, w, h, widget):
                     y + (h + rotateBoxLabel*layoutW)/2.0,
                 )
                 cr.rotate(-rotateBoxLabel*pi/2)
-                cr.show_layout(layout)
+                show_layout(cr, layout)
                 try:
                     cr.rotate(rotateBoxLabel*pi/2)
                 except:
@@ -132,7 +132,7 @@ def drawBoxText(cr, box, x, y, w, h, widget):
                     x + (w-layoutW)/2.0,
                     y + (h-layoutH)/2.0,
                 )
-                cr.show_layout(layout)
+                show_layout(cr, layout)
 
 
 

@@ -22,8 +22,11 @@ from time import time
 from scal2 import core
 from scal2 import ui
 
-import gtk
-from gtk import gdk
+from gi.repository import cairo
+from gi.repository import GdkPixbuf
+from gi.repository import Gdk
+from gi.repository import Gtk
+
 
 from scal2.ui_gtk import listener
 from scal2.ui_gtk.drawing import newTextLayout
@@ -46,10 +49,10 @@ class CalBase(CustomizableCalObj):
         'menu',
         'i',
     )
-    def __init__(self):
+    def initCal(self):
         self.initVars()
         listener.dateChange.add(self)
-        self.optionsWidget = gtk.VBox()
+        self.optionsWidget = Gtk.VBox()
         ####
         self.defineDragAndDrop()
         self.connect('2button-press', ui.dayOpenEvolution)
@@ -79,23 +82,20 @@ class CalBase(CustomizableCalObj):
         self.queue_draw()
     def defineDragAndDrop(self):
         self.drag_source_set(
-            gdk.MODIFIER_MASK,
-            (
-                ('', 0, 0),
-            ),
-            gdk.ACTION_MOVE,## FIXME
+            Gdk.ModifierType.MODIFIER_MASK,
+            [],
+            Gdk.DragAction.MOVE,## FIXME
         )
         self.drag_source_add_text_targets()
+        ###
         self.connect('drag-data-get', self.dragDataGet)
         self.connect('drag-begin', self.dragBegin)
         self.connect('drag-data-received', self.dragDataRec)
+        ###
         self.drag_dest_set(
-            gdk.MODIFIER_MASK,
-            (
-                ('', 0, 0),
-                ('application/x-color', 0, 0),
-            ),
-            gdk.ACTION_COPY,## FIXME
+            Gtk.DestDefaults.ALL,
+            [],
+            Gdk.DragAction.COPY,## FIXME
         )
         self.drag_dest_add_text_targets()
         self.drag_dest_add_uri_targets()
@@ -145,13 +145,22 @@ class CalBase(CustomizableCalObj):
         text = '%.2d/%.2d/%.2d'%ui.cell.dates[ui.dragGetMode]
         textLay = newTextLayout(self, text)
         w, h = textLay.get_pixel_size()
-        pmap = gdk.Pixmap(None, w, h, 24)
+        sur = cairo.image_surface_create()
+        cr = sur.cairo_create()
+        cr.fill(rgbToGdkColor(ui.bgColor))
+        cr.setColor(rgbToGdkColor(*ui.textColor))
+        cr.draw_layout(textLay, 0, 0)
+        
+        
+        
+        '''
+        pmap = Gdk.Pixmap(None, w, h, 24)
         #pmap.set_colormap(colormap)
         gc = pmap.new_gc()
         gc.set_foreground(rgbToGdkColor(*ui.bgColor))
         pmap.draw_rectangle(gc, True, 0, 0, w, h)
         #gc.set_background(ui.bgColor)
-        ##pmap.set_direction(gtk.DIR_LTR)## FIXME
+        ##pmap.set_direction(Gtk.DIR_LTR)## FIXME
         pmap.draw_layout(
             gc,
             0,
@@ -160,7 +169,7 @@ class CalBase(CustomizableCalObj):
             rgbToGdkColor(*ui.textColor),
             rgbToGdkColor(*ui.bgColor),## rgbToGdkColor(ui.gdkColorInvert(*ui.textColor))
         )
-        pbuf = gdk.Pixbuf(gdk.COLORSPACE_RGB, True, 8, w , h)
+        pbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, w , h)
         pbuf.get_from_drawable(
             pmap,
             colormap,
@@ -171,6 +180,7 @@ class CalBase(CustomizableCalObj):
             -1,
             -1,
         )
+        '''
         context.set_icon_pixbuf(
             pbuf,
             w/2,## y offset
@@ -181,7 +191,7 @@ class CalBase(CustomizableCalObj):
         raise NotImplementedError
     def keyPress(self, arg, event):
         CustomizableCalObj.keyPress(self, arg, event)
-        kname = gdk.keyval_name(event.keyval).lower()
+        kname = Gdk.keyval_name(event.keyval).lower()
         if kname in ('space', 'home', 't'):
             self.goToday()
         elif kname=='menu':
