@@ -149,7 +149,10 @@ class CustomizableToolbar(Gtk.Toolbar, CustomizableCalObj):
         }
     def setupItemSignals(self, item):
         if item.method:
-            func = getattr(self.funcOwner, item.method)
+            if isinstance(item.method, str):
+                func = getattr(self.funcOwner, item.method)
+            else:
+                func = item.method
             if self.onPressContinue:
                 item.get_child().connect('button-press-event', lambda obj, ev: self.itemPress(func))
                 item.get_child().connect('button-release-event', self.itemRelease)
