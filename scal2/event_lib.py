@@ -93,7 +93,10 @@ class InfoWrapper(JsonSObjBase):
         self.save()
 
 info = InfoWrapper()
-info.load()
+try:
+    info.load()
+except IOError:
+    pass
 
 ###################################################
 
