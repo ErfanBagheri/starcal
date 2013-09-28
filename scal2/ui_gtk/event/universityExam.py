@@ -24,8 +24,8 @@ from scal2 import event_lib
 
 from scal2 import ui
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.utils import showError
 from scal2.ui_gtk.mywidgets import TextFrame
@@ -33,19 +33,19 @@ from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton, HourMinuteButto
 from scal2.ui_gtk.mywidgets.icon import IconSelectButton
 from scal2.ui_gtk.event import common
 
-class EventWidget(Gtk.VBox):
+class EventWidget(gtk.VBox):
     def __init__(self, event):## FIXME
-        Gtk.VBox.__init__(self)
+        gtk.VBox.__init__(self)
         self.event = event
         assert event.parent.name == 'universityTerm' ## FIXME
-        sizeGroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        sizeGroup = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
         #####
         if not event.parent.courses:
             showError(event.parent.noCourseError)
             raise RuntimeError('No courses added')
         self.courseIds = []
         self.courseNames = []
-        combo = Gtk.ComboBoxText()
+        combo = gtk.ComboBoxText()
         for course in event.parent.courses:
             self.courseIds.append(course[0])
             self.courseNames.append(course[1])
@@ -53,8 +53,8 @@ class EventWidget(Gtk.VBox):
         #combo.connect('changed', self.updateSummary)
         self.courseCombo = combo
         ##
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Course'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Course'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
@@ -62,8 +62,8 @@ class EventWidget(Gtk.VBox):
         ##
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Date'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Date'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
@@ -71,8 +71,8 @@ class EventWidget(Gtk.VBox):
         hbox.pack_start(self.dateInput, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Time'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Time'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
@@ -80,25 +80,25 @@ class EventWidget(Gtk.VBox):
         self.dayTimeStartCombo = HourMinuteButton()
         self.dayTimeEndCombo = HourMinuteButton()
         ##
-        #self.dayTimeStartCombo.get_child().set_direction(Gtk.TextDirection.LTR)
-        #self.dayTimeEndCombo.get_child().set_direction(Gtk.TextDirection.LTR)
+        #self.dayTimeStartCombo.get_child().set_direction(gtk.TextDirection.LTR)
+        #self.dayTimeEndCombo.get_child().set_direction(gtk.TextDirection.LTR)
         ##
         hbox.pack_start(self.dayTimeStartCombo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(' ' + _('to') + ' '), 0, 0, 0)
+        hbox.pack_start(gtk.Label(' ' + _('to') + ' '), 0, 0, 0)
         hbox.pack_start(self.dayTimeEndCombo, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         ###########
-        #hbox = Gtk.HBox()
-        #label = Gtk.Label(label=_('Summary'))
+        #hbox = gtk.HBox()
+        #label = gtk.Label(label=_('Summary'))
         #label.set_alignment(0, 0.5)
         #sizeGroup.add_widget(label)
         #hbox.pack_start(label, 0, 0, 0)
-        #self.summaryEntry = Gtk.Entry()
+        #self.summaryEntry = gtk.Entry()
         #hbox.pack_start(self.summaryEntry, 1, 1, 0)
         #self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Description'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Description'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
@@ -106,15 +106,15 @@ class EventWidget(Gtk.VBox):
         hbox.pack_start(self.descriptionInput, 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Icon'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Icon'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
         self.iconSelect = IconSelectButton()
         #print join(pixDir, self.icon)
         hbox.pack_start(self.iconSelect, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         ######
         self.notificationBox = common.NotificationBox(event)

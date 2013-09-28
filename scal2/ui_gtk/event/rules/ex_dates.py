@@ -25,8 +25,8 @@ from scal2.date_utils import dateEncode, dateDecode
 from scal2 import event_lib
 from scal2 import ui
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.utils import toolButtonFromStock, set_tooltip
 
@@ -35,59 +35,59 @@ encode = lambda d: textNumEncode(dateEncode(d))
 decode = lambda s: dateDecode(textNumDecode(s))
 validate = lambda s: encode(decode(s))
 
-class RuleWidget(Gtk.HBox):
+class RuleWidget(gtk.HBox):
     def __init__(self, rule):
         self.rule = rule
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         ###
-        self.countLabel = Gtk.Label(label='')
+        self.countLabel = gtk.Label(label='')
         self.pack_start(self.countLabel, 0, 0, 0)
         ###
-        self.editButton = Gtk.Button(_('Edit'))
-        self.editButton.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_EDIT, Gtk.IconSize.BUTTON))
+        self.editButton = gtk.Button(_('Edit'))
+        self.editButton.set_image(gtk.Image.new_from_stock(gtk.STOCK_EDIT, gtk.IconSize.BUTTON))
         self.editButton.connect('clicked', self.showDialog)
         self.pack_start(self.editButton, 0, 0, 0)
         ###
-        self.dialog = Gtk.Dialog(title=rule.desc)
+        self.dialog = gtk.Dialog(title=rule.desc)
         ##
-        self.treev = Gtk.TreeView()
+        self.treev = gtk.TreeView()
         self.treev.set_headers_visible(True)
-        self.trees = Gtk.ListStore(str)
+        self.trees = gtk.ListStore(str)
         self.treev.set_model(self.trees)
         ##
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         cell.set_property('editable', True)
         cell.connect('edited', self.dateCellEdited)
-        col = Gtk.TreeViewColumn(_('Date'), cell, text=0)
+        col = gtk.TreeViewColumn(_('Date'), cell, text=0)
         self.treev.append_column(col)
         ##
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
+        size = gtk.IconSize.SMALL_TOOLBAR
         ##
-        tb = toolButtonFromStock(Gtk.STOCK_ADD, size)
+        tb = toolButtonFromStock(gtk.STOCK_ADD, size)
         set_tooltip(tb, _('Add'))
         tb.connect('clicked', self.addClicked)
         toolbar.insert(tb, -1)
         #self.buttonAdd = tb
         ##
-        tb = toolButtonFromStock(Gtk.STOCK_DELETE, size)
+        tb = toolButtonFromStock(gtk.STOCK_DELETE, size)
         set_tooltip(tb, _('Delete'))
         tb.connect('clicked', self.deleteClicked)
         toolbar.insert(tb, -1)
         #self.buttonDel = tb
         ##
-        tb = toolButtonFromStock(Gtk.STOCK_GO_UP, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_UP, size)
         set_tooltip(tb, _('Move up'))
         tb.connect('clicked', self.moveUpClicked)
         toolbar.insert(tb, -1)
         ##
-        tb = toolButtonFromStock(Gtk.STOCK_GO_DOWN, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_DOWN, size)
         set_tooltip(tb, _('Move down'))
         tb.connect('clicked', self.moveDownClicked)
         toolbar.insert(tb, -1)
         ##
-        dialogHbox = Gtk.HBox()
+        dialogHbox = gtk.HBox()
         dialogHbox.pack_start(self.treev, 1, 1, 0)
         dialogHbox.pack_start(toolbar, 0, 0, 0)
         self.dialog.vbox.pack_start(dialogHbox, 1, 1, 0)
@@ -95,10 +95,10 @@ class RuleWidget(Gtk.HBox):
         self.dialog.resize(200, 300)
         self.dialog.connect('response', lambda w, e: self.dialog.hide())
         ##
-        okButton = self.dialog.add_button(Gtk.STOCK_OK, Gtk.ResponseType.CANCEL)
+        okButton = self.dialog.add_button(gtk.STOCK_OK, gtk.ResponseType.CANCEL)
         if ui.autoLocale:
             okButton.set_label(_('_OK'))
-            okButton.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_OK, Gtk.IconSize.BUTTON))
+            okButton.set_image(gtk.Image.new_from_stock(gtk.STOCK_OK, gtk.IconSize.BUTTON))
     def updateCountLabel(self):
         self.countLabel.set_label(' '*2 + _('%s items')%_(len(self.trees)) + ' '*2)
     def showDialog(self, w=None):
@@ -138,7 +138,7 @@ class RuleWidget(Gtk.HBox):
             return
         t = self.trees
         if index<=0 or index>=len(t):
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(index-1), t.get_iter(index))
         self.treev.set_cursor(index-1)
@@ -148,7 +148,7 @@ class RuleWidget(Gtk.HBox):
             return
         t = self.trees
         if index<0 or index>=len(t)-1:
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(index), t.get_iter(index+1))
         self.treev.set_cursor(index+1)

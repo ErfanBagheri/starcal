@@ -24,8 +24,8 @@ from scal2 import ui
 
 from gi.repository import cairo
 from gi.repository import GdkPixbuf
-from gi.repository import Gdk
-from gi.repository import Gtk
+from gi.repository import Gdk as gdk
+from gi.repository import Gtk as gtk
 
 
 from scal2.ui_gtk import listener
@@ -52,7 +52,7 @@ class CalBase(CustomizableCalObj):
     def initCal(self):
         self.initVars()
         listener.dateChange.add(self)
-        self.optionsWidget = Gtk.VBox()
+        self.optionsWidget = gtk.VBox()
         ####
         self.defineDragAndDrop()
         self.connect('2button-press', ui.dayOpenEvolution)
@@ -82,9 +82,9 @@ class CalBase(CustomizableCalObj):
         self.queue_draw()
     def defineDragAndDrop(self):
         self.drag_source_set(
-            Gdk.ModifierType.MODIFIER_MASK,
+            gdk.ModifierType.MODIFIER_MASK,
             [],
-            Gdk.DragAction.MOVE,## FIXME
+            gdk.DragAction.MOVE,## FIXME
         )
         self.drag_source_add_text_targets()
         ###
@@ -93,9 +93,9 @@ class CalBase(CustomizableCalObj):
         self.connect('drag-data-received', self.dragDataRec)
         ###
         self.drag_dest_set(
-            Gtk.DestDefaults.ALL,
+            gtk.DestDefaults.ALL,
             [],
-            Gdk.DragAction.COPY,## FIXME
+            gdk.DragAction.COPY,## FIXME
         )
         self.drag_dest_add_text_targets()
         self.drag_dest_add_uri_targets()
@@ -154,13 +154,13 @@ class CalBase(CustomizableCalObj):
         
         
         '''
-        pmap = Gdk.Pixmap(None, w, h, 24)
+        pmap = gdk.Pixmap(None, w, h, 24)
         #pmap.set_colormap(colormap)
         gc = pmap.new_gc()
         gc.set_foreground(rgbToGdkColor(*ui.bgColor))
         pmap.draw_rectangle(gc, True, 0, 0, w, h)
         #gc.set_background(ui.bgColor)
-        ##pmap.set_direction(Gtk.DIR_LTR)## FIXME
+        ##pmap.set_direction(gtk.DIR_LTR)## FIXME
         pmap.draw_layout(
             gc,
             0,
@@ -191,7 +191,7 @@ class CalBase(CustomizableCalObj):
         raise NotImplementedError
     def keyPress(self, arg, event):
         CustomizableCalObj.keyPress(self, arg, event)
-        kname = Gdk.keyval_name(event.keyval).lower()
+        kname = gdk.keyval_name(event.keyval).lower()
         if kname in ('space', 'home', 't'):
             self.goToday()
         elif kname=='menu':

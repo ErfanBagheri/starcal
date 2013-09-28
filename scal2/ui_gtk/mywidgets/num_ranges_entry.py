@@ -25,8 +25,8 @@ from scal2 import locale_man
 from scal2.locale_man import tr as _
 from scal2.locale_man import numDecode, textNumEncode, textNumDecode
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.decorators import *
 
@@ -38,16 +38,16 @@ def myRaise():
         print i
 
 @registerType
-class NumRangesEntry(Gtk.Entry):
+class NumRangesEntry(gtk.Entry):
     def __init__(self, _min, _max, page_inc=10):
         self._min = _min
         self._max = _max
         self.digs = locale_man.digits[locale_man.langSh]
         self.page_inc = page_inc
         ####
-        Gtk.Entry.__init__(self)
+        gtk.Entry.__init__(self)
         self.connect('key-press-event', self.keyPress)
-        self.set_direction(Gtk.TextDirection.LTR)
+        self.set_direction(gtk.TextDirection.LTR)
         self.set_alignment(0.5)
     def insertText(self, s, clearSeceltion=True):
         selection = self.get_selection_bounds()
@@ -108,7 +108,7 @@ class NumRangesEntry(Gtk.Entry):
         )
     def keyPress(self, obj, gevent):
         kval = gevent.keyval
-        kname = Gdk.keyval_name(gevent.keyval).lower()
+        kname = gdk.keyval_name(gevent.keyval).lower()
         #print kval, kname
         if kname in (
             'tab', 'escape', 'backspace', 'delete', 'insert',
@@ -150,14 +150,14 @@ class NumRangesEntry(Gtk.Entry):
         elif ord('0') <= kval <= ord('9'):
             self.insertText(self.digs[kval-ord('0')])
         else:
-            uniVal = Gdk.keyval_to_unicode(kval)
+            uniVal = gdk.keyval_to_unicode(kval)
             #print 'uniVal=%r'%uniVal
             if uniVal!=0:
                 ch = unichr(uniVal)
                 #print 'ch=%r'%ch
                 if ch in self.digs:
                     self.insertText(ch)
-                if gevent.get_state() & Gdk.ModifierType.CONTROL_MASK:## Shortcuts like Ctrl + [A, C, X, V]
+                if gevent.get_state() & gdk.ModifierType.CONTROL_MASK:## Shortcuts like Ctrl + [A, C, X, V]
                     return False
             else:
                 print kval, kname
@@ -174,7 +174,7 @@ if __name__=='__main__':
     from scal2 import core
     ###
     entry = NumRangesEntry(0, 9999)
-    win = Gtk.Dialog()
+    win = gtk.Dialog()
     win.vbox.add(entry)
     win.vbox.show_all()
     win.resize(100, 40)

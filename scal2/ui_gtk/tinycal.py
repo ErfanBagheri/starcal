@@ -34,8 +34,8 @@ from scal2.core import myRaise, getMonthName, getMonthLen,\
 from scal2 import ui
 
 from gi.repository import GObject
-from gi.repository import Gdk
-from gi.repository import Gtk
+from gi.repository import Gdk as gdk
+from gi.repository import Gtk as gtk
 
 
 from scal2.ui_gtk import preferences
@@ -117,9 +117,9 @@ class PlainStrObject(TextObject):
 
 
 
-class TinyCal(Gtk.Window):
+class TinyCal(gtk.Window):
     def __init__(self):
-        Gtk.Window.__init__(self)
+        gtk.Window.__init__(self)
         self.set_title(core.APP_DESC+' Tiny')
         self.set_decorated(False)
         self.set_property('skip-taskbar-hint', None)

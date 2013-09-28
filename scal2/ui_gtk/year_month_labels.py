@@ -32,8 +32,8 @@ from scal2 import ui
 from gi.repository import GObject
 from gi.repository.GObject import timeout_add
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk.utils import set_tooltip
@@ -44,10 +44,10 @@ from scal2.ui_gtk.customize import CustomizableCalObj
 
 
 
-class BaseLabel(Gtk.EventBox):
+class BaseLabel(gtk.EventBox):
     highlightColor = (176, 176, 176)
     def __init__(self):
-        Gtk.EventBox.__init__(self)
+        gtk.EventBox.__init__(self)
         ##########
         #self.menu.connect('map', lambda obj: self.drag_highlight())
         #self.menu.connect('unmap', lambda obj: self.drag_unhighlight())
@@ -97,10 +97,10 @@ class MonthLabel(BaseLabel, ud.IntegratedCalObj):
         s = _(getMonthName(self.mode, active+1))
         if ui.boldYmLabel:
             s = '<b>%s</b>'%s
-        self.label = Gtk.Label(label=s)
+        self.label = gtk.Label(label=s)
         self.label.set_use_markup(True)
         self.add(self.label)
-        menu = Gtk.Menu()
+        menu = gtk.Menu()
         menu.set_border_width(0)
         menuLabels = []
         for i in range(12):
@@ -110,11 +110,11 @@ class MonthLabel(BaseLabel, ud.IntegratedCalObj):
                 text = _(getMonthName(self.mode, i+1))
             if i==active:
                 text = self.getActiveStr(text)
-            label = Gtk.Label(label=text)
-            #label.set_justify(Gtk.Justification.LEFT)
+            label = gtk.Label(label=text)
+            #label.set_justify(gtk.Justification.LEFT)
             label.set_alignment(0, 0.5)
             label.set_use_markup(True)
-            item = Gtk.MenuItem()
+            item = gtk.MenuItem()
             item.set_right_justified(True) ##?????????
             item.add(label)
             item.connect('activate', self.itemActivate, i)
@@ -208,13 +208,13 @@ class IntLabel(BaseLabel):
             s = '<b>%s</b>'%_(active)
         else:
             s = _(active)
-        self.label = Gtk.Label(label=s)
+        self.label = gtk.Label(label=s)
         self.label.set_use_markup(True)
         self.add(self.label)
-        menu = Gtk.Menu()
+        menu = gtk.Menu()
         ##########
-        item = Gtk.MenuItem()
-        arrow = Gtk.Arrow(Gtk.ArrowType.UP, Gtk.ShadowType.IN)
+        item = gtk.MenuItem()
+        arrow = gtk.Arrow(gtk.ArrowType.UP, gtk.ShadowType.IN)
         item.add(arrow)
         arrow.set_property('height-request', 10)
         #item.set_border_width(0)
@@ -232,17 +232,17 @@ class IntLabel(BaseLabel):
         ##########
         menuLabels = []
         for i in range(height):
-            label = Gtk.Label()
+            label = gtk.Label()
             label.set_use_markup(True)
-            item = Gtk.MenuItem()
+            item = gtk.MenuItem()
             item.add(label)
             item.connect('activate', self.itemActivate, i)
             menu.append(item)
             menuLabels.append(label)
         menu.connect('scroll-event', self.menuScroll)
         ##########
-        item = Gtk.MenuItem()
-        arrow = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.IN)
+        item = gtk.MenuItem()
+        arrow = gtk.Arrow(gtk.ArrowType.DOWN, gtk.ShadowType.IN)
         arrow.set_property('height-request', 10)
         item.add(arrow)
         menu.append(item)
@@ -347,18 +347,18 @@ def newSmallNoFocusButton(stock, func, tooltip=''):
     arrow = ConButton()
     arrow.set_relief(2)
     arrow.set_can_focus(False)
-    arrow.set_image(Gtk.Image.new_from_stock(stock, Gtk.IconSize.SMALL_TOOLBAR))
+    arrow.set_image(gtk.Image.new_from_stock(stock, gtk.IconSize.SMALL_TOOLBAR))
     arrow.connect('con-clicked', func)
     if tooltip:
         set_tooltip(arrow, tooltip)
     return arrow
 
-class YearLabelButtonBox(Gtk.HBox):
+class YearLabelButtonBox(gtk.HBox):
     def __init__(self, mode, **kwargs):
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         ###
         self.pack_start(
-            newSmallNoFocusButton(Gtk.STOCK_REMOVE, self.prevClicked, _('Previous Year')),
+            newSmallNoFocusButton(gtk.STOCK_REMOVE, self.prevClicked, _('Previous Year')),
             0,
             0,
             0,
@@ -368,7 +368,7 @@ class YearLabelButtonBox(Gtk.HBox):
         self.pack_start(self.label, 0, 0, 0)
         ###
         self.pack_start(
-            newSmallNoFocusButton(Gtk.STOCK_ADD, self.nextClicked, _('Next Year')),
+            newSmallNoFocusButton(gtk.STOCK_ADD, self.nextClicked, _('Next Year')),
             0,
             0,
             0,
@@ -381,12 +381,12 @@ class YearLabelButtonBox(Gtk.HBox):
         self.label.onDateChange()
     changeMode = lambda self, mode: self.label.changeMode(mode)
 
-class MonthLabelButtonBox(Gtk.HBox):
+class MonthLabelButtonBox(gtk.HBox):
     def __init__(self, mode, **kwargs):
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         ###
         self.pack_start(
-            newSmallNoFocusButton(Gtk.STOCK_REMOVE, self.prevClicked, _('Previous Month')),
+            newSmallNoFocusButton(gtk.STOCK_REMOVE, self.prevClicked, _('Previous Month')),
             0,
             0,
             0,
@@ -396,7 +396,7 @@ class MonthLabelButtonBox(Gtk.HBox):
         self.pack_start(self.label, 0, 0, 0)
         ###
         self.pack_start(
-            newSmallNoFocusButton(Gtk.STOCK_ADD, self.nextClicked, _('Next Month')),
+            newSmallNoFocusButton(gtk.STOCK_ADD, self.nextClicked, _('Next Month')),
             0,
             0,
             0,
@@ -411,11 +411,11 @@ class MonthLabelButtonBox(Gtk.HBox):
 
 
 @registerSignals
-class YearMonthLabelBox(Gtk.HBox, CustomizableCalObj):
+class YearMonthLabelBox(gtk.HBox, CustomizableCalObj):
     _name = 'labelBox'
     desc = _('Year & Month Labels')
     def __init__(self):
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         self.initVars()
         #self.set_border_width(2)
     def onConfigChange(self, *a, **kw):
@@ -431,7 +431,7 @@ class YearMonthLabelBox(Gtk.HBox, CustomizableCalObj):
         self.pack_start(box, 0, 0, 0)
         self.appendItem(box.label)
         ##
-        vsep = Gtk.VSeparator()
+        vsep = gtk.VSeparator()
         self.pack_start(vsep, 1, 1, 0)
         ##
         box = MonthLabelButtonBox(mode)
@@ -440,13 +440,13 @@ class YearMonthLabelBox(Gtk.HBox, CustomizableCalObj):
         monthLabels.append(box.label)
         ####
         for i, mode in list(enumerate(calTypes.active))[1:]:
-            vsep = Gtk.VSeparator()
+            vsep = gtk.VSeparator()
             self.pack_start(vsep, 1, 1, 0)
             label = YearLabel(mode)
             self.pack_start(label, 0, 0, 0)
             self.appendItem(label)
             ###############
-            label = Gtk.Label(label='')
+            label = gtk.Label(label='')
             label.set_property('width-request', 5)
             self.pack_start(label, 0, 0, 0)
             ###############
@@ -476,12 +476,12 @@ class YearMonthLabelBox(Gtk.HBox, CustomizableCalObj):
 
 
 if __name__=='__main__':
-    win = Gtk.Dialog()
+    win = gtk.Dialog()
     box = YearMonthLabelBox()
     win.add_events(
-        Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.FOCUS_CHANGE_MASK | Gdk.EventMask.BUTTON_MOTION_MASK |
-        Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.SCROLL_MASK |
-        Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.VISIBILITY_NOTIFY_MASK | Gdk.EventMask.EXPOSURE_MASK
+        gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.FOCUS_CHANGE_MASK | gdk.EventMask.BUTTON_MOTION_MASK |
+        gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK | gdk.EventMask.SCROLL_MASK |
+        gdk.EventMask.KEY_PRESS_MASK | gdk.EventMask.VISIBILITY_NOTIFY_MASK | gdk.EventMask.EXPOSURE_MASK
     )
     win.vbox.pack_start(box, 1, 1, 0)
     win.vbox.show_all()

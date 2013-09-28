@@ -4,21 +4,21 @@ from scal2 import core
 from scal2.locale_man import tr as _
 
 from scal2 import event_lib
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 '''
-class MultiValueRule(Gtk.HBox):
+class MultiValueRule(gtk.HBox):
     def __init__(self, rule, ValueWidgetClass):
         self.rule = rule
         self.ValueWidgetClass = ValueWidgetClass
         ##
-        Gtk.HBox.__init__(self)
-        self._widgetsBox = Gtk.HBox()
+        gtk.HBox.__init__(self)
+        self._widgetsBox = gtk.HBox()
         self.pack_start(self._widgetsBox, 0, 0, 0)
         ##
-        self.removeButton = Gtk.Button()
-        self.removeButton.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_REMOVE, Gtk.IconSize.MENU))
+        self.removeButton = gtk.Button()
+        self.removeButton.set_image(gtk.Image.new_from_stock(gtk.STOCK_REMOVE, gtk.IconSize.MENU))
         self.removeButton.connect('clicked', self.removeLastWidget)
         ##
 

@@ -11,15 +11,15 @@ from scal2 import ui
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton
 from scal2.ui_gtk.event import common
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 class EventWidget(common.EventWidget):
     def __init__(self, event):
         common.EventWidget.__init__(self, event)
         ###
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Date')), 0, 0, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Date')), 0, 0, 0)
         self.dateInput = DateButton()
         hbox.pack_start(self.dateInput, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)

@@ -27,8 +27,8 @@ from scal2 import ui
 
 from gi.repository import GObject
 from gi.repository import GdkPixbuf
-from gi.repository import Gdk
-from gi.repository import Gtk
+from gi.repository import Gdk as gdk
+from gi.repository import Gtk as gtk
 
 from scal2.ui_gtk.utils import toolButtonFromStock, set_tooltip, dialog_add_button
 from scal2.ui_gtk import gtk_ud as ud
@@ -75,7 +75,7 @@ class CustomizableCalObj(ud.IntegratedCalObj):
         self.reorder_child(self.items[i], i-1)## for GtkBox (HBox and VBox)
         self.items.insert(i-1, self.items.pop(i))
     def keyPress(self, arg, event):
-        kname = Gdk.keyval_name(event.keyval).lower()
+        kname = gdk.keyval_name(event.keyval).lower()
         for item in self.items:
             if item.enable and kname in item.myKeys:
                 item.keyPress(arg, event)
@@ -92,7 +92,7 @@ class CustomizableCalBox(CustomizableCalObj):
             item.show()
 
 
-class CustomizeDialog(Gtk.Dialog):
+class CustomizeDialog(gtk.Dialog):
     def appendItemTree(self, item, parentIter):
         itemIter = self.model.append(parentIter)
         self.model.set(itemIter, 0, item.enable, 1, item.desc)
@@ -100,33 +100,33 @@ class CustomizeDialog(Gtk.Dialog):
             if isinstance(item, CustomizableCalObj):
                 self.appendItemTree(child, itemIter)
     def __init__(self, widget):
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Customize'))
         #self.set_has_separator(False)## not in gtk3
         self.connect('delete-event', self.close)
-        dialog_add_button(self, Gtk.STOCK_CLOSE, _('_Close'), 0, self.close)
+        dialog_add_button(self, gtk.STOCK_CLOSE, _('_Close'), 0, self.close)
         ###
         self._widget = widget
         self.activeOptionsWidget = None
         ###
-        self.model = Gtk.TreeStore(bool, str) ## (GdkPixbuf.Pixbuf, str)
-        treev = self.treev = Gtk.TreeView(self.model)
+        self.model = gtk.TreeStore(bool, str) ## (GdkPixbuf.Pixbuf, str)
+        treev = self.treev = gtk.TreeView(self.model)
         ##
         treev.set_enable_tree_lines(True)
         treev.set_headers_visible(False)
         treev.connect('row-activated', self.rowActivated)
         ##
-        col = Gtk.TreeViewColumn('Widget')
+        col = gtk.TreeViewColumn('Widget')
         ##
-        cell = Gtk.CellRendererToggle()
+        cell = gtk.CellRendererToggle()
         cell.connect('toggled', self.enableCellToggled)
         col.pack_start(cell, 0)
         col.add_attribute(cell, 'active', 0)
         ##
         treev.append_column(col)
-        col = Gtk.TreeViewColumn('Widget')
+        col = gtk.TreeViewColumn('Widget')
         ##
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         col.pack_start(cell, 0)
         col.add_attribute(cell, 'text', 1)
         ##
@@ -136,23 +136,23 @@ class CustomizeDialog(Gtk.Dialog):
             if isinstance(item, CustomizableCalObj):
                 self.appendItemTree(item, None)
         ###
-        hbox = Gtk.HBox()
-        vbox_l = Gtk.VBox()
+        hbox = gtk.HBox()
+        vbox_l = gtk.VBox()
         vbox_l.pack_start(treev, 1, 1, 0)
         hbox.pack_start(vbox_l, 1, 1, 0)
         ###
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
+        size = gtk.IconSize.SMALL_TOOLBAR
         toolbar.set_icon_size(size)
         ## argument2 to image_new_from_stock does not affect
         ###
-        tb = toolButtonFromStock(Gtk.STOCK_GO_UP, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_UP, size)
         set_tooltip(tb, _('Move up'))
         tb.connect('clicked', self.upClicked)
         toolbar.insert(tb, -1)
         ###
-        tb = toolButtonFromStock(Gtk.STOCK_GO_DOWN, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_DOWN, size)
         set_tooltip(tb, _('Move down'))
         tb.connect('clicked', self.downClicked)
         toolbar.insert(tb, -1)
@@ -200,7 +200,7 @@ class CustomizeDialog(Gtk.Dialog):
         i = index_list[-1]
         if len(index_list)==1:
             if i<=0 or i>=len(model):
-                Gdk.beep()
+                gdk.beep()
                 return
             ###
             self._widget.moveItemUp(i)
@@ -208,12 +208,12 @@ class CustomizeDialog(Gtk.Dialog):
             self.treev.set_cursor(i-1)
         else:
             if i<=0:
-                Gdk.beep()
+                gdk.beep()
                 return
             ###
             root = self.getItemByPath(index_list[:-1])
             if i>=len(root.items):
-                Gdk.beep()
+                gdk.beep()
                 return
             ###
             root.moveItemUp(i)
@@ -228,7 +228,7 @@ class CustomizeDialog(Gtk.Dialog):
         i = index_list[-1]
         if len(index_list)==1:
             if i<0 or i>=len(model)-1:
-                Gdk.beep()
+                gdk.beep()
                 return
             ###
             self._widget.moveItemUp(i+1)
@@ -236,12 +236,12 @@ class CustomizeDialog(Gtk.Dialog):
             self.treev.set_cursor(i+1)
         else:
             if i<0:
-                Gdk.beep()
+                gdk.beep()
                 return
             ###
             root = self.getItemByPath(index_list[:-1])
             if i>=len(root.items)-1:
-                Gdk.beep()
+                gdk.beep()
                 return
             ###
             root.moveItemUp(i+1)

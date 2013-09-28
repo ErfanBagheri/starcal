@@ -30,9 +30,9 @@ from scal2.ui_gtk.color_utils import *
 from gi.repository import cairo # as n_cairo
 
 from gi.repository.PangoCairo import show_layout
-from gi.repository import Gdk
+from gi.repository import Gdk as gdk
 from gi.repository import GdkPixbuf
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 if not ui.fontCustom:
     ui.fontCustom = ui.fontDefault
@@ -207,7 +207,7 @@ def newOutlineSquarePixbuf(color, size, innerSize=0, bgColor=None):
     fillColor(cr, color)
     ####
     #pbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, size, size)
-    #colormap = Gdk.colormap_get_system()
+    #colormap = gdk.colormap_get_system()
     #colormap = self.get_screen().get_system_colormap()
     #colormap = pmap.get_colormap()
     #pbuf.get_from_drawable(pmap, colormap, 0, 0, 0, 0, size, size)
@@ -367,7 +367,7 @@ class Button:
         return (x, y)
     def draw(self, cr, w, h):
         x, y = self.getAbsPos(w, h)
-        Gdk.cairo_set_source_pixbuf(cr, self.pixbuf, x, y)
+        gdk.cairo_set_source_pixbuf(cr, self.pixbuf, x, y)
         cr.rectangle(x, y, self.width, self.height)
         cr.fill()
     def contains(self, px, py, w, h):

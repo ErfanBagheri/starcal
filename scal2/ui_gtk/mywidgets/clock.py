@@ -21,17 +21,17 @@ from time import localtime, strftime
 from time import time as now
 
 from gi.repository.GObject import timeout_add
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 from gi.repository import GdkPixbuf
 
 from scal2.ui_gtk.font_utils import *
 
 time_rem = lambda: int(1000*(1.01-now()%1))
 
-class ClockLabel(Gtk.Label):
+class ClockLabel(gtk.Label):
     def __init__(self, bold=False, seconds=True, selectable=False):
-        Gtk.Label.__init__(self)
+        gtk.Label.__init__(self)
         self.set_use_markup(True)
         self.set_selectable(selectable)
         self.bold = bold
@@ -58,16 +58,16 @@ class ClockLabel(Gtk.Label):
     #    if event.buuton == 3:
 
 
-class FClockLabel(Gtk.Label):
+class FClockLabel(gtk.Label):
     def __init__(self, format='%T', local=True, selectable=False):
         '''format is a string that used in strftime(), it can contains markup that apears in GtkLabel
         for example format can be "<b>%T</b>"
         local is bool. if True, use Local time. and if False, use GMT time.
         selectable is bool that passes to GtkLabel'''
-        Gtk.Label.__init__(self)
+        gtk.Label.__init__(self)
         self.set_use_markup(True)
         self.set_selectable(selectable)
-        self.set_direction(Gtk.TextDirection.LTR)
+        self.set_direction(gtk.TextDirection.LTR)
         self.format = format
         self.local = local
         self.running = False
@@ -88,14 +88,14 @@ class FClockLabel(Gtk.Label):
 
 
 
-class FClockWidget(Gtk.DrawingArea): ## Time is in Local
+class FClockWidget(gtk.DrawingArea): ## Time is in Local
     def __init__(self, format='%T', selectable=False):
         '''format is a string that used in strftime(), it can contains markup that apears in GtkLabel
         for example format can be "<b>%T</b>"
         local is bool. if True, use Local time. and if False, use GMT time.
         selectable is bool that passes to GtkLabel'''
-        Gtk.DrawingArea.__init__(self)
-        self.set_direction(Gtk.TextDirection.LTR)
+        gtk.DrawingArea.__init__(self)
+        self.set_direction(gtk.TextDirection.LTR)
         self.format = format
         self.running = False
         #self.connect('button-press-event', self.button_press)
@@ -114,7 +114,7 @@ class FClockWidget(Gtk.DrawingArea): ## Time is in Local
             return
         self.get_window().clear()
         cr = self.get_window().cairo_create()
-        cr.set_source_color(Gdk.Color(0,0,0))
+        cr.set_source_color(gdk.Color(0,0,0))
         lay = self.create_pango_layout(text)
         show_layout(cr, lay)
         w, h = lay.get_pixel_size()
@@ -134,19 +134,19 @@ class FClockWidget(Gtk.DrawingArea): ## Time is in Local
         self.set_from_pixmap(pmap, mask)
 
     def do_realize(self):
-        self.set_flags(self.flags() | Gtk.REALIZED)
-        self.window = Gdk.Window(
+        self.set_flags(self.flags() | gtk.REALIZED)
+        self.window = gdk.Window(
                                                          self.get_parent_window(),
                                                          width=self.get_allocation().width,
                                                          height=self.get_allocation().height,
-                                                         window_type=Gdk.WINDOW_CHILD,
-                                                         wclass=Gdk.INPUT_OUTPUT,
-                                                         event_mask=self.get_events() | Gdk.EventMask.EXPOSURE_MASK
-                                                         | Gdk.EventMask.BUTTON1_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK
-                                                         | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.POINTER_MOTION_HINT_MASK)
+                                                         window_type=gdk.WINDOW_CHILD,
+                                                         wclass=gdk.INPUT_OUTPUT,
+                                                         event_mask=self.get_events() | gdk.EventMask.EXPOSURE_MASK
+                                                         | gdk.EventMask.BUTTON1_MOTION_MASK | gdk.EventMask.BUTTON_PRESS_MASK
+                                                         | gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.POINTER_MOTION_HINT_MASK)
         self.get_window().set_user_data(self)
         self.style.attach(self.window)
-        self.style.set_background(self.window, Gtk.StateType.NORMAL)
+        self.style.set_background(self.window, gtk.StateType.NORMAL)
         self.get_window().move_resize(*self.get_allocation())
         """
 

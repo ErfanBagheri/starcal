@@ -27,8 +27,8 @@ from scal2.locale_man import tr as _
 
 from scal2.ui_gtk.starcal2 import *
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 import gnomeapplet
 ## import gnomeapplet module AFTRE scal2.* modules, to prevent crash on first run (after boot up)
@@ -67,13 +67,13 @@ class StarCalApplet(MainWin):
         self.hide()
         return True
     def trayInit(self):
-        self.image = Gtk.Image()
-        self.tooltips = Gtk.Tooltips()
-        ## self.sicon = Gtk.EventBox()
-        self.sicon = Gtk.ToggleButton()
+        self.image = gtk.Image()
+        self.tooltips = gtk.Tooltips()
+        ## self.sicon = gtk.EventBox()
+        self.sicon = gtk.ToggleButton()
         #self.sicon.__getattribute__ = getattribute
         self.sicon.set_from_pixbuf = self.image.set_from_pixbuf
-        self.sicon.set_relief(Gtk.ReliefStyle.NONE)
+        self.sicon.set_relief(gtk.ReliefStyle.NONE)
         self.sicon.connect('toggled', self.trayClicked)
         self.sicon.connect('button_press_event', self.appletButtonPress)
         menuData = (
@@ -100,8 +100,8 @@ class StarCalApplet(MainWin):
         #popup = self.applet.get_popup_component()
         #print type(popup)
         ###################################
-        hbox = Gtk.HBox()
-        hbox.set_direction(Gtk.TextDirection.LTR)
+        hbox = gtk.HBox()
+        hbox.set_direction(gtk.TextDirection.LTR)
         hbox.pack_start(self.image, 0, 0, 0)
         if ui.showDigClockTr:
             #if self.is_composited
@@ -145,13 +145,13 @@ class StarCalApplet(MainWin):
         return MainWin.trayUpdate(self, gdate=gdate, checkTrayMode=False)
     def onChangeBg(self, applet, typ, color, pixmap):
         applet.set_style(None)
-        rc_style = Gtk.RcStyle()
+        rc_style = gtk.RcStyle()
         applet.modify_style(rc_style)
         if (typ == gnomeapplet.COLOR_BACKGROUND):
-            applet.modify_bg(Gtk.StateType.NORMAL, color)
+            applet.modify_bg(gtk.StateType.NORMAL, color)
         elif (typ == gnomeapplet.PIXMAP_BACKGROUND):
             style = applet.style
-            style.bg_pixmap[Gtk.StateType.NORMAL] = pixmap
+            style.bg_pixmap[gtk.StateType.NORMAL] = pixmap
             applet.set_style(style)
     def quit(self, widget=None, event=None):
         ui.saveLiveConf()
@@ -166,14 +166,14 @@ def starcalAppletFactory(applet, iid):
 
 
 if len(sys.argv)>1 and sys.argv[1] in ('-w', '--window'):
-    main_window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
+    main_window = gtk.Window(gtk.WindowType.TOPLEVEL)
     main_window.set_title(core.APP_DESC+' Gnome Applet')
-    main_window.connect('destroy', Gtk.main_quit)
+    main_window.connect('destroy', gtk.main_quit)
     app = gnomeapplet.Applet()
     starcalAppletFactory(app, None)
     app.reparent(main_window)
     main_window.show_all()
-    sys.exit(Gtk.main())
+    sys.exit(gtk.main())
 
 if __name__ == '__main__':
     gnomeapplet.bonobo_factory(

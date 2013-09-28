@@ -5,21 +5,21 @@ from scal2 import core
 from scal2.locale_man import tr as _
 
 from scal2 import event_lib
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.utils import set_tooltip
 
-class RuleWidget(Gtk.HBox):
+class RuleWidget(gtk.HBox):
     def __init__(self, rule):
         self.rule = rule
         ###
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         ###
         self.buttons = []
         mode = self.rule.getMode()
         for i in range(12):
-            b = Gtk.ToggleButton(_(i+1))
+            b = gtk.ToggleButton(_(i+1))
             set_tooltip(b, core.getMonthName(mode, i+1))
             self.pack_start(b, 0, 0, 0)
             self.buttons.append(b)

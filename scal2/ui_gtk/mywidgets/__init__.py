@@ -22,8 +22,8 @@ from time import time as now
 from time import localtime
 
 from gi.repository import GObject
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 from gi.repository import GdkPixbuf
 
 from scal2.ui_gtk.font_utils import *
@@ -44,22 +44,22 @@ def show_event(widget, event):
 time_rem = lambda: int(1000*(1.01-now()%1))
 
 
-class MyFontButton(Gtk.FontButton):
+class MyFontButton(gtk.FontButton):
     def __init__(self, parent):
-        Gtk.FontButton.__init__(self)
+        gtk.FontButton.__init__(self)
         ##########
         self.drag_source_set(
-            Gdk.ModifierType.MODIFIER_MASK,
+            gdk.ModifierType.MODIFIER_MASK,
             (),
-            Gdk.DragAction.COPY,
+            gdk.DragAction.COPY,
         )
         self.drag_source_add_text_targets()
         self.connect('drag-data-get', self.dragDataGet)
         self.connect('drag-begin', self.dragBegin, parent)
         self.drag_dest_set(
-            Gtk.DestDefaults.ALL,
+            gtk.DestDefaults.ALL,
             (),
-            Gdk.DragAction.COPY,
+            gdk.DragAction.COPY,
         )
         self.drag_dest_add_text_targets()
         self.connect('drag-data-received', self.dragDataRec)
@@ -75,21 +75,21 @@ class MyFontButton(Gtk.FontButton):
         if text:
             pfont = Pango.FontDescription(text)
             if pfont.get_family() and pfont.get_size() > 0:
-                Gtk.FontButton.set_font_name(fontb, text)
+                gtk.FontButton.set_font_name(fontb, text)
         return True
     def dragBegin(self, fontb, context, parent):
         #print 'fontBottonDragBegin'## caled before dragCalDataGet
-        textLay = newTextLayout(self, Gtk.FontButton.get_font_name(self))
+        textLay = newTextLayout(self, gtk.FontButton.get_font_name(self))
         w, h = textLay.get_pixel_size()
         '''
-        pmap = Gdk.Pixmap(None, w, h, 24)
+        pmap = gdk.Pixmap(None, w, h, 24)
         pmap.draw_layout(
             pmap.new_gc(),
             0,
             0,
             textLay,
-            Gdk.Color(0, 0, 0, 0),# foreground
-            Gdk.Color(-1, -1, -1),# background
+            gdk.Color(0, 0, 0, 0),# foreground
+            gdk.Color(-1, -1, -1),# background
         )
         pbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, w, h)
         pbuf.get_from_drawable(
@@ -106,18 +106,18 @@ class MyFontButton(Gtk.FontButton):
         '''
         context.set_icon_pixbuf(pbuf, -16, -10)
         return True
-    get_font_name = lambda self: gfontDecode(Gtk.FontButton.get_font_name(self))
+    get_font_name = lambda self: gfontDecode(gtk.FontButton.get_font_name(self))
     def set_font_name(self, font):
         if isinstance(font, basestring):## For compatibility
-            Gtk.FontButton.set_font_name(self, font)
+            gtk.FontButton.set_font_name(self, font)
         else:
-            Gtk.FontButton.set_font_name(self, gfontEncode(font))
+            gtk.FontButton.set_font_name(self, gfontEncode(font))
 
 
 
-class MyColorButton(Gtk.ColorButton): ## for tooltip text
+class MyColorButton(gtk.ColorButton): ## for tooltip text
     def __init__(self):
-        Gtk.ColorButton.__init__(self)
+        gtk.ColorButton.__init__(self)
         self.connect('color-set', self.update_tooltip)
     def update_tooltip(self, colorb=None):
         try:
@@ -127,7 +127,7 @@ class MyColorButton(Gtk.ColorButton): ## for tooltip text
                 text = '%s\n%s\n%s\n%s'%(r, g, b, a)
             else:
                 text = '%s\n%s\n%s'%(r, g, b)
-            ##self.get_tooltip_window().set_direction(Gtk.TextDirection.LTR)
+            ##self.get_tooltip_window().set_direction(gtk.TextDirection.LTR)
             ##print self.get_tooltip_window()
             self.set_tooltip_text(text) ##???????????????? Right to left
             #self.tt_label.set_label(text)##???????????? Dosent work
@@ -138,33 +138,33 @@ class MyColorButton(Gtk.ColorButton): ## for tooltip text
     def set_color(self, color):## color is a tuple of (r, g, b)
         if len(color)==3:
             r, g, b = color
-            Gtk.ColorButton.set_color(self, rgbToGdkColor(*color))
+            gtk.ColorButton.set_color(self, rgbToGdkColor(*color))
             self.set_alpha(255)
         elif len(color)==4:
-            Gtk.ColorButton.set_color(self, rgbToGdkColor(*color[:3]))
-            Gtk.ColorButton.set_alpha(self, color[3]*257)
+            gtk.ColorButton.set_color(self, rgbToGdkColor(*color[:3]))
+            gtk.ColorButton.set_alpha(self, color[3]*257)
         else:
             raise ValueError
         self.update_tooltip()
     def set_alpha(self, alpha):## alpha in range(256)
         if alpha==None:
             alpha = 255
-        Gtk.ColorButton.set_alpha(self, alpha*257)
+        gtk.ColorButton.set_alpha(self, alpha*257)
         self.update_tooltip()
     def get_color(self):
-        color = Gtk.ColorButton.get_color(self)
+        color = gtk.ColorButton.get_color(self)
         return (int(color.red/257), int(color.green/257), int(color.blue/257))
     def get_alpha(self):
-        return int(Gtk.ColorButton.get_alpha(self)/257)
+        return int(gtk.ColorButton.get_alpha(self)/257)
 
 
-class TextFrame(Gtk.Frame):
+class TextFrame(gtk.Frame):
     def __init__(self):
-        Gtk.Frame.__init__(self)
+        gtk.Frame.__init__(self)
         self.set_border_width(4)
         ####
-        self.textview = Gtk.TextView()
-        self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
+        self.textview = gtk.TextView()
+        self.textview.set_wrap_mode(gtk.WrapMode.WORD)
         self.add(self.textview)
         ####
         self.buff = self.textview.get_buffer()
@@ -173,13 +173,13 @@ class TextFrame(Gtk.Frame):
 
 
 if __name__=='__main__':
-    d = Gtk.Dialog()
+    d = gtk.Dialog()
     clock = FClockLabel()
     clock.start()
     d.vbox.pack_start(clock, 1, 1, 0)
-    d.connect('delete-event', lambda widget, event: Gtk.main_quit())
+    d.connect('delete-event', lambda widget, event: gtk.main_quit())
     d.show_all()
-    Gtk.main()
+    gtk.main()
 
 
 

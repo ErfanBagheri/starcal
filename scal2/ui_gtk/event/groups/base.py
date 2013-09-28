@@ -20,7 +20,7 @@
 from scal2 import core
 from scal2.locale_man import tr as _
 
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 from scal2.ui_gtk.mywidgets import MyColorButton, TextFrame
 from scal2.ui_gtk.mywidgets.multi_spin_button import IntSpinButton
@@ -30,24 +30,24 @@ from scal2.ui_gtk.utils import set_tooltip, DateTypeCombo
 from scal2.ui_gtk.event import common
 
 
-class BaseGroupWidget(Gtk.VBox):
+class BaseGroupWidget(gtk.VBox):
     def __init__(self, group):
-        Gtk.VBox.__init__(self)
+        gtk.VBox.__init__(self)
         self.group = group
         ########
-        self.sizeGroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        self.sizeGroup = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Title'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Title'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
-        self.titleEntry = Gtk.Entry()
+        self.titleEntry = gtk.Entry()
         hbox.pack_start(self.titleEntry, 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Color'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Color'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
@@ -56,8 +56,8 @@ class BaseGroupWidget(Gtk.VBox):
         hbox.pack_start(self.colorButton, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Default Icon'))## FIXME
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Default Icon'))## FIXME
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
@@ -65,48 +65,48 @@ class BaseGroupWidget(Gtk.VBox):
         hbox.pack_start(self.iconSelect, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Default Calendar Type'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Default Calendar Type'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
         combo = DateTypeCombo()
         hbox.pack_start(combo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.modeCombo = combo
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Show in Calendar'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Show in Calendar'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
-        self.showInDCalCheck = Gtk.CheckButton(_('Day'))
-        self.showInWCalCheck = Gtk.CheckButton(_('Week'))
-        self.showInMCalCheck = Gtk.CheckButton(_('Month'))
+        self.showInDCalCheck = gtk.CheckButton(_('Day'))
+        self.showInWCalCheck = gtk.CheckButton(_('Week'))
+        self.showInMCalCheck = gtk.CheckButton(_('Month'))
         hbox.pack_start(self.showInDCalCheck, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         hbox.pack_start(self.showInWCalCheck, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         hbox.pack_start(self.showInMCalCheck, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Show in'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Show in'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
-        self.showInTimeLineCheck = Gtk.CheckButton(_('Time Line'))
-        self.showInTrayCheck = Gtk.CheckButton(_('Tray'))
+        self.showInTimeLineCheck = gtk.CheckButton(_('Time Line'))
+        self.showInTrayCheck = gtk.CheckButton(_('Tray'))
         hbox.pack_start(self.showInTimeLineCheck, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         hbox.pack_start(self.showInTrayCheck, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Event Cache Size'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Event Cache Size'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
@@ -114,8 +114,8 @@ class BaseGroupWidget(Gtk.VBox):
         hbox.pack_start(self.cacheSizeSpin, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         #####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Event Text Seperator'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Event Text Seperator'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
@@ -124,12 +124,12 @@ class BaseGroupWidget(Gtk.VBox):
         self.pack_start(hbox, 0, 0, 0)
         set_tooltip(hbox, _('Using to seperate Summary and Description when displaying event'))
         #####
-        #hbox = Gtk.HBox()
-        #label = Gtk.Label(label=_('Show Full Event Description'))
+        #hbox = gtk.HBox()
+        #label = gtk.Label(label=_('Show Full Event Description'))
         #label.set_alignment(0, 0.5)
         #hbox.pack_start(label, 0, 0, 0)
         #self.sizeGroup.add_widget(label)
-        #self.showFullEventDescCheck = Gtk.CheckButton('')
+        #self.showFullEventDescCheck = gtk.CheckButton('')
         #hbox.pack_start(self.showFullEventDescCheck, 1, 1, 0)
         #self.pack_start(hbox, 0, 0, 0)
         ###

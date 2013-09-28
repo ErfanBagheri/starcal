@@ -35,8 +35,8 @@ from scal2 import ui
 from scal2.monthcal import getMonthStatus, getCurrentMonthStatus
 
 from gi.repository import GdkPixbuf
-from gi.repository import Gdk
-from gi.repository import Gtk
+from gi.repository import Gdk as gdk
+from gi.repository import Gtk as gtk
 
 from scal2.ui_gtk.drawing import *
 
@@ -53,20 +53,20 @@ from scal2.ui_gtk.customize import CustomizableCalObj
 #from scal2.ui_gtk import wallpaper
 
 
-class McalTypeParamBox(Gtk.HBox):
+class McalTypeParamBox(gtk.HBox):
     def __init__(self, mcal, index, mode, params, sgroupLabel, sgroupFont):
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         self.mcal = mcal
         self.index = index
         self.mode = mode
         ######
-        label = Gtk.Label(label=_(calTypes[mode].desc)+'  ')
+        label = gtk.Label(label=_(calTypes[mode].desc)+'  ')
         label.set_alignment(0, 0.5)
         self.pack_start(label, 0, 0, 0)
         sgroupLabel.add_widget(label)
         ###
-        self.pack_start(Gtk.Label(''), 1, 1, 0)
-        self.pack_start(Gtk.Label(_('position')), 0, 0, 0)
+        self.pack_start(gtk.Label(''), 1, 1, 0)
+        self.pack_start(gtk.Label(_('position')), 0, 0, 0)
         ###
         spin = FloatSpinButton(-99, 99, 1)
         self.spinX = spin
@@ -76,7 +76,7 @@ class McalTypeParamBox(Gtk.HBox):
         self.spinY = spin
         self.pack_start(spin, 0, 0, 0)
         ####
-        self.pack_start(Gtk.Label(''), 1, 1, 0)
+        self.pack_start(gtk.Label(''), 1, 1, 0)
         ###
         fontb = MyFontButton(mcal)
         self.fontb = fontb
@@ -109,7 +109,7 @@ class McalTypeParamBox(Gtk.HBox):
         self.mcal.queue_draw()
 
 @registerSignals
-class MonthCal(Gtk.DrawingArea, CalBase):
+class MonthCal(gtk.DrawingArea, CalBase):
     _name = 'monthCal'
     desc = _('Month Calendar')
     cx = [0, 0, 0, 0, 0, 0, 0]
@@ -156,8 +156,8 @@ class MonthCal(Gtk.DrawingArea, CalBase):
                 'font': ui.getFontSmall(),
                 'color': ui.textColor,
             })
-        sgroupLabel = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
-        sgroupFont = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        sgroupLabel = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
+        sgroupFont = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
         for i, mode in enumerate(calTypes.active):
             #try:
             params = ui.mcalTypeParams[i]
@@ -168,36 +168,36 @@ class MonthCal(Gtk.DrawingArea, CalBase):
         ###
         vbox.show_all()
     def __init__(self):
-        Gtk.DrawingArea.__init__(self)
+        gtk.DrawingArea.__init__(self)
         self.initCal()
         self.set_property('height-request', ui.mcalHeight)
         ######
-        hbox = Gtk.HBox()
+        hbox = gtk.HBox()
         spin = IntSpinButton(1, 9999)
         spin.set_value(ui.mcalHeight)
         spin.connect('changed', self.heightSpinChanged)
-        hbox.pack_start(Gtk.Label(_('Height')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Height')), 0, 0, 0)
         hbox.pack_start(spin, 0, 0, 0)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ####
-        hbox = Gtk.HBox(spacing=3)
+        hbox = gtk.HBox(spacing=3)
         ##
-        hbox.pack_start(Gtk.Label(_('Left Margin')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Left Margin')), 0, 0, 0)
         spin = IntSpinButton(0, 99)
         spin.set_value(ui.mcalLeftMargin)
         spin.connect('changed', self.leftMarginSpinChanged)
         hbox.pack_start(spin, 0, 0, 0)
         ##
-        hbox.pack_start(Gtk.Label(_('Top')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Top')), 0, 0, 0)
         spin = IntSpinButton(0, 99)
         spin.set_value(ui.mcalTopMargin)
         spin.connect('changed', self.topMarginSpinChanged)
         hbox.pack_start(spin, 0, 0, 0)
         ##
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ########
-        hbox = Gtk.HBox(spacing=3)
+        hbox = gtk.HBox(spacing=3)
         ####
         item = CheckPrefItem(ui, 'mcalGrid', _('Grid'))
         item.updateWidget()
@@ -216,9 +216,9 @@ class MonthCal(Gtk.DrawingArea, CalBase):
         ####
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ########
-        frame = Gtk.Frame()
+        frame = gtk.Frame()
         frame.set_label(_('Calendars'))
-        self.typeParamsVbox = Gtk.VBox()
+        self.typeParamsVbox = gtk.VBox()
         frame.add(self.typeParamsVbox)
         frame.show_all()
         self.optionsWidget.pack_start(frame, 0, 0, 0)
@@ -235,7 +235,7 @@ class MonthCal(Gtk.DrawingArea, CalBase):
         self.updateTextWidth()
         ######################
     def drawAll(self, widget=None, cr=None, cursor=True):
-        #event = Gtk.get_current_event()
+        #event = gtk.get_current_event()
         #?????? Must enhance (only draw few cells, not all cells)
         self.calcCoord()
         w = self.get_allocation().width
@@ -261,7 +261,7 @@ class MonthCal(Gtk.DrawingArea, CalBase):
                     ui.bgUseDesk = False ##??????????????????
                     #self.prefDialog.checkDeskBg.set_active(False)##??????????????????
                 else:
-                    Gdk.cairo_set_source_pixbuf(cr, bg, 0, 0, 0)
+                    gdk.cairo_set_source_pixbuf(cr, bg, 0, 0, 0)
                     cr.paint()
             #else:
             #    print coord
@@ -381,7 +381,7 @@ class MonthCal(Gtk.DrawingArea, CalBase):
                             x1 = (self.cx[xPos] + self.dx/2.0)/scaleFact - fromRight - pix_w # right side
                             y1 = (self.cy[yPos] + self.dy/2.0)/scaleFact - pix_h # buttom side
                             cr.scale(scaleFact, scaleFact)
-                            Gdk.cairo_set_source_pixbuf(cr, pix, x1, y1)
+                            gdk.cairo_set_source_pixbuf(cr, pix, x1, y1)
                             cr.rectangle(x1, y1, pix_w, pix_h)
                             cr.fill()
                             cr.scale(1.0/scaleFact, 1.0/scaleFact)
@@ -478,7 +478,7 @@ class MonthCal(Gtk.DrawingArea, CalBase):
         elif yPos >= 0 and xPos >= 0:
             cell = status[yPos][xPos]
             self.changeDate(*cell.dates[core.primaryMode])
-            if event.type==getattr(Gdk.EventType, '2BUTTON_PRESS'):
+            if event.type==getattr(gdk.EventType, '2BUTTON_PRESS'):
                 self.emit('2button-press')
             if b == 3 and cell.month == ui.cell.month:## right click on a normal cell
                 #self.emit('popup-menu-cell', event.time, *self.getCellPos())
@@ -509,7 +509,7 @@ class MonthCal(Gtk.DrawingArea, CalBase):
     def keyPress(self, arg, event):
         if CalBase.keyPress(self, arg, event):
             return True
-        kname = Gdk.keyval_name(event.keyval).lower()
+        kname = gdk.keyval_name(event.keyval).lower()
         #if kname.startswith('alt'):
         #    return True
         ## How to disable Alt+Space of metacity ?????????????????????
@@ -538,7 +538,7 @@ class MonthCal(Gtk.DrawingArea, CalBase):
         elif kname in ('page_down', 'j', 'n'):
             self.monthPlus(1)
         elif kname in ('f10', 'm'):
-            if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
+            if event.get_state() & gdk.ModifierType.SHIFT_MASK:
                 # Simulate right click (key beside Right-Ctrl)
                 self.emit('popup-menu-cell', event.time, *self.getCellPos())
             else:
@@ -581,12 +581,12 @@ class MonthCal(Gtk.DrawingArea, CalBase):
 
 
 if __name__=='__main__':
-    win = Gtk.Dialog()
+    win = gtk.Dialog()
     cal = MonthCal()
     win.add_events(
-        Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.FOCUS_CHANGE_MASK | Gdk.EventMask.BUTTON_MOTION_MASK |
-        Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.SCROLL_MASK |
-        Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.VISIBILITY_NOTIFY_MASK | Gdk.EventMask.EXPOSURE_MASK
+        gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.FOCUS_CHANGE_MASK | gdk.EventMask.BUTTON_MOTION_MASK |
+        gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK | gdk.EventMask.SCROLL_MASK |
+        gdk.EventMask.KEY_PRESS_MASK | gdk.EventMask.VISIBILITY_NOTIFY_MASK | gdk.EventMask.EXPOSURE_MASK
     )
     win.vbox.pack_start(cal, 1, 1, 0)
     win.vbox.show_all()

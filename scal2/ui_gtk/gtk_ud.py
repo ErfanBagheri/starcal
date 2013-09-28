@@ -31,8 +31,8 @@ from scal2 import ui
 from scal2.format_time import compileTmFormat
 
 from gi.overrides.GObject import Object
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk.font_utils import gfontDecode, pfontEncode
@@ -100,11 +100,11 @@ windowList = IntegatedWindowList()
 ###########
 
 if rtl:
-    Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL)
+    gtk.Widget.set_default_direction(gtk.TextDirection.RTL)
 
-Gtk.Window.set_default_icon_from_file(ui.logo)
+gtk.Window.set_default_icon_from_file(ui.logo)
 
-settings = Gtk.Settings.get_default()
+settings = gtk.Settings.get_default()
 
 ## ui.timeout_initial = settings.get_property('gtk-timeout-initial') ## == 200 FIXME
 ## ui.timeout_repeat = settings.get_property('gtk-timeout-repeat') ## == 20 too small!! FIXME
@@ -114,9 +114,9 @@ ui.initFonts(gfontDecode(settings.get_property('gtk-font-name')))
 
 ###########
 textDirDict = {
-    'ltr': Gtk.TextDirection.LTR,
-    'rtl': Gtk.TextDirection.RTL,
-    'auto': Gtk.TextDirection.NONE,
+    'ltr': gtk.TextDirection.LTR,
+    'rtl': gtk.TextDirection.RTL,
+    'auto': gtk.TextDirection.NONE,
 }
 
 ##############################
@@ -161,14 +161,14 @@ wcalToolbarData = {
 
 ############################################################
 
-sysConfPath = join(sysConfDir, 'ui-Gtk.conf')
+sysConfPath = join(sysConfDir, 'ui-gtk.conf')
 if os.path.isfile(sysConfPath):
     try:
         exec(open(sysConfPath).read())
     except:
         myRaise(__file__)
 
-confPath = join(confDir, 'ui-Gtk.conf')
+confPath = join(confDir, 'ui-gtk.conf')
 if os.path.isfile(confPath):
     try:
         exec(open(confPath).read())
@@ -189,10 +189,10 @@ for cmd in ('gksudo', 'kdesudo', 'gksu', 'gnomesu', 'kdesu'):
 
 ############################################################
 
-rootWindow = Gdk.get_default_root_window() ## Good Place?????
+rootWindow = gdk.get_default_root_window() ## Good Place?????
 ##import atexit
-##atexit.register(rootWindow.set_cursor, Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)) ## ?????????????????????
-#rootWindow.set_cursor(cursor=Gdk.Cursor.new(Gdk.CursorType.WATCH)) ## ???????????????????
+##atexit.register(rootWindow.set_cursor, gdk.Cursor.new(gdk.CursorType.LEFT_PTR)) ## ?????????????????????
+#rootWindow.set_cursor(cursor=gdk.Cursor.new(gdk.CursorType.WATCH)) ## ???????????????????
 screenW = rootWindow.get_width()
 screenH = rootWindow.get_height()
 

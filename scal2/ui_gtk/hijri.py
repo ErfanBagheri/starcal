@@ -33,8 +33,8 @@ from scal2.locale_man import tr as _
 
 from scal2 import ui
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton
 from scal2.ui_gtk.utils import dialog_add_button, toolButtonFromStock, set_tooltip
@@ -47,17 +47,17 @@ def getCurrentYm():
     y, m, d = ui.todayCell.dates[hijriMode]
     return y*12 + m-1
 
-class EditDbDialog(Gtk.Dialog):
+class EditDbDialog(gtk.Dialog):
     def __init__(self):## parent FIXME
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Tune Hijri Monthes'))
         self.connect('delete-event', self.onDeleteEvent)
         ############
         self.altMode = 0
         self.altModeDesc = 'Gregorian'
         ############
-        hbox = Gtk.HBox()
-        self.topLabel = Gtk.Label()
+        hbox = gtk.HBox()
+        self.topLabel = gtk.Label()
         hbox.pack_start(self.topLabel, 0, 0, 0)
         self.startDateInput = DateButton()
         self.startDateInput.set_editable(False)## FIXME
@@ -65,27 +65,27 @@ class EditDbDialog(Gtk.Dialog):
         hbox.pack_start(self.startDateInput, 0, 0, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ############################
-        treev = Gtk.TreeView()
-        trees = Gtk.ListStore(int, str, str, int, str)## ym, yearShown, monthShown, monthLenCombo, endDateShown
+        treev = gtk.TreeView()
+        trees = gtk.ListStore(int, str, str, int, str)## ym, yearShown, monthShown, monthLenCombo, endDateShown
         treev.set_model(trees)
         #treev.connect('cursor-changed', self.plugTreevCursorChanged)
         #treev.connect('row-activated', self.plugTreevRActivate)
         #treev.connect('button-press-event', self.plugTreevButtonPress)
         ###
-        swin = Gtk.ScrolledWindow()
+        swin = gtk.ScrolledWindow()
         swin.add(treev)
-        swin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
         ######
-        cell = Gtk.CellRendererText()
-        col = Gtk.TreeViewColumn(_('Year'), cell, text=1)
+        cell = gtk.CellRendererText()
+        col = gtk.TreeViewColumn(_('Year'), cell, text=1)
         treev.append_column(col)
         ######
-        cell = Gtk.CellRendererText()
-        col = Gtk.TreeViewColumn(_('Month'), cell, text=2)
+        cell = gtk.CellRendererText()
+        col = gtk.TreeViewColumn(_('Month'), cell, text=2)
         treev.append_column(col)
         ######
-        cell = Gtk.CellRendererCombo()
-        mLenModel = Gtk.ListStore(int)
+        cell = gtk.CellRendererCombo()
+        mLenModel = gtk.ListStore(int)
         mLenModel.append([29])
         mLenModel.append([30])
         cell.set_property('model', mLenModel)
@@ -93,23 +93,23 @@ class EditDbDialog(Gtk.Dialog):
         cell.set_property('editable', True)
         cell.set_property('text-column', 0)
         cell.connect('edited', self.monthLenCellEdited)
-        col = Gtk.TreeViewColumn(_('Month Length'), cell, text=3)
+        col = gtk.TreeViewColumn(_('Month Length'), cell, text=3)
         treev.append_column(col)
         ######
-        cell = Gtk.CellRendererText()
-        col = Gtk.TreeViewColumn(_('End Date'), cell, text=4)
+        cell = gtk.CellRendererText()
+        col = gtk.TreeViewColumn(_('End Date'), cell, text=4)
         treev.append_column(col)
         ######
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
+        size = gtk.IconSize.SMALL_TOOLBAR
         ###
-        tb = toolButtonFromStock(Gtk.STOCK_ADD, size)
+        tb = toolButtonFromStock(gtk.STOCK_ADD, size)
         set_tooltip(tb, _('Add'))
         tb.connect('clicked', self.addClicked)
         toolbar.insert(tb, -1)
         ###
-        tb = toolButtonFromStock(Gtk.STOCK_DELETE, size)
+        tb = toolButtonFromStock(gtk.STOCK_DELETE, size)
         set_tooltip(tb, _('Delete'))
         tb.connect('clicked', self.delClicked)
         toolbar.insert(tb, -1)
@@ -117,17 +117,17 @@ class EditDbDialog(Gtk.Dialog):
         self.treev = treev
         self.trees = trees
         #####
-        mainHbox = Gtk.HBox()
+        mainHbox = gtk.HBox()
         mainHbox.pack_start(swin, 1, 1, 0)
         mainHbox.pack_start(toolbar, 0, 0, 0)
         self.vbox.pack_start(mainHbox, 1, 1, 0)
         ######
-        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
+        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.ResponseType.OK)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.ResponseType.CANCEL)
         ##
-        resetB = self.add_button(Gtk.STOCK_UNDO, Gtk.ResponseType.NONE)
+        resetB = self.add_button(gtk.STOCK_UNDO, gtk.ResponseType.NONE)
         resetB.set_label(_('_Reset to Defaults'))
-        resetB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_UNDO, Gtk.IconSize.BUTTON))
+        resetB.set_image(gtk.Image.new_from_stock(gtk.STOCK_UNDO, gtk.IconSize.BUTTON))
         resetB.connect('clicked', self.resetToDefaults)
         ##
         self.connect('response', self.onResponse)
@@ -242,12 +242,12 @@ class EditDbDialog(Gtk.Dialog):
         monthDb.load()
         self.updateWidget()
         self.treev.grab_focus()
-        Gtk.Dialog.run(self)
+        gtk.Dialog.run(self)
     def onResponse(self, dialog, response_id):
-        if response_id==Gtk.ResponseType.OK:
+        if response_id==gtk.ResponseType.OK:
             self.updateVars()
             self.destroy()
-        elif response_id==Gtk.ResponseType.CANCEL:
+        elif response_id==gtk.ResponseType.CANCEL:
             self.destroy()
         return True
     def onDeleteEvent(self, dialog, event):

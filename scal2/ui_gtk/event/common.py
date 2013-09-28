@@ -38,9 +38,9 @@ from scal2.ui_gtk.color_utils import gdkColorToRgb
 from scal2.ui_gtk.drawing import newOutlineSquarePixbuf
 
 from gi.repository import GObject
-from gi.repository import Gdk
+from gi.repository import Gdk as gdk
 from gi.repository import GdkPixbuf
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 from scal2.ui_gtk.mywidgets import TextFrame
 from scal2.ui_gtk.mywidgets.icon import IconSelectButton
@@ -65,18 +65,18 @@ getGroupRow = lambda group, rowBgColor: (
 
 
 
-class EventWidget(Gtk.VBox):
+class EventWidget(gtk.VBox):
     def __init__(self, event):
-        Gtk.VBox.__init__(self)
+        gtk.VBox.__init__(self)
         self.event = event
         ###########
-        hbox = Gtk.HBox()
+        hbox = gtk.HBox()
         ###
-        hbox.pack_start(Gtk.Label(_('Calendar Type')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Calendar Type')), 0, 0, 0)
         combo = DateTypeCombo()
         combo.set_active(core.primaryMode)## overwritten in updateWidget()
         hbox.pack_start(combo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.modeCombo = combo
         ###
         self.pack_start(hbox, 0, 0, 0)
@@ -84,40 +84,40 @@ class EventWidget(Gtk.VBox):
         if event.isAllDay:
             self.tzCheck = None
         else:
-            hbox = Gtk.HBox()
-            self.tzCheck = Gtk.CheckButton(_('Time Zone'))
+            hbox = gtk.HBox()
+            self.tzCheck = gtk.CheckButton(_('Time Zone'))
             set_tooltip(self.tzCheck, _('For input times of event'))
             hbox.pack_start(self.tzCheck, 0, 0, 0)
             combo = TimeZoneComboBoxEntry()
             hbox.pack_start(combo, 0, 0, 0)
-            hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+            hbox.pack_start(gtk.Label(''), 1, 1, 0)
             self.tzCombo = combo
             self.pack_start(hbox, 0, 0, 0)
             self.tzCheck.connect('clicked', lambda check: self.tzCombo.set_sensitive(check.get_active()))
         ###########
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Summary')), 0, 0, 0)
-        self.summaryEntry = Gtk.Entry()
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Summary')), 0, 0, 0)
+        self.summaryEntry = gtk.Entry()
         hbox.pack_start(self.summaryEntry, 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         ###########
         self.descriptionInput = TextFrame()
-        swin = Gtk.ScrolledWindow()
-        swin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        swin = gtk.ScrolledWindow()
+        swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
         swin.add_with_viewport(self.descriptionInput)
         ###
-        exp = Gtk.Expander()
+        exp = gtk.Expander()
         exp.set_expanded(True)
         exp.set_label(_('Description'))
         exp.add(swin)
         self.pack_start(exp, 1, 1, 0)
         ###########
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Icon')+':'), 0, 0, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Icon')+':'), 0, 0, 0)
         self.iconSelect = IconSelectButton()
         #print join(pixDir, self.icon)
         hbox.pack_start(self.iconSelect, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         ##########
         self.modeCombo.connect('changed', self.modeComboChanged)## right place? before updateWidget? FIXME
@@ -163,32 +163,32 @@ class EventWidget(Gtk.VBox):
         pass
 
 
-class FilesBox(Gtk.VBox):
+class FilesBox(gtk.VBox):
     def __init__(self, event):
-        Gtk.VBox.__init__(self)
+        gtk.VBox.__init__(self)
         self.event = event
-        self.vbox = Gtk.VBox()
+        self.vbox = gtk.VBox()
         self.pack_start(self.vbox, 0, 0, 0)
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
-        addButton = Gtk.Button()
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
+        addButton = gtk.Button()
         addButton.set_label(_('_Add File'))
-        addButton.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_ADD, Gtk.IconSize.BUTTON))
+        addButton.set_image(gtk.Image.new_from_stock(gtk.STOCK_ADD, gtk.IconSize.BUTTON))
         addButton.connect('clicked', self.addClicked)
         hbox.pack_start(addButton, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         self.show_all()
         self.newFiles = []
     def showFile(self, fname):
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.LinkButton(
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.LinkButton(
             self.event.getUrlForFile(fname),
             _('File') + ': ' + fname,
         ), 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
-        delButton = Gtk.Button()
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
+        delButton = gtk.Button()
         delButton.set_label(_('_Delete'))
-        delButton.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_DELETE, Gtk.IconSize.BUTTON))
+        delButton.set_image(gtk.Image.new_from_stock(gtk.STOCK_DELETE, gtk.IconSize.BUTTON))
         delButton.fname = fname
         delButton.hbox = hbox
         delButton.connect('clicked', self.delClicked)
@@ -196,15 +196,15 @@ class FilesBox(Gtk.VBox):
         self.vbox.pack_start(hbox, 0, 0, 0)
         hbox.show_all()
     def addClicked(self, button):
-        fcd = Gtk.FileChooserDialog(
+        fcd = gtk.FileChooserDialog(
             buttons=(
-                toStr(_('_OK')), Gtk.ResponseType.OK,
-                toStr(_('_Cancel')), Gtk.ResponseType.CANCEL,
+                toStr(_('_OK')), gtk.ResponseType.OK,
+                toStr(_('_Cancel')), gtk.ResponseType.CANCEL,
             ),
             title=_('Add File'),
         )
         fcd.connect('response', lambda w, e: fcd.hide())
-        if fcd.run() == Gtk.ResponseType.OK:
+        if fcd.run() == gtk.ResponseType.OK:
             fpath = fcd.get_filename()
             fname = split(fpath)[-1]
             dstDir = self.event.filesDir
@@ -237,16 +237,16 @@ class FilesBox(Gtk.VBox):
         pass
 
 
-class NotificationBox(Gtk.Expander):## or NotificationBox FIXME
+class NotificationBox(gtk.Expander):## or NotificationBox FIXME
     def __init__(self, event):
-        Gtk.Expander.__init__(self)
+        gtk.Expander.__init__(self)
         self.set_label(_('Notification'))
         self.event = event
         self.hboxDict = {}
-        totalVbox = Gtk.VBox()
+        totalVbox = gtk.VBox()
         ###
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Notify Before')), 0, 0, 0)## or at the end?
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Notify Before')), 0, 0, 0)## or at the end?
         self.notifyBeforeInput = DurationInputBox()
         hbox.pack_start(self.notifyBeforeInput, 1, 1, 0)
         totalVbox.pack_start(hbox, 0, 0, 0)
@@ -254,14 +254,14 @@ class NotificationBox(Gtk.Expander):## or NotificationBox FIXME
         for cls in event_lib.classes.notifier:
             notifier = cls(self.event)
             inputWidget = notifier.makeWidget()
-            hbox = Gtk.HBox()
-            cb = Gtk.CheckButton(notifier.desc)
+            hbox = gtk.HBox()
+            cb = gtk.CheckButton(notifier.desc)
             cb.inputWidget = inputWidget
             cb.connect('clicked', lambda check: check.inputWidget.set_sensitive(check.get_active()))
             cb.set_active(False)
             hbox.pack_start(cb, 0, 0, 0)
             hbox.cb = cb
-            #hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+            #hbox.pack_start(gtk.Label(''), 1, 1, 0)
             hbox.pack_start(inputWidget, 1, 1, 0)
             hbox.inputWidget = inputWidget
             self.hboxDict[notifier.name] = hbox
@@ -290,14 +290,14 @@ class NotificationBox(Gtk.Expander):## or NotificationBox FIXME
         self.event.notifiers = notifiers
 
 
-class DurationInputBox(Gtk.HBox):
+class DurationInputBox(gtk.HBox):
     def __init__(self):
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         ##
         self.valueSpin = FloatSpinButton(0, 999, 1)
         self.pack_start(self.valueSpin, 0, 0, 0)
         ##
-        combo = Gtk.ComboBoxText()
+        combo = gtk.ComboBoxText()
         for unitValue, unitName in durationUnitsAbs:
             combo.append_text(_(' '+unitName.capitalize()+'s'))
         combo.set_active(2) ## hour FIXME
@@ -310,45 +310,45 @@ class DurationInputBox(Gtk.HBox):
         self.unitCombo.set_active(durationUnitValues.index(unit))
 
 
-class StrListEditor(Gtk.HBox):
+class StrListEditor(gtk.HBox):
     def __init__(self, defaultValue=''):
         self.defaultValue = defaultValue
         #####
-        Gtk.HBox.__init__(self)
-        self.treev = Gtk.TreeView()
+        gtk.HBox.__init__(self)
+        self.treev = gtk.TreeView()
         self.treev.set_headers_visible(False)
-        self.trees = Gtk.ListStore(str)
+        self.trees = gtk.ListStore(str)
         self.treev.set_model(self.trees)
         ##########
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         cell.set_property('editable', True)
-        col = Gtk.TreeViewColumn('', cell, text=0)
+        col = gtk.TreeViewColumn('', cell, text=0)
         self.treev.append_column(col)
         ####
         self.pack_start(self.treev, 1, 1, 0)
         ##########
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
         #try:## DeprecationWarning #?????????????
-            #toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
+            #toolbar.set_icon_size(gtk.IconSize.SMALL_TOOLBAR)
             ### no different (argument to set_icon_size does not affect) ?????????
         #except:
         #    pass
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        size = gtk.IconSize.SMALL_TOOLBAR
         ##no different(argument2 to image_new_from_stock does not affect) ?????????
-        #### Gtk.IconSize.SMALL_TOOLBAR or Gtk.IconSize.MENU
-        tb = toolButtonFromStock(Gtk.STOCK_ADD, size)
+        #### gtk.IconSize.SMALL_TOOLBAR or gtk.IconSize.MENU
+        tb = toolButtonFromStock(gtk.STOCK_ADD, size)
         set_tooltip(tb, _('Add'))
         tb.connect('clicked', self.addClicked)
         toolbar.insert(tb, -1)
         #self.buttonAdd = tb
         ####
-        tb = toolButtonFromStock(Gtk.STOCK_GO_UP, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_UP, size)
         set_tooltip(tb, _('Move up'))
         tb.connect('clicked', self.moveUpClicked)
         toolbar.insert(tb, -1)
         ####
-        tb = toolButtonFromStock(Gtk.STOCK_GO_DOWN, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_DOWN, size)
         set_tooltip(tb, _('Move down'))
         tb.connect('clicked', self.moveDownClicked)
         toolbar.insert(tb, -1)
@@ -367,7 +367,7 @@ class StrListEditor(Gtk.HBox):
         i = cur[0]
         t = self.trees
         if i<=0 or i>=len(t):
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(i-1), t.get_iter(i))
         self.treev.set_cursor(i-1)
@@ -378,7 +378,7 @@ class StrListEditor(Gtk.HBox):
         i = cur[0]
         t = self.trees
         if i<0 or i>=len(t)-1:
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(i), t.get_iter(i+1))
         self.treev.set_cursor(i+1)
@@ -390,12 +390,12 @@ class StrListEditor(Gtk.HBox):
         return [row[0] for row in self.trees]
 
 
-class Scale10PowerComboBox(Gtk.ComboBox):
+class Scale10PowerComboBox(gtk.ComboBox):
     def __init__(self):
-        self.ls = Gtk.ListStore(int, str)
-        Gtk.ComboBox.__init__(self, self.ls)
+        self.ls = gtk.ListStore(int, str)
+        gtk.ComboBox.__init__(self, self.ls)
         ###
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         self.pack_start(cell, True)
         self.add_attribute(cell, 'text', 1)
         ###
@@ -416,20 +416,20 @@ class Scale10PowerComboBox(Gtk.ComboBox):
         self.set_active(len(self.ls)-1)
 
 
-class EventEditorDialog(Gtk.Dialog):
+class EventEditorDialog(gtk.Dialog):
     def __init__(self, event, typeChangable=True, title=None, isNew=False, parent=None, useSelectedDate=False):
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_parent(parent)
         #self.set_transient_for(None)
-        #self.set_type_hint(Gdk.WindowTypeHint.NORMAL)
+        #self.set_type_hint(gdk.WindowTypeHint.NORMAL)
         if title:
             self.set_title(title)
         self.isNew = isNew
         #self.connect('delete-event', lambda obj, e: self.destroy())
         #self.resize(800, 600)
         ###
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
-        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.ResponseType.CANCEL)
+        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.ResponseType.OK)
         ###
         self.connect('response', lambda w, e: self.hide())
         #######
@@ -437,10 +437,10 @@ class EventEditorDialog(Gtk.Dialog):
         self._group = event.parent
         self.activeWidget = None
         #######
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Event Type')), 0, 0, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Event Type')), 0, 0, 0)
         if typeChangable and len(self._group.acceptsEventTypes)>1:## FIXME
-            combo = Gtk.ComboBoxText()
+            combo = gtk.ComboBoxText()
             for eventType in self._group.acceptsEventTypes:
                 combo.append_text(event_lib.classes.event.byName[eventType].desc)
             hbox.pack_start(combo, 0, 0, 0)
@@ -450,8 +450,8 @@ class EventEditorDialog(Gtk.Dialog):
             combo.connect('changed', self.typeChanged)
             self.comboEventType = combo
         else:
-            hbox.pack_start(Gtk.Label(':  '+event.desc), 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+            hbox.pack_start(gtk.Label(':  '+event.desc), 0, 0, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         hbox.show_all()
         self.vbox.pack_start(hbox, 0, 0, 0)
         #####
@@ -480,7 +480,7 @@ class EventEditorDialog(Gtk.Dialog):
     def run(self):
         #if not self.activeWidget:
         #    return None
-        if Gtk.Dialog.run(self) != Gtk.ResponseType.OK:
+        if gtk.Dialog.run(self) != gtk.ResponseType.OK:
             try:
                 filesBox = self.activeWidget.filesBox
             except AttributeError:
@@ -512,27 +512,27 @@ def addNewEvent(group, eventType, title, typeChangable=False, **kw):
     group.save()
     return event
 
-class GroupEditorDialog(Gtk.Dialog):
+class GroupEditorDialog(gtk.Dialog):
     def __init__(self, group=None):
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.isNew = (group is None)
         self.set_title(_('Add New Group') if self.isNew else _('Edit Group'))
         #self.connect('delete-event', lambda obj, e: self.destroy())
         #self.resize(800, 600)
         ###
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
-        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.ResponseType.CANCEL)
+        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.ResponseType.OK)
         self.connect('response', lambda w, e: self.hide())
         #######
         self.activeWidget = None
         #######
-        hbox = Gtk.HBox()
-        combo = Gtk.ComboBoxText()
+        hbox = gtk.HBox()
+        combo = gtk.ComboBoxText()
         for cls in event_lib.classes.group:
             combo.append_text(cls.desc)
-        hbox.pack_start(Gtk.Label(_('Group Type')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Group Type')), 0, 0, 0)
         hbox.pack_start(combo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ####
         if self.isNew:
@@ -579,7 +579,7 @@ class GroupEditorDialog(Gtk.Dialog):
     def run(self):
         if self.activeWidget is None:
             return None
-        if Gtk.Dialog.run(self) != Gtk.ResponseType.OK:
+        if gtk.Dialog.run(self) != gtk.ResponseType.OK:
             return None
         self.activeWidget.updateVars()
         self._group.save()## FIXME
@@ -591,23 +591,23 @@ class GroupEditorDialog(Gtk.Dialog):
         return self._group
 
 
-class GroupsTreeCheckList(Gtk.TreeView):
+class GroupsTreeCheckList(gtk.TreeView):
     def __init__(self):
-        Gtk.TreeView.__init__(self)
-        self.trees = Gtk.ListStore(int, bool, str)## groupId(hidden), enable, summary
+        gtk.TreeView.__init__(self)
+        self.trees = gtk.ListStore(int, bool, str)## groupId(hidden), enable, summary
         self.set_model(self.trees)
         self.set_headers_visible(False)
         ###
-        cell = Gtk.CellRendererToggle()
+        cell = gtk.CellRendererToggle()
         #cell.set_property('activatable', True)
         cell.connect('toggled', self.enableCellToggled)
-        col = Gtk.TreeViewColumn(_('Enable'), cell)
+        col = gtk.TreeViewColumn(_('Enable'), cell)
         col.add_attribute(cell, 'active', 1)
         #cell.set_active(True)
         col.set_resizable(True)
         self.append_column(col)
         ###
-        col = Gtk.TreeViewColumn(_('Title'), Gtk.CellRendererText(), text=2)
+        col = gtk.TreeViewColumn(_('Title'), gtk.CellRendererText(), text=2)
         col.set_resizable(True)
         self.append_column(col)
         ###
@@ -627,16 +627,16 @@ class GroupsTreeCheckList(Gtk.TreeView):
 
 
 
-class SingleGroupComboBox(Gtk.ComboBox):
+class SingleGroupComboBox(gtk.ComboBox):
     def __init__(self):
-        Gtk.ComboBox.__init__(self)
-        self.set_model(Gtk.ListStore(int, GdkPixbuf.Pixbuf, str))
+        gtk.ComboBox.__init__(self)
+        self.set_model(gtk.ListStore(int, GdkPixbuf.Pixbuf, str))
         #####
-        cell = Gtk.CellRendererPixbuf()
+        cell = gtk.CellRendererPixbuf()
         self.pack_start(cell, 0)
         self.add_attribute(cell, 'pixbuf', 1)
         ###
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         self.pack_start(cell, 1)
         self.add_attribute(cell, 'text', 2)
         #####
@@ -646,8 +646,8 @@ class SingleGroupComboBox(Gtk.ComboBox):
         activeGid = self.get_active()
         ls.clear()
         ###
-        #print 'Gtk.StateType.NORMAL', self.get_style_context().get_style_property('base', Gtk.StateType.NORMAL)
-        #print 'Gtk.StateType.NORMAL', self.get_style_context().get_color(Gtk.StateType.NORMAL)
+        #print 'gtk.StateType.NORMAL', self.get_style_context().get_style_property('base', gtk.StateType.NORMAL)
+        #print 'gtk.StateType.NORMAL', self.get_style_context().get_color(gtk.StateType.NORMAL)
         rowBgColor = gdkColorToRgb(getStyleColor(self))
         ## bg color of non-selected rows FIXME
         for group in ui.eventGroups:
@@ -656,7 +656,7 @@ class SingleGroupComboBox(Gtk.ComboBox):
             ls.append(getGroupRow(group, rowBgColor))
         ###
         #try:
-        Gtk.ComboBox.set_active(self, 0)
+        gtk.ComboBox.set_active(self, 0)
         #except:
         #    pass
         if activeGid not in (None, -1):
@@ -665,7 +665,7 @@ class SingleGroupComboBox(Gtk.ComboBox):
             except ValueError:
                 pass
     def get_active(self):
-        index = Gtk.ComboBox.get_active(self)
+        index = gtk.ComboBox.get_active(self)
         if index in (None, -1):
             return
         gid = self.get_model()[index][0]
@@ -674,15 +674,15 @@ class SingleGroupComboBox(Gtk.ComboBox):
         ls = self.get_model()
         for i, row in enumerate(ls):
             if row[0] == gid:
-                Gtk.ComboBox.set_active(self, i)
+                gtk.ComboBox.set_active(self, i)
                 break
         else:
             raise ValueError('SingleGroupComboBox.set_active: Group ID %s is not in items'%gid)
 
 if __name__ == '__main__':
     from pprint import pformat
-    dialog = Gtk.Window()
-    dialog.vbox = Gtk.VBox()
+    dialog = gtk.Window()
+    dialog.vbox = gtk.VBox()
     dialog.add(dialog.vbox)
     #widget = ViewEditTagsHbox()
     #widget = EventTagsAndIconSelect()
@@ -693,7 +693,7 @@ if __name__ == '__main__':
     #dialog.resize(300, 500)
     #dialog.run()
     dialog.show_all()
-    Gtk.main()
+    gtk.main()
     print pformat(widget.getData())
 
 

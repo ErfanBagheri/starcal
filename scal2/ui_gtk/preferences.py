@@ -33,8 +33,8 @@ from scal2.core import myRaise, convert, APP_DESC
 
 from scal2 import ui
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.font_utils import *
 from scal2.ui_gtk.color_utils import *
@@ -47,16 +47,16 @@ from scal2.ui_gtk.event.account_op import AccountEditorDialog
 
 
 
-class PrefDialog(Gtk.Dialog):
+class PrefDialog(gtk.Dialog):
     def __init__(self, trayMode):
-        Gtk.Dialog.__init__(self, title=_('Preferences'))
+        gtk.Dialog.__init__(self, title=_('Preferences'))
         self.connect('delete-event', self.onDelete)
         #self.set_has_separator(False)
         #self.set_skip_taskbar_hint(True)
         ###
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), 1, self.cancel)
-        dialog_add_button(self, Gtk.STOCK_APPLY, _('_Apply'), 2, self.apply)
-        okB = dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), 3, self.ok, tooltip=_('Apply and Close'))
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), 1, self.cancel)
+        dialog_add_button(self, gtk.STOCK_APPLY, _('_Apply'), 2, self.apply)
+        okB = dialog_add_button(self, gtk.STOCK_OK, _('_OK'), 3, self.ok, tooltip=_('Apply and Close'))
         okB.grab_default()## FIXME
         #okB.grab_focus()## FIXME
         ##############################################
@@ -67,34 +67,34 @@ class PrefDialog(Gtk.Dialog):
         #####
         self.prefPages = []
         ################################ Tab 1 (General) ############################################
-        vbox = Gtk.VBox()
+        vbox = gtk.VBox()
         vbox.label = _('_General')
         vbox.icon = 'preferences-other.png'
         self.prefPages.append(vbox)
-        hbox = Gtk.HBox(spacing=3)
-        hbox.pack_start(Gtk.Label(_('Language')), 0, 0, 0)
+        hbox = gtk.HBox(spacing=3)
+        hbox.pack_start(gtk.Label(_('Language')), 0, 0, 0)
         itemLang = LangPrefItem()
         self.localePrefItems.append(itemLang)
         ###
         hbox.pack_start(itemLang._widget, 0, 0, 0)
         if langSh!='en':
-            hbox.pack_start(Gtk.Label('Language'), 0, 0, 0)
+            hbox.pack_start(gtk.Label('Language'), 0, 0, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         ##########################
-        hbox = Gtk.HBox()
-        frame = Gtk.Frame()
+        hbox = gtk.HBox()
+        frame = gtk.Frame()
         frame.set_label(_('Calendar Types'))
         itemCals = AICalsPrefItem()
         self.corePrefItems.append(itemCals)
         frame.add(itemCals._widget)
         hbox.pack_start(frame, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         hbox.set_border_width(5)
         #frame.set_border_width(5)
         vbox.pack_start(hbox, 1, 1, 0)
         ##########################
         if trayMode!=1:
-            hbox = Gtk.HBox(spacing=3)
+            hbox = gtk.HBox(spacing=3)
             item = CheckStartupPrefItem()
             self.uiPrefItems.append(item)
             hbox.pack_start(item._widget, 1, 1, 0)
@@ -106,9 +106,9 @@ class PrefDialog(Gtk.Dialog):
         ##########################
         item = CheckPrefItem(ui, 'winTaskbar', _('Window in Taskbar'))
         self.uiPrefItems.append(item)
-        hbox = Gtk.HBox(spacing=3)
+        hbox = gtk.HBox(spacing=3)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###########
         vbox.pack_start(hbox, 0, 0, 0)
         ##########################
@@ -119,33 +119,33 @@ class PrefDialog(Gtk.Dialog):
         #else:
         item = CheckPrefItem(ui, 'useAppIndicator', _('Use AppIndicator'))
         self.uiPrefItems.append(item)
-        hbox = Gtk.HBox(spacing=3)
+        hbox = gtk.HBox(spacing=3)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         ##########################
-        hbox = Gtk.HBox(spacing=3)
-        hbox.pack_start(Gtk.Label(_('Show Digital Clock:')), 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox = gtk.HBox(spacing=3)
+        hbox.pack_start(gtk.Label(_('Show Digital Clock:')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         #item = CheckPrefItem(ui, 'showDigClockTb', _('On Toolbar'))## FIXME
         #self.uiPrefItems.append(item)
         #hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         if trayMode==1:
             item = CheckPrefItem(ui, 'showDigClockTr', _('On Applet'), 'Panel Applet')
         else:
             item = CheckPrefItem(ui, 'showDigClockTr', _('On Tray'), 'Notification Area')
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         ################################ Tab 2 (Appearance) ###########################################
-        vbox = Gtk.VBox()
+        vbox = gtk.VBox()
         vbox.label = _('A_ppearance')
         vbox.icon = 'preferences-desktop-theme.png'
         self.prefPages.append(vbox)
         ########
-        hbox = Gtk.HBox(spacing=2)
+        hbox = gtk.HBox(spacing=2)
         ###
         customCheckItem = CheckPrefItem(ui, 'fontCustomEnable', _('Application Font'))
         self.uiPrefItems.append(customCheckItem)
@@ -154,122 +154,122 @@ class PrefDialog(Gtk.Dialog):
         customItem = FontPrefItem(ui, 'fontCustom', self)
         self.uiPrefItems.append(customItem)
         hbox.pack_start(customItem._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         customItem._widget.set_sensitive(ui.fontCustomEnable)
         #customItem._widget.connect('clicked', self.checkbFontClicked)
         customCheckItem._widget.connect('clicked', lambda w: customItem._widget.set_sensitive(w.get_active()))## FIXME
         vbox.pack_start(hbox, 0, 0, 0)
         ########################### Theme #####################
-        hbox = Gtk.HBox(spacing=3)
+        hbox = gtk.HBox(spacing=3)
         item = CheckPrefItem(ui, 'bgUseDesk', _('Use Desktop Background'))
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         #####################
-        hbox = Gtk.HBox(spacing=3)
-        lab = Gtk.Label(label='<b>%s:</b> '%_('Colors'))
+        hbox = gtk.HBox(spacing=3)
+        lab = gtk.Label(label='<b>%s:</b> '%_('Colors'))
         lab.set_use_markup(True)
         hbox.pack_start(lab, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
-        hbox.pack_start(Gtk.Label(_('Background')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Background')), 0, 0, 0)
         item = ColorPrefItem(ui, 'bgColor', True)
         self.uiPrefItems.append(item)
         self.colorbBg = item._widget ## FIXME
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
-        hbox.pack_start(Gtk.Label(_('Border')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Border')), 0, 0, 0)
         item = ColorPrefItem(ui, 'borderColor', True)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
-        hbox.pack_start(Gtk.Label(_('Cursor')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Cursor')), 0, 0, 0)
         item = ColorPrefItem(ui, 'cursorOutColor', False)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
-        hbox.pack_start(Gtk.Label(_('Cursor BG')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Cursor BG')), 0, 0, 0)
         item = ColorPrefItem(ui, 'cursorBgColor', True)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
-        hbox.pack_start(Gtk.Label(_('Today')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Today')), 0, 0, 0)
         item = ColorPrefItem(ui, 'todayCellColor', True)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
         vbox.pack_start(hbox, 0, 0, 0)
         ####################
-        hbox = Gtk.HBox(spacing=3)
-        lab = Gtk.Label(label='<b>%s:</b> '%_('Font Colors'))
+        hbox = gtk.HBox(spacing=3)
+        lab = gtk.Label(label='<b>%s:</b> '%_('Font Colors'))
         lab.set_use_markup(True)
         hbox.pack_start(lab, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ####
-        hbox.pack_start(Gtk.Label(_('Normal')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Normal')), 0, 0, 0)
         item = ColorPrefItem(ui, 'textColor', False)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
-        hbox.pack_start(Gtk.Label(_('Holiday')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Holiday')), 0, 0, 0)
         item = ColorPrefItem(ui, 'holidayColor', False)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
-        hbox.pack_start(Gtk.Label(_('Inactive Day')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Inactive Day')), 0, 0, 0)
         item = ColorPrefItem(ui, 'inactiveColor', True)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ####
-        hbox.pack_start(Gtk.Label(_('Border')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Border')), 0, 0, 0)
         item = ColorPrefItem(ui, 'borderTextColor', False)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ####
         vbox.pack_start(hbox, 0, 0, 0)
         ###################
-        hbox = Gtk.HBox(spacing=1)
-        label = Gtk.Label(label='<b>%s</b>:'%_('Cursor'))
+        hbox = gtk.HBox(spacing=1)
+        label = gtk.Label(label='<b>%s</b>:'%_('Cursor'))
         label.set_use_markup(True)
         hbox.pack_start(label, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
-        hbox.pack_start(Gtk.Label(_('Diameter Factor')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(_('Diameter Factor')), 0, 0, 0)
         item = SpinPrefItem(ui, 'cursorDiaFactor', 0, 1, 2)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
         ###
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
-        hbox.pack_start(Gtk.Label(_('Rounding Factor')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(_('Rounding Factor')), 0, 0, 0)
         item = SpinPrefItem(ui, 'cursorRoundingFactor', 0, 1, 2)
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ###
         vbox.pack_start(hbox, 0, 0, 0)
         ################################ Tab 3 (Advanced) ###########################################
-        vbox = Gtk.VBox()
+        vbox = gtk.VBox()
         vbox.label = _('A_dvanced')
         vbox.icon = 'applications-system.png'
         self.prefPages.append(vbox)
         ######
-        sgroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        sgroup = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
         ######
-        hbox = Gtk.HBox(spacing=5)
-        label = Gtk.Label(label=_('Date Format'))
+        hbox = gtk.HBox(spacing=5)
+        label = gtk.Label(label=_('Date Format'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         sgroup.add_widget(label)
-        #hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        #hbox.pack_start(gtk.Label(''), 1, 1, 0)
         item = ComboEntryTextPrefItem(ud, 'dateFormat', (
             '%Y/%m/%d',
             '%Y-%m-%d',
@@ -284,9 +284,9 @@ class PrefDialog(Gtk.Dialog):
         hbox.pack_start(item._widget, 1, 1, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = Gtk.HBox(spacing=5)
-        #hbox.pack_start(Gtk.Label(''), 1, 1, 0)
-        label = Gtk.Label(label=_('Digital Clock Format'))
+        hbox = gtk.HBox(spacing=5)
+        #hbox.pack_start(gtk.Label(''), 1, 1, 0)
+        label = gtk.Label(label=_('Digital Clock Format'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         sgroup.add_widget(label)
@@ -310,8 +310,8 @@ class PrefDialog(Gtk.Dialog):
         hbox.pack_start(item._widget, 1, 1, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         ######
-        hbox = Gtk.HBox(spacing=5)
-        label = Gtk.Label(label=_('Days maximum cache size'))
+        hbox = gtk.HBox(spacing=5)
+        label = gtk.Label(label=_('Days maximum cache size'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         ##sgroup.add_widget(label)
@@ -321,10 +321,10 @@ class PrefDialog(Gtk.Dialog):
         vbox.pack_start(hbox, 0, 0, 0)
         vbox4 = vbox
         ########
-        hbox = Gtk.HBox(spacing=3)
-        hbox.pack_start(Gtk.Label(_('First day of week')), 0, 0, 0)
+        hbox = gtk.HBox(spacing=3)
+        hbox.pack_start(gtk.Label(_('First day of week')), 0, 0, 0)
         ##item = ComboTextPrefItem( ##?????????
-        self.comboFirstWD = Gtk.ComboBoxText()
+        self.comboFirstWD = gtk.ComboBoxText()
         for item in core.weekDayName:
             self.comboFirstWD.append_text(item)
         self.comboFirstWD.append_text(_('Automatic'))
@@ -332,32 +332,32 @@ class PrefDialog(Gtk.Dialog):
         hbox.pack_start(self.comboFirstWD, 0, 0, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         #########
-        hbox0 = Gtk.HBox(spacing=0)
-        hbox0.pack_start(Gtk.Label(_('Holidays')+'    '), 0, 0, 0)
+        hbox0 = gtk.HBox(spacing=0)
+        hbox0.pack_start(gtk.Label(_('Holidays')+'    '), 0, 0, 0)
         item = WeekDayCheckListPrefItem(core, 'holidayWeekDays')
         self.corePrefItems.append(item)
         self.holiWDItem = item ## Holiday Week Days Item
         hbox0.pack_start(item._widget, 1, 1, 0)
         vbox.pack_start(hbox0, 0, 0, 0)
         #########
-        hbox = Gtk.HBox(spacing=3)
-        hbox.pack_start(Gtk.Label(_('First week of year containts')), 0, 0, 0)
-        combo = Gtk.ComboBoxText()
+        hbox = gtk.HBox(spacing=3)
+        hbox.pack_start(gtk.Label(_('First week of year containts')), 0, 0, 0)
+        combo = gtk.ComboBoxText()
         texts = [_('First %s of year')%name for name in core.weekDayName]+[_('First day of year')]
         texts[4] += ' (ISO 8601)' ##??????
         for text in texts:
             combo.append_text(text)
         #combo.append_text(_('Automatic'))## (as Locale)#?????????????????
         hbox.pack_start(combo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         self.comboWeekYear = combo
         #########
-        hbox = Gtk.HBox(spacing=3)
+        hbox = gtk.HBox(spacing=3)
         item = CheckPrefItem(locale_man, 'enableNumLocale', _('Numbers Localization'))
         self.localePrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         ##################################################
         ################################
@@ -376,71 +376,71 @@ class PrefDialog(Gtk.Dialog):
                 vbox.pack_start(optl._widget, 0, 0, 0)
         self.moduleOptions = options
         ################################ Tab 4 (Plugins) ############################################
-        vbox = Gtk.VBox()
+        vbox = gtk.VBox()
         vbox.label = _('_Plugins')
         vbox.icon = 'preferences-plugin.png'
         self.prefPages.append(vbox)
         #####
         ##pluginsTextTray:
-        hbox = Gtk.HBox()
+        hbox = gtk.HBox()
         if trayMode==1:
             item = CheckPrefItem(ui, 'pluginsTextTray', _('Show in applet (for today)'))
         else:
             item = CheckPrefItem(ui, 'pluginsTextTray', _('Show in tray (for today)'))
         self.uiPrefItems.append(item)
         hbox.pack_start(item._widget, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         vbox.pack_start(hbox, 0, 0, 0)
         #####
-        treev = Gtk.TreeView()
+        treev = gtk.TreeView()
         treev.set_headers_clickable(True)
-        trees = Gtk.ListStore(int, bool, bool, str)
+        trees = gtk.ListStore(int, bool, bool, str)
         treev.set_model(trees)
-        treev.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [('row', Gtk.TargetFlags.SAME_WIDGET, 0)], Gdk.DragAction.MOVE)
-        treev.enable_model_drag_dest([('row', Gtk.TargetFlags.SAME_WIDGET, 0)], Gdk.DragAction.MOVE)
+        treev.enable_model_drag_source(gdk.ModifierType.BUTTON1_MASK, [('row', gtk.TargetFlags.SAME_WIDGET, 0)], gdk.DragAction.MOVE)
+        treev.enable_model_drag_dest([('row', gtk.TargetFlags.SAME_WIDGET, 0)], gdk.DragAction.MOVE)
         treev.connect('drag_data_received', self.plugTreevDragReceived)
         treev.connect('cursor-changed', self.plugTreevCursorChanged)
         treev.connect('row-activated', self.plugTreevRActivate)
         treev.connect('button-press-event', self.plugTreevButtonPress)
         ###
-        #treev.drag_source_set_icon_stock(Gtk.STOCK_CLOSE)
+        #treev.drag_source_set_icon_stock(gtk.STOCK_CLOSE)
         #treev.drag_source_add_text_targets()
         #treev.drag_source_add_uri_targets()
         #treev.drag_source_unset()
         ###
-        swin = Gtk.ScrolledWindow()
+        swin = gtk.ScrolledWindow()
         swin.add(treev)
-        swin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
         ######
-        cell = Gtk.CellRendererToggle()
+        cell = gtk.CellRendererToggle()
         #cell.set_property('activatable', True)
         cell.connect('toggled', self.plugTreeviewCellToggled)
-        col = Gtk.TreeViewColumn(_('Enable'), cell)
+        col = gtk.TreeViewColumn(_('Enable'), cell)
         col.add_attribute(cell, 'active', 1)
         #cell.set_active(False)
         col.set_resizable(True)
         treev.append_column(col)
         ######
-        cell = Gtk.CellRendererToggle()
+        cell = gtk.CellRendererToggle()
         #cell.set_property('activatable', True)
         cell.connect('toggled', self.plugTreeviewCellToggled2)
-        col = Gtk.TreeViewColumn(_('Show Date'), cell)
+        col = gtk.TreeViewColumn(_('Show Date'), cell)
         col.add_attribute(cell, 'active', 2)
         #cell.set_active(False)
         col.set_resizable(True)
         treev.append_column(col)
         ######
-        #cell = Gtk.CellRendererText()
-        #col = Gtk.TreeViewColumn(_('File Name'), cell, text=2)
+        #cell = gtk.CellRendererText()
+        #col = gtk.TreeViewColumn(_('File Name'), cell, text=2)
         #col.set_resizable(True)
         #treev.append_column(col)
         #treev.set_search_column(1)
         ######
-        cell = Gtk.CellRendererText()
-        #cell.set_property('wrap-mode', Gtk.WrapMode.WORD)
+        cell = gtk.CellRendererText()
+        #cell.set_property('wrap-mode', gtk.WrapMode.WORD)
         #cell.set_property('editable', True)
         #cell.set_property('wrap-width', 200)
-        col = Gtk.TreeViewColumn(_('Description'), cell, text=3)
+        col = gtk.TreeViewColumn(_('Description'), cell, text=3)
         #treev.connect('draw', self.plugTreevExpose)
         #self.plugDescCell = cell
         #self.plugDescCol = col
@@ -454,62 +454,62 @@ class PrefDialog(Gtk.Dialog):
         self.plugTreeview = treev
         self.plugTreestore = trees
         #######################
-        hbox = Gtk.HBox()
-        vboxPlug = Gtk.VBox()
+        hbox = gtk.HBox()
+        vboxPlug = gtk.VBox()
         vboxPlug.pack_start(swin, 1, 1, 0)
         hbox.pack_start(vboxPlug, 1, 1, 0)
         ###
-        hboxBut = Gtk.HBox()
+        hboxBut = gtk.HBox()
         ###
-        button = Gtk.Button(_('_About Plugin'))
-        button.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_ABOUT, Gtk.IconSize.BUTTON))
+        button = gtk.Button(_('_About Plugin'))
+        button.set_image(gtk.Image.new_from_stock(gtk.STOCK_ABOUT, gtk.IconSize.BUTTON))
         button.set_sensitive(False)
         button.connect('clicked', self.plugAboutClicked)
         self.plugButtonAbout = button
         hboxBut.pack_start(button, 0, 0, 0)
-        hboxBut.pack_start(Gtk.Label(''), 1, 1, 0)
+        hboxBut.pack_start(gtk.Label(''), 1, 1, 0)
         ###
-        button = Gtk.Button(_('C_onfigure Plugin'))
-        button.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_PREFERENCES, Gtk.IconSize.BUTTON))
+        button = gtk.Button(_('C_onfigure Plugin'))
+        button.set_image(gtk.Image.new_from_stock(gtk.STOCK_PREFERENCES, gtk.IconSize.BUTTON))
         button.set_sensitive(False)
         button.connect('clicked', self.plugConfClicked)
         self.plugButtonConf = button
         hboxBut.pack_start(button, 0, 0, 0)
-        hboxBut.pack_start(Gtk.Label(''), 1, 1, 0)
+        hboxBut.pack_start(gtk.Label(''), 1, 1, 0)
         ###
         vboxPlug.pack_start(hboxBut, 0, 0, 0)
         ###
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
         #try:## DeprecationWarning #?????????????
-            #toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
+            #toolbar.set_icon_size(gtk.IconSize.SMALL_TOOLBAR)
             ### no different (argument to set_icon_size does not affect) ?????????
         #except:
         #    pass
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        size = gtk.IconSize.SMALL_TOOLBAR
         ##no different(argument2 to image_new_from_stock does not affect) ?????????
-        ######## Gtk.IconSize.SMALL_TOOLBAR or Gtk.IconSize.MENU
-        tb = toolButtonFromStock(Gtk.STOCK_GOTO_TOP, size)
+        ######## gtk.IconSize.SMALL_TOOLBAR or gtk.IconSize.MENU
+        tb = toolButtonFromStock(gtk.STOCK_GOTO_TOP, size)
         set_tooltip(tb, _('Move to top'))
         tb.connect('clicked', self.plugTreeviewTop)
         toolbar.insert(tb, -1)
         ########
-        tb = toolButtonFromStock(Gtk.STOCK_GO_UP, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_UP, size)
         set_tooltip(tb, _('Move up'))
         tb.connect('clicked', self.plugTreeviewUp)
         toolbar.insert(tb, -1)
         #########
-        tb = toolButtonFromStock(Gtk.STOCK_GO_DOWN, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_DOWN, size)
         set_tooltip(tb, _('Move down'))
         tb.connect('clicked', self.plugTreeviewDown)
         toolbar.insert(tb, -1)
         ########
-        tb = toolButtonFromStock(Gtk.STOCK_GOTO_BOTTOM, size)
+        tb = toolButtonFromStock(gtk.STOCK_GOTO_BOTTOM, size)
         set_tooltip(tb, _('Move to bottom'))
         tb.connect('clicked', self.plugTreeviewBottom)
         toolbar.insert(tb, -1)
         ##########
-        tb = toolButtonFromStock(Gtk.STOCK_ADD, size)
+        tb = toolButtonFromStock(gtk.STOCK_ADD, size)
         set_tooltip(tb, _('Add'))
         #tb.connect('clicked', lambda obj: self.plugAddDialog.run())
         tb.connect('clicked', self.plugAddClicked)
@@ -518,7 +518,7 @@ class PrefDialog(Gtk.Dialog):
         toolbar.insert(tb, -1)
         self.plugButtonAdd = tb
         ###########
-        tb = toolButtonFromStock(Gtk.STOCK_DELETE, size)
+        tb = toolButtonFromStock(gtk.STOCK_DELETE, size)
         set_tooltip(tb, _('Delete'))
         tb.connect('clicked', self.plugTreeviewDel)
         toolbar.insert(tb, -1)
@@ -526,17 +526,17 @@ class PrefDialog(Gtk.Dialog):
         hbox.pack_start(toolbar, 0, 0, 0)
         #####
         '''
-        vpan = Gtk.VPaned()
+        vpan = gtk.VPaned()
         vpan.add1(hbox)
-        vbox2 = Gtk.VBox()
-        vbox2.pack_start(Gtk.Label('Test Label'))
+        vbox2 = gtk.VBox()
+        vbox2.pack_start(gtk.Label('Test Label'))
         vpan.add2(vbox2)
         vpan.set_position(100)
         vbox.pack_start(vpan)
         '''
         vbox.pack_start(hbox, 1, 1, 0)
         ##########################
-        d = Gtk.Dialog()
+        d = gtk.Dialog()
         d.set_transient_for(self)
         ## dialog.set_transient_for(parent) makes the window on top of parent and at the center point of parent
         ## but if you call dialog.show() or dialog.present(), the parent is still active(clickabel widgets) before closing child "dialog"
@@ -545,105 +545,105 @@ class PrefDialog(Gtk.Dialog):
         d.connect('delete-event', self.plugAddDialogClose)
         d.set_title(_('Add Plugin'))
         ###
-        dialog_add_button(d, Gtk.STOCK_CANCEL, _('_Cancel'), 1, self.plugAddDialogClose)
-        dialog_add_button(d, Gtk.STOCK_OK, _('_OK'), 2, self.plugAddDialogOK)
+        dialog_add_button(d, gtk.STOCK_CANCEL, _('_Cancel'), 1, self.plugAddDialogClose)
+        dialog_add_button(d, gtk.STOCK_OK, _('_OK'), 2, self.plugAddDialogOK)
         ###
-        treev = Gtk.TreeView()
-        trees = Gtk.ListStore(str)
+        treev = gtk.TreeView()
+        trees = gtk.ListStore(str)
         treev.set_model(trees)
-        #treev.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [('', 0, 0, 0)], Gdk.DragAction.MOVE)#?????
-        #treev.enable_model_drag_dest([('', 0, 0, 0)], Gdk.DragAction.MOVE)#?????
+        #treev.enable_model_drag_source(gdk.ModifierType.BUTTON1_MASK, [('', 0, 0, 0)], gdk.DragAction.MOVE)#?????
+        #treev.enable_model_drag_dest([('', 0, 0, 0)], gdk.DragAction.MOVE)#?????
         treev.connect('drag_data_received', self.plugTreevDragReceived)
         treev.connect('row-activated', self.plugAddTreevRActivate)
         ####
-        cell = Gtk.CellRendererText()
-        col = Gtk.TreeViewColumn(_('Description'), cell, text=0)
+        cell = gtk.CellRendererText()
+        col = gtk.TreeViewColumn(_('Description'), cell, text=0)
         #col.set_resizable(True)# no need when have only one column!
         treev.append_column(col)
         ####
-        swin = Gtk.ScrolledWindow()
+        swin = gtk.ScrolledWindow()
         swin.add(treev)
-        swin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
         d.vbox.pack_start(swin, 1, 1, 0)
         d.vbox.show_all()
         self.plugAddDialog = d
         self.plugAddTreeview = treev
         self.plugAddTreestore = trees
         #############
-        ##treev.set_resize_mode(Gtk.RESIZE_IMMEDIATE)
+        ##treev.set_resize_mode(gtk.RESIZE_IMMEDIATE)
         ##self.plugAddItems = []
         ####################################### Tab 5 (Accounts)
-        vbox = Gtk.VBox()
+        vbox = gtk.VBox()
         vbox.label = _('Accounts')
         vbox.icon = 'web-settings.png'
         self.prefPages.append(vbox)
         #####
-        treev = Gtk.TreeView()
+        treev = gtk.TreeView()
         treev.set_headers_clickable(True)
-        trees = Gtk.ListStore(int, bool, str)## id (hidden), enable, title
+        trees = gtk.ListStore(int, bool, str)## id (hidden), enable, title
         treev.set_model(trees)
-        treev.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [('row', Gtk.TargetFlags.SAME_WIDGET, 0)], Gdk.DragAction.MOVE)
-        treev.enable_model_drag_dest([('row', Gtk.TargetFlags.SAME_WIDGET, 0)], Gdk.DragAction.MOVE)
+        treev.enable_model_drag_source(gdk.ModifierType.BUTTON1_MASK, [('row', gtk.TargetFlags.SAME_WIDGET, 0)], gdk.DragAction.MOVE)
+        treev.enable_model_drag_dest([('row', gtk.TargetFlags.SAME_WIDGET, 0)], gdk.DragAction.MOVE)
         treev.connect('row-activated', self.accountsTreevRActivate)
         treev.connect('button-press-event', self.accountsTreevButtonPress)
         ###
-        swin = Gtk.ScrolledWindow()
+        swin = gtk.ScrolledWindow()
         swin.add(treev)
-        swin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
         ######
-        cell = Gtk.CellRendererToggle()
+        cell = gtk.CellRendererToggle()
         #cell.set_property('activatable', True)
         cell.connect('toggled', self.accountsTreeviewCellToggled)
-        col = Gtk.TreeViewColumn(_('Enable'), cell)
+        col = gtk.TreeViewColumn(_('Enable'), cell)
         col.add_attribute(cell, 'active', 1)
         #cell.set_active(False)
         col.set_resizable(True)
         treev.append_column(col)
         ######
-        cell = Gtk.CellRendererText()
-        col = Gtk.TreeViewColumn(_('Title'), cell, text=2)
+        cell = gtk.CellRendererText()
+        col = gtk.TreeViewColumn(_('Title'), cell, text=2)
         #col.set_resizable(True)## No need!
         treev.append_column(col)
         ######
         self.accountsTreeview = treev
         self.accountsTreestore = trees
         #######################
-        hbox = Gtk.HBox()
-        vboxPlug = Gtk.VBox()
+        hbox = gtk.HBox()
+        vboxPlug = gtk.VBox()
         vboxPlug.pack_start(swin, 1, 1, 0)
         hbox.pack_start(vboxPlug, 1, 1, 0)
         ###
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
         #try:## DeprecationWarning #?????????????
-            #toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
+            #toolbar.set_icon_size(gtk.IconSize.SMALL_TOOLBAR)
             ### no different (argument to set_icon_size does not affect) ?????????
         #except:
         #    pass
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        size = gtk.IconSize.SMALL_TOOLBAR
         ##no different(argument2 to image_new_from_stock does not affect) ?????????
-        ######## Gtk.IconSize.SMALL_TOOLBAR or Gtk.IconSize.MENU
-        tb = toolButtonFromStock(Gtk.STOCK_EDIT, size)
+        ######## gtk.IconSize.SMALL_TOOLBAR or gtk.IconSize.MENU
+        tb = toolButtonFromStock(gtk.STOCK_EDIT, size)
         set_tooltip(tb, _('Edit'))
         tb.connect('clicked', self.accountsEditClicked)
         toolbar.insert(tb, -1)
         ###########
-        tb = toolButtonFromStock(Gtk.STOCK_ADD, size)
+        tb = toolButtonFromStock(gtk.STOCK_ADD, size)
         set_tooltip(tb, _('Add'))
         tb.connect('clicked', self.accountsAddClicked)
         toolbar.insert(tb, -1)
         ###########
-        tb = toolButtonFromStock(Gtk.STOCK_DELETE, size)
+        tb = toolButtonFromStock(gtk.STOCK_DELETE, size)
         set_tooltip(tb, _('Delete'))
         tb.connect('clicked', self.accountsDelClicked)
         toolbar.insert(tb, -1)
         ##########
-        tb = toolButtonFromStock(Gtk.STOCK_GO_UP, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_UP, size)
         set_tooltip(tb, _('Move up'))
         tb.connect('clicked', self.accountsUpClicked)
         toolbar.insert(tb, -1)
         #########
-        tb = toolButtonFromStock(Gtk.STOCK_GO_DOWN, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_DOWN, size)
         set_tooltip(tb, _('Move down'))
         tb.connect('clicked', self.accountsDownClicked)
         toolbar.insert(tb, -1)
@@ -651,13 +651,13 @@ class PrefDialog(Gtk.Dialog):
         hbox.pack_start(toolbar, 0, 0, 0)
         vbox.pack_start(hbox, 1, 1, 0)
         ###################################################################################################
-        notebook = Gtk.Notebook()
+        notebook = gtk.Notebook()
         self.notebook = notebook
         #####################################
         for vbox in self.prefPages:
-            l = Gtk.Label(label=vbox.label)
+            l = gtk.Label(label=vbox.label)
             l.set_use_underline(True)
-            vb = Gtk.VBox(spacing=3)
+            vb = gtk.VBox(spacing=3)
             vb.pack_start(imageFromFile(vbox.icon), 0, 0, 0)
             vb.pack_start(l, 0, 0, 0)
             vb.show_all()
@@ -794,23 +794,23 @@ class PrefDialog(Gtk.Dialog):
         if ui.mainWin:
             """
             if ui.bgUseDesk and ui.bgColor[3]==255:
-                msg = Gtk.MessageDialog(buttons=Gtk.ButtonsType.OK_CANCEL, message_format=_(
+                msg = gtk.MessageDialog(buttons=gtk.ButtonsType.OK_CANCEL, message_format=_(
                 'If you want to have a transparent calendar (and see your desktop),'+\
                 'change the opacity of calendar background color!'))
-                if msg.run()==Gtk.ResponseType.OK:
+                if msg.run()==gtk.ResponseType.OK:
                     self.colorbBg.emit('clicked')
                 msg.destroy()
             """
             if ui.checkNeedRestart():
-                d = Gtk.Dialog(_('Need Restart '+APP_DESC), self,
-                    Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT | Gtk.DialogFlags.NO_SEPARATOR,
-                    (Gtk.STOCK_CANCEL, 0))
+                d = gtk.Dialog(_('Need Restart '+APP_DESC), self,
+                    gtk.DialogFlags.MODAL | gtk.DialogFlags.DESTROY_WITH_PARENT | gtk.DialogFlags.NO_SEPARATOR,
+                    (gtk.STOCK_CANCEL, 0))
                 d.set_keep_above(True)
-                label = Gtk.Label(label=_('Some preferences need for restart %s to apply.'%APP_DESC))
+                label = gtk.Label(label=_('Some preferences need for restart %s to apply.'%APP_DESC))
                 label.set_line_wrap(True)
                 d.vbox.pack_start(label, 0, 0, 0)
                 resBut = d.add_button(_('_Restart'), 1)
-                resBut.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_REFRESH,Gtk.IconSize.BUTTON))
+                resBut.set_image(gtk.Image.new_from_stock(gtk.STOCK_REFRESH,gtk.IconSize.BUTTON))
                 resBut.grab_default()
                 d.vbox.show_all()
                 if d.run()==1:
@@ -902,13 +902,13 @@ class PrefDialog(Gtk.Dialog):
                 i = cur[0]
                 j = self.plugTreestore[i][0]
                 plug = core.allPlugList[j]
-                menu = Gtk.Menu()
+                menu = gtk.Menu()
                 ##
-                item = labelStockMenuItem('_About', Gtk.STOCK_ABOUT, self.plugAboutClicked)
+                item = labelStockMenuItem('_About', gtk.STOCK_ABOUT, self.plugAboutClicked)
                 item.set_sensitive(bool(plug.about))
                 menu.add(item)
                 ##
-                item = labelStockMenuItem('_Configure', Gtk.STOCK_PREFERENCES, self.plugConfClicked)
+                item = labelStockMenuItem('_Configure', gtk.STOCK_PREFERENCES, self.plugConfClicked)
                 item.set_sensitive(plug.has_config)
                 menu.add(item)
                 ##
@@ -955,7 +955,7 @@ class PrefDialog(Gtk.Dialog):
         i = cur[0]
         t = self.plugTreestore
         if i<=0 or i>=len(t):
-            Gdk.beep()
+            gdk.beep()
             return
         t.prepend(t[i])
         t.remove(t.get_iter(i+1))
@@ -967,7 +967,7 @@ class PrefDialog(Gtk.Dialog):
         i = cur[0]
         t = self.plugTreestore
         if i<0 or i>=len(t)-1:
-            Gdk.beep()
+            gdk.beep()
             return
         t.append(t[i])
         t.remove(t.get_iter(i))
@@ -979,7 +979,7 @@ class PrefDialog(Gtk.Dialog):
         i = cur[0]
         t = self.plugTreestore
         if i<=0 or i>=len(t):
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(i-1), t.get_iter(i))
         self.plugTreeview.set_cursor(i-1)
@@ -990,7 +990,7 @@ class PrefDialog(Gtk.Dialog):
         i = cur[0]
         t = self.plugTreestore
         if i<0 or i>=len(t)-1:
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(i), t.get_iter(i+1))
         self.plugTreeview.set_cursor(i+1)
@@ -1003,7 +1003,7 @@ class PrefDialog(Gtk.Dialog):
         dest = treev.get_dest_row_at_pos(x, y)
         if dest == None:
             t.move_after(t.get_iter(i), t.get_iter(len(t)-1))
-        elif dest[1] in (Gtk.TreeViewDropPosition.BEFORE, Gtk.TreeViewDropPosition.INTO_OR_BEFORE):
+        elif dest[1] in (gtk.TreeViewDropPosition.BEFORE, gtk.TreeViewDropPosition.INTO_OR_BEFORE):
             t.move_before(t.get_iter(i), t.get_iter(dest[0][0]))
         else:
             t.move_after(t.get_iter(i), t.get_iter(dest[0][0]))
@@ -1015,7 +1015,7 @@ class PrefDialog(Gtk.Dialog):
         t = self.plugTreestore
         n = len(t)
         if i<0 or i>=n:
-            Gdk.beep()
+            gdk.beep()
             return
         j = t[i][0]
         t.remove(t.get_iter(i))
@@ -1030,7 +1030,7 @@ class PrefDialog(Gtk.Dialog):
     def plugAddDialogOK(self, obj):
         cur = self.plugAddTreeview.get_cursor()[0]
         if cur==None:
-            Gdk.beep()
+            gdk.beep()
             return
         i = cur[0]
         j = self.plugAddItems[i]
@@ -1087,7 +1087,7 @@ class PrefDialog(Gtk.Dialog):
         index = cur[0]
         t = self.accountsTreestore
         if index<=0 or index>=len(t):
-            Gdk.beep()
+            gdk.beep()
             return
         ui.eventAccounts.moveUp(index)
         ui.eventAccounts.save()
@@ -1100,7 +1100,7 @@ class PrefDialog(Gtk.Dialog):
         index = cur[0]
         t = self.accountsTreestore
         if index<0 or index>=len(t)-1:
-            Gdk.beep()
+            gdk.beep()
             return
         ui.eventAccounts.moveDown(index)
         ui.eventAccounts.save()
@@ -1117,7 +1117,7 @@ class PrefDialog(Gtk.Dialog):
                 index = cur[0]
                 accountId = self.accountsTreestore[index][0]
                 account = ui.eventAccounts[accountId]
-                menu = Gtk.Menu()
+                menu = gtk.Menu()
                 ##
                 ## FIXME
                 ##

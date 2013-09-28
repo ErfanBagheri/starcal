@@ -24,30 +24,30 @@ from scal2 import ui
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton, TimeButton
 from scal2.ui_gtk.event import common
 
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 class EventWidget(common.EventWidget):
     def __init__(self, event):## FIXME
         common.EventWidget.__init__(self, event)
         ######
-        sizeGroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        sizeGroup = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
         ######
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Start'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Start'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
         self.startDateInput = DateButton()
         hbox.pack_start(self.startDateInput, 0, 0, 0)
         ##
-        hbox.pack_start(Gtk.Label(' '+_('Time')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(' '+_('Time')), 0, 0, 0)
         self.startTimeInput = TimeButton()
         hbox.pack_start(self.startTimeInput, 0, 0, 0)
         ##
         self.pack_start(hbox, 0, 0, 0)
         ######
-        hbox = Gtk.HBox()
-        self.endTypeCombo = Gtk.ComboBoxText()
+        hbox = gtk.HBox()
+        self.endTypeCombo = gtk.ComboBoxText()
         for item in ('Duration', 'End'):
             self.endTypeCombo.append_text(_(item))
         self.endTypeCombo.connect('changed', self.endTypeComboChanged)
@@ -57,17 +57,17 @@ class EventWidget(common.EventWidget):
         self.durationBox = common.DurationInputBox()
         hbox.pack_start(self.durationBox, 1, 1, 0)
         ####
-        self.endDateHbox = Gtk.HBox()
+        self.endDateHbox = gtk.HBox()
         self.endDateInput = DateButton()
         self.endDateHbox.pack_start(self.endDateInput, 0, 0, 0)
         ##
-        self.endDateHbox.pack_start(Gtk.Label(' '+_('Time')), 0, 0, 0)
+        self.endDateHbox.pack_start(gtk.Label(' '+_('Time')), 0, 0, 0)
         self.endTimeInput = TimeButton()
         self.endDateHbox.pack_start(self.endTimeInput, 0, 0, 0)
         ##
         hbox.pack_start(self.endDateHbox, 1, 1, 0)
         ####
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         #############
         self.notificationBox = common.NotificationBox(event)

@@ -27,8 +27,8 @@ from scal2.locale_man import numDecode
 from scal2 import core
 
 from gi.repository import GObject
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.decorators import *
 from scal2.ui_gtk.drawing import *
@@ -37,7 +37,7 @@ from scal2.ui_gtk.event.groups.group import GroupWidget as NormalGroupWidget
 
 
 
-class CourseListEditor(Gtk.HBox):
+class CourseListEditor(gtk.HBox):
     def __init__(
         self,
         term,
@@ -49,63 +49,63 @@ class CourseListEditor(Gtk.HBox):
         self.defaultCourseName = defaultCourseName
         self.defaultCourseUnits = defaultCourseUnits
         #####
-        Gtk.HBox.__init__(self)
-        self.treev = Gtk.TreeView()
+        gtk.HBox.__init__(self)
+        self.treev = gtk.TreeView()
         self.treev.set_headers_visible(True)
-        self.trees = Gtk.ListStore(int, str, int)
+        self.trees = gtk.ListStore(int, str, int)
         self.treev.set_model(self.trees)
         ##########
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         cell.set_property('editable', True)
         cell.connect('edited', self.courseNameEdited)
         #cell.connect('editing-started', lambda cell0, editable, path:
         #    sys.stdout.write('editing-started %s\n'%path))
         #cell.connect('editing-canceled', lambda cell0:sys.stdout.write('editing-canceled\n'))
-        col = Gtk.TreeViewColumn(_('Course Name'), cell, text=1)
+        col = gtk.TreeViewColumn(_('Course Name'), cell, text=1)
         self.treev.append_column(col)
         ###
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         cell.set_property('editable', True)
         cell.connect('edited', self.courseUnitsEdited)
-        col = Gtk.TreeViewColumn(_('Units'), cell, text=2)
+        col = gtk.TreeViewColumn(_('Units'), cell, text=2)
         self.treev.append_column(col)
         ####
         if enableScrollbars:## FIXME
-            swin = Gtk.ScrolledWindow()
+            swin = gtk.ScrolledWindow()
             swin.add(self.treev)
-            swin.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            swin.set_policy(gtk.PolicyType.NEVER, gtk.PolicyType.AUTOMATIC)
             self.pack_start(swin, 1, 1, 0)
         else:
             self.pack_start(self.treev, 1, 1, 0)
         ##########
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
         #try:## DeprecationWarning #?????????????
-            #toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
+            #toolbar.set_icon_size(gtk.IconSize.SMALL_TOOLBAR)
             ### no different (argument to set_icon_size does not affect) ?????????
         #except:
         #    pass
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        size = gtk.IconSize.SMALL_TOOLBAR
         ##no different(argument2 to image_new_from_stock does not affect) ?????????
-        #### Gtk.IconSize.SMALL_TOOLBAR or Gtk.IconSize.MENU
-        tb = toolButtonFromStock(Gtk.STOCK_ADD, size)
+        #### gtk.IconSize.SMALL_TOOLBAR or gtk.IconSize.MENU
+        tb = toolButtonFromStock(gtk.STOCK_ADD, size)
         set_tooltip(tb, _('Add'))
         tb.connect('clicked', self.addClicked)
         toolbar.insert(tb, -1)
         #self.buttonAdd = tb
         ####
-        tb = toolButtonFromStock(Gtk.STOCK_DELETE, size)
+        tb = toolButtonFromStock(gtk.STOCK_DELETE, size)
         set_tooltip(tb, _('Delete'))
         tb.connect('clicked', self.deleteClicked)
         toolbar.insert(tb, -1)
         #self.buttonDel = tb
         ####
-        tb = toolButtonFromStock(Gtk.STOCK_GO_UP, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_UP, size)
         set_tooltip(tb, _('Move up'))
         tb.connect('clicked', self.moveUpClicked)
         toolbar.insert(tb, -1)
         ####
-        tb = toolButtonFromStock(Gtk.STOCK_GO_DOWN, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_DOWN, size)
         set_tooltip(tb, _('Move down'))
         tb.connect('clicked', self.moveDownClicked)
         toolbar.insert(tb, -1)
@@ -142,7 +142,7 @@ class CourseListEditor(Gtk.HBox):
             return
         t = self.trees
         if index<=0 or index>=len(t):
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(index-1), t.get_iter(index))
         self.treev.set_cursor(index-1)
@@ -152,7 +152,7 @@ class CourseListEditor(Gtk.HBox):
             return
         t = self.trees
         if index<0 or index>=len(t)-1:
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(index), t.get_iter(index+1))
         self.treev.set_cursor(index+1)
@@ -172,41 +172,41 @@ class CourseListEditor(Gtk.HBox):
         return [tuple(row) for row in self.trees]
 
 
-class ClassTimeBoundsEditor(Gtk.HBox):
+class ClassTimeBoundsEditor(gtk.HBox):
     def __init__(self, term):
         self.term = term
         #####
-        Gtk.HBox.__init__(self)
-        self.treev = Gtk.TreeView()
+        gtk.HBox.__init__(self)
+        self.treev = gtk.TreeView()
         self.treev.set_headers_visible(False)
-        self.trees = Gtk.ListStore(str)
+        self.trees = gtk.ListStore(str)
         self.treev.set_model(self.trees)
         ##########
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         cell.set_property('editable', True)
         cell.connect('edited', self.timeEdited)
-        col = Gtk.TreeViewColumn(_('Time'), cell, text=0)
+        col = gtk.TreeViewColumn(_('Time'), cell, text=0)
         self.treev.append_column(col)
         ####
         self.pack_start(self.treev, 1, 1, 0)
         ##########
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
         #try:## DeprecationWarning #?????????????
-            #toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
+            #toolbar.set_icon_size(gtk.IconSize.SMALL_TOOLBAR)
             ### no different (argument to set_icon_size does not affect) ?????????
         #except:
         #    pass
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        size = gtk.IconSize.SMALL_TOOLBAR
         ##no different(argument2 to image_new_from_stock does not affect) ?????????
-        #### Gtk.IconSize.SMALL_TOOLBAR or Gtk.IconSize.MENU
-        tb = toolButtonFromStock(Gtk.STOCK_ADD, size)
+        #### gtk.IconSize.SMALL_TOOLBAR or gtk.IconSize.MENU
+        tb = toolButtonFromStock(gtk.STOCK_ADD, size)
         set_tooltip(tb, _('Add'))
         tb.connect('clicked', self.addClicked)
         toolbar.insert(tb, -1)
         #self.buttonAdd = tb
         ####
-        tb = toolButtonFromStock(Gtk.STOCK_DELETE, size)
+        tb = toolButtonFromStock(gtk.STOCK_DELETE, size)
         set_tooltip(tb, _('Delete'))
         tb.connect('clicked', self.deleteClicked)
         toolbar.insert(tb, -1)
@@ -240,7 +240,7 @@ class ClassTimeBoundsEditor(Gtk.HBox):
             return
         t = self.trees
         if index<=0 or index>=len(t):
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(index-1), t.get_iter(index))
         self.treev.set_cursor(index-1)
@@ -250,7 +250,7 @@ class ClassTimeBoundsEditor(Gtk.HBox):
             return
         t = self.trees
         if index<0 or index>=len(t)-1:
-            Gdk.beep()
+            gdk.beep()
             return
         t.swap(t.get_iter(index), t.get_iter(index+1))
         self.treev.set_cursor(index+1)
@@ -273,20 +273,20 @@ class GroupWidget(NormalGroupWidget):
     def __init__(self, group):
         NormalGroupWidget.__init__(self, group)
         #####
-        totalFrame = Gtk.Frame()
+        totalFrame = gtk.Frame()
         totalFrame.set_label(group.desc)
-        totalVbox = Gtk.VBox()
+        totalVbox = gtk.VBox()
         ###
-        expandHbox = Gtk.HBox()## for courseList and classTimeBounds
+        expandHbox = gtk.HBox()## for courseList and classTimeBounds
         ##
-        frame = Gtk.Frame()
+        frame = gtk.Frame()
         frame.set_label(_('Course List'))
         self.courseListEditor = CourseListEditor(self.group)
         self.courseListEditor.set_size_request(100, 150)
         frame.add(self.courseListEditor)
         expandHbox.pack_start(frame, 1, 1, 0)
         ##
-        frame = Gtk.Frame()## FIXME
+        frame = gtk.Frame()## FIXME
         frame.set_label(_('Class Time Bounds'))
         self.classTimeBoundsEditor = ClassTimeBoundsEditor(self.group)
         self.classTimeBoundsEditor.set_size_request(50, 150)
@@ -309,31 +309,31 @@ class GroupWidget(NormalGroupWidget):
 
 
 @registerType
-class WeeklyScheduleWidget(Gtk.DrawingArea):
+class WeeklyScheduleWidget(gtk.DrawingArea):
     def __init__(self, term):
         self.term = term
         self.data = []
         ####
-        Gtk.DrawingArea.__init__(self)
+        gtk.DrawingArea.__init__(self)
         #self.connect('button-press-event', self.buttonPress)
         self.connect('draw', self.onExposeEvent)
         #self.connect('event', show_event)
     def do_realize(self):
-        self.set_flags(self.flags() | Gtk.REALIZED)
-        self.window = Gdk.Window(
+        self.set_flags(self.flags() | gtk.REALIZED)
+        self.window = gdk.Window(
             self.get_parent_window(),
             width=self.get_allocation().width,
             height=self.get_allocation().height,
-            window_type=Gdk.WINDOW_CHILD,
-            wclass=Gdk.INPUT_OUTPUT,
-            event_mask=self.get_events() | Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON1_MOTION_MASK
-                | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.POINTER_MOTION_HINT_MASK,
+            window_type=gdk.WINDOW_CHILD,
+            wclass=gdk.INPUT_OUTPUT,
+            event_mask=self.get_events() | gdk.EventMask.EXPOSURE_MASK | gdk.EventMask.BUTTON1_MOTION_MASK
+                | gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.POINTER_MOTION_HINT_MASK,
             #colormap=self.get_screen().get_rgba_colormap(),
         )
         #self.get_window().set_composited(True)
         self.get_window().set_user_data(self)
         self.style.attach(self.window)#?????? Needed??
-        self.style.set_background(self.window, Gtk.StateType.NORMAL)
+        self.style.set_background(self.window, gtk.StateType.NORMAL)
         self.get_window().move_resize(*self.get_allocation())
         #self.onExposeEvent()
     def onExposeEvent(self, widget=None, event=None):
@@ -436,22 +436,22 @@ class WeeklyScheduleWidget(Gtk.DrawingArea):
                 show_layout(cr, layout)
 
 
-class WeeklyScheduleWindow(Gtk.Dialog):
+class WeeklyScheduleWindow(gtk.Dialog):
     def __init__(self, term, **kwargs):
         self.term = term
-        Gtk.Dialog.__init__(self, **kwargs)
+        gtk.Dialog.__init__(self, **kwargs)
         self.resize(800, 500)
         self.set_title(_('View Weekly Schedule'))
         self.connect('delete-event', self.onDeleteEvent)
         #####
-        hbox = Gtk.HBox()
-        self.currentWOnlyCheck = Gtk.CheckButton(_('Current Week Only'))
+        hbox = gtk.HBox()
+        self.currentWOnlyCheck = gtk.CheckButton(_('Current Week Only'))
         self.currentWOnlyCheck.connect('clicked', lambda obj: self.updateWidget())
         hbox.pack_start(self.currentWOnlyCheck, 0, 0, 0)
         ##
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ##
-        button = Gtk.Button(_('Export to ')+'SVG')
+        button = gtk.Button(_('Export to ')+'SVG')
         button.connect('clicked', self.exportToSvgClicked)
         hbox.pack_start(button, 0, 0, 0)
         ##
@@ -474,22 +474,22 @@ class WeeklyScheduleWindow(Gtk.Dialog):
         fo = open(fpath, 'w')
         surface = cairo.SVGSurface(fo, w, h)
         cr0 = cairo.Context(surface)
-        cr = Gdk.CairoContext(cr0)
+        cr = gdk.CairoContext(cr0)
         #surface.set_device_offset(0, 0)
         self._widget.drawCairo(cr)
         surface.finish()
     def exportToSvgClicked(self, obj=None):
-        fcd = Gtk.FileChooserDialog(parent=self, action=Gtk.FileChooserAction.SAVE)
+        fcd = gtk.FileChooserDialog(parent=self, action=gtk.FileChooserAction.SAVE)
         fcd.set_current_folder(deskDir)
         fcd.set_current_name(self.term.title + '.svg')
-        canB = fcd.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
-        saveB = fcd.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
+        canB = fcd.add_button(gtk.STOCK_CANCEL, gtk.ResponseType.CANCEL)
+        saveB = fcd.add_button(gtk.STOCK_SAVE, gtk.ResponseType.OK)
         if ui.autoLocale:
             canB.set_label(_('_Cancel'))
-            canB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_CANCEL,Gtk.IconSize.BUTTON))
+            canB.set_image(gtk.Image.new_from_stock(gtk.STOCK_CANCEL,gtk.IconSize.BUTTON))
             saveB.set_label(_('_Save'))
-            saveB.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_SAVE,Gtk.IconSize.BUTTON))
-        if fcd.run()==Gtk.ResponseType.OK:
+            saveB.set_image(gtk.Image.new_from_stock(gtk.STOCK_SAVE,gtk.IconSize.BUTTON))
+        if fcd.run()==gtk.ResponseType.OK:
             self.exportToSvg(fcd.get_filename())
         fcd.destroy()
 

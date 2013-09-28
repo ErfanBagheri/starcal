@@ -31,35 +31,35 @@ from scal2.export import exportToHtml
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton, TimeButton, YearMonthButton
 from scal2.ui_gtk.utils import openWindow, dialog_add_button
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 #gdkColorToHtml = lambda color: '#%.2x%.2x%.2x'%(color.red/256, color.green/256, color.blue/256)
 
 
 
-class ExportDialog(Gtk.Dialog):
+class ExportDialog(gtk.Dialog):
     def __init__(self):
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Export to %s')%'HTML')
         ## parent=None FIXME
         #self.set_has_separator(False)
         ########
-        hbox = Gtk.HBox(spacing=2)
-        hbox.pack_start(Gtk.Label(_('Month Range')), 0, 0, 0)
-        combo = Gtk.ComboBoxText()
+        hbox = gtk.HBox(spacing=2)
+        hbox.pack_start(gtk.Label(_('Month Range')), 0, 0, 0)
+        combo = gtk.ComboBoxText()
         for t in ('Current Month', 'Whole Current Year', 'Custom'):
             combo.append_text(_(t))
         hbox.pack_start(combo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.combo = combo
         ###
-        hbox2 = Gtk.HBox(spacing=2)
-        hbox2.pack_start(Gtk.Label(_('from month')), 0, 0, 0)
+        hbox2 = gtk.HBox(spacing=2)
+        hbox2.pack_start(gtk.Label(_('from month')), 0, 0, 0)
         self.ymBox0 = YearMonthButton()
         hbox2.pack_start(self.ymBox0, 0, 0, 0)
-        hbox2.pack_start(Gtk.Label(''), 1, 1, 0)
-        hbox2.pack_start(Gtk.Label(_('to month')), 0, 0, 0)
+        hbox2.pack_start(gtk.Label(''), 1, 1, 0)
+        hbox2.pack_start(gtk.Label(_('to month')), 0, 0, 0)
         self.ymBox1 = YearMonthButton()
         hbox2.pack_start(self.ymBox1, 0, 0, 0)
         hbox.pack_start(hbox2, 1, 1, 0)
@@ -67,14 +67,14 @@ class ExportDialog(Gtk.Dialog):
         combo.set_active(0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ########
-        self.fcw = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.SAVE)
+        self.fcw = gtk.FileChooserWidget(action=gtk.FileChooserAction.SAVE)
         self.vbox.pack_start(self.fcw, 1, 1, 0)
         self.vbox.set_focus_child(self.fcw)## FIXME
         self.vbox.show_all()
         combo.connect('changed', self.comboChanged)
         ##
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), 1, self.onDelete)
-        dialog_add_button(self, Gtk.STOCK_SAVE, _('_Save'), 2, self.save)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), 1, self.onDelete)
+        dialog_add_button(self, gtk.STOCK_SAVE, _('_Save'), 2, self.save)
         ##
         self.connect('delete-event', self.onDelete)
         try:
@@ -99,9 +99,9 @@ class ExportDialog(Gtk.Dialog):
         self.hide()
         return True
     def save(self, widget=None):
-        self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.WATCH))
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
+        self.get_window().set_cursor(gdk.Cursor.new(gdk.CursorType.WATCH))
+        while gtk.events_pending():
+            gtk.main_iteration_do(False)
         path = self.fcw.get_filename()
         if path in (None, ''):
             return
@@ -126,7 +126,7 @@ class ExportDialog(Gtk.Dialog):
                 months.append(getMonthStatus(y, m))
             title = _('Calendar')
         exportToHtml(path, months, title)
-        self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR))
+        self.get_window().set_cursor(gdk.Cursor.new(gdk.CursorType.LEFT_PTR))
         self.hide()
     def showDialog(self, year, month):
         self.comboChanged(ym=(year, month))
@@ -147,7 +147,7 @@ class ExportDialog(Gtk.Dialog):
         fo = open(path+'.svg', 'w')
         surface = cairo.SVGSurface(fo, w, h)
         cr0 = cairo.Context(surface)
-        cr = Gdk.CairoContext(cr0)
+        cr = gdk.CairoContext(cr0)
         year = ui.cell.year
         month = ui.cell.month
         day = self.mcal.day
@@ -163,19 +163,19 @@ class ExportDialog(Gtk.Dialog):
 
 
 
-class ExportToIcsDialog(Gtk.Dialog):
+class ExportToIcsDialog(gtk.Dialog):
     def __init__(self, saveIcsFunc, defaultFileName):
         self.saveIcsFunc = saveIcsFunc
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Export to %s')%'iCalendar')
         ## parent=None FIXME
         #self.set_has_separator(False)
         ########
-        hbox = Gtk.HBox(spacing=2)
-        hbox.pack_start(Gtk.Label(_('From')+' '), 0, 0, 0)
+        hbox = gtk.HBox(spacing=2)
+        hbox.pack_start(gtk.Label(_('From')+' '), 0, 0, 0)
         self.startDateInput = DateButton()
         hbox.pack_start(self.startDateInput, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(' '+_('To')+' '), 0, 0, 0)
+        hbox.pack_start(gtk.Label(' '+_('To')+' '), 0, 0, 0)
         self.endDateInput = DateButton()
         hbox.pack_start(self.endDateInput, 0, 0, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
@@ -184,13 +184,13 @@ class ExportToIcsDialog(Gtk.Dialog):
         self.startDateInput.set_value((year, 1, 1, 0))
         self.endDateInput.set_value((year+1, 1, 1, 0))
         ########
-        self.fcw = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.SAVE)
+        self.fcw = gtk.FileChooserWidget(action=gtk.FileChooserAction.SAVE)
         self.vbox.pack_start(self.fcw, 1, 1, 0)
         self.vbox.set_focus_child(self.fcw)## FIXME
         self.vbox.show_all()
         ##
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), 1, self.onDelete)
-        dialog_add_button(self, Gtk.STOCK_SAVE, _('_Save'), 2, self.save)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), 1, self.onDelete)
+        dialog_add_button(self, gtk.STOCK_SAVE, _('_Save'), 2, self.save)
         ##
         self.connect('delete-event', self.onDelete)
         self.fcw.connect('file-activated', self.save)## not working FIXME
@@ -206,9 +206,9 @@ class ExportToIcsDialog(Gtk.Dialog):
         self.destroy()
         return True
     def save(self, widget=None):
-        self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.WATCH))
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
+        self.get_window().set_cursor(gdk.Cursor.new(gdk.CursorType.WATCH))
+        while gtk.events_pending():
+            gtk.main_iteration_do(False)
         path = self.fcw.get_filename()
         if path in (None, ''):
             return
@@ -218,7 +218,7 @@ class ExportToIcsDialog(Gtk.Dialog):
             core.primary_to_jd(*self.startDateInput.get_value()),
             core.primary_to_jd(*self.endDateInput.get_value()),
         )
-        self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR))
+        self.get_window().set_cursor(gdk.Cursor.new(gdk.CursorType.LEFT_PTR))
         self.destroy()
 
 

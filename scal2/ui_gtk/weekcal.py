@@ -37,8 +37,8 @@ from scal2.weekcal import getCurrentWeekStatus
 
 from gi.repository import GObject
 from gi.repository import GdkPixbuf
-from gi.repository import Gdk
-from gi.repository import Gtk
+from gi.repository import Gdk as gdk
+from gi.repository import Gtk as gtk
 
 
 from scal2.ui_gtk.decorators import *
@@ -98,14 +98,14 @@ class ColumnBase(CustomizableCalObj):
     def initVars(self, *a, **ka):
         CustomizableCalObj.initVars(self, *a, **ka)
         if not self.optionsWidget:
-            self.optionsWidget = Gtk.VBox()
+            self.optionsWidget = gtk.VBox()
         ####
         if self.customizeWidth:
             value = self.getWidthValue()
             self.setWidthWidget(value)
             ###
-            hbox = Gtk.HBox()
-            hbox.pack_start(Gtk.Label(_('Width')), 0, 0, 0)
+            hbox = gtk.HBox()
+            hbox.pack_start(gtk.Label(_('Width')), 0, 0, 0)
             spin = IntSpinButton(0, 999)
             hbox.pack_start(spin, 0, 0, 0)
             spin.set_value(value)
@@ -113,8 +113,8 @@ class ColumnBase(CustomizableCalObj):
             self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ####
         if self.customizeFont:
-            hbox = Gtk.HBox()
-            hbox.pack_start(Gtk.Label(_('Font Family')), 0, 0, 0)
+            hbox = gtk.HBox()
+            hbox.pack_start(gtk.Label(_('Font Family')), 0, 0, 0)
             combo = FontFamilyCombo(hasAuto=True)
             combo.set_value(self.getFontValue())
             hbox.pack_start(combo, 0, 0, 0)
@@ -125,12 +125,12 @@ class ColumnBase(CustomizableCalObj):
 
 
 @registerSignals
-class Column(Gtk.DrawingArea, ColumnBase):
+class Column(gtk.DrawingArea, ColumnBase):
     colorizeHolidayText = False
     showCursor = False
     truncateText = False
     def __init__(self, wcal):
-        Gtk.DrawingArea.__init__(self)
+        gtk.DrawingArea.__init__(self)
         self.initVars()
         #self.connect('button-press-event', self.buttonPress)
         #self.connect('event', show_event)
@@ -139,20 +139,20 @@ class Column(Gtk.DrawingArea, ColumnBase):
         return self.get_window().cairo_create()
     '''
     def do_realize(self):
-        self.set_flags(self.flags() | Gtk.REALIZED)
-        self.window = Gdk.Window(
+        self.set_flags(self.flags() | gtk.REALIZED)
+        self.window = gdk.Window(
             self.get_parent_window(),
             width=self.get_allocation().width,
             height=self.get_allocation().height,
-            window_type=Gdk.WINDOW_CHILD,
-            wclass=Gdk.INPUT_OUTPUT,
+            window_type=gdk.WINDOW_CHILD,
+            wclass=gdk.INPUT_OUTPUT,
             event_mask=self.get_events() \
-                | Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON1_MOTION_MASK
-                | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.POINTER_MOTION_HINT_MASK,
+                | gdk.EventMask.EXPOSURE_MASK | gdk.EventMask.BUTTON1_MOTION_MASK
+                | gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.POINTER_MOTION_HINT_MASK,
         )
         self.get_window().set_user_data(self)
         self.style.attach(self.window)#?????? Needed??
-        self.style.set_background(self.window, Gtk.StateType.NORMAL)
+        self.style.set_background(self.window, gtk.StateType.NORMAL)
         self.get_window().move_resize(*self.get_allocation())
     '''
     def drawBg(self, cr):
@@ -247,15 +247,15 @@ class MainMenuToolbarItem(ToolbarItem):
         self.connect('clicked', self.onClicked)
         self.updateImage()
         ####
-        self.optionsWidget = Gtk.VBox()
+        self.optionsWidget = gtk.VBox()
         ###
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Icon')+'  '), 0, 0, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Icon')+'  '), 0, 0, 0)
         self.iconSelect = IconSelectButton()
         self.iconSelect.set_filename(ui.wcal_toolbar_mainMenu_icon)
         self.iconSelect.connect('changed', self.onIconChanged)
         hbox.pack_start(self.iconSelect, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         self.optionsWidget.show_all()
     def updateImage(self):
@@ -282,8 +282,8 @@ class MainMenuToolbarItem(ToolbarItem):
 class WeekNumToolbarItem(ToolbarItem):
     def __init__(self):
         ToolbarItem.__init__(self, 'weekNum', None, self.onClicked, tooltip=_('Week Number'), text='')
-        self.label = Gtk.Label()
-        self.label.set_direction(gtk.TEXT_DIR_LTR)
+        self.label = gtk.Label()
+        self.label.set_direction(gtk.TextDirection.LTR)
         self.set_property('label-widget', self.label)
     def updateLabel(self):
         if ui.wcal_toolbar_weekNum_negative:
@@ -418,7 +418,7 @@ class EventsIconColumn(Column):
                 x1 = x0 + iconIndex*self.maxPixW - pix_w/2.0
                 y1 = y0 - pix_h/2.0
                 cr.scale(scaleFact, scaleFact)
-                Gdk.cairo_set_source_pixbuf(cr, pix, x1, y1)
+                gdk.cairo_set_source_pixbuf(cr, pix, x1, y1)
                 cr.rectangle(x1, y1, pix_w, pix_h)
                 cr.fill()
                 cr.scale(1.0/scaleFact, 1.0/scaleFact)
@@ -435,12 +435,12 @@ class EventsCountColumn(Column):
         Column.__init__(self, wcal)
         self.expand = ui.wcal_eventsCount_expand
         ##
-        hbox = Gtk.HBox()
-        check = Gtk.CheckButton(_('Expand'))
+        hbox = gtk.HBox()
+        check = gtk.CheckButton(_('Expand'))
         check.set_active(ui.wcal_eventsCount_expand)
         check.connect('clicked', self.expandCheckClicked)
         hbox.pack_start(check, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         self.optionsWidget.show_all()
         ##
@@ -448,7 +448,7 @@ class EventsCountColumn(Column):
     def expandCheckClicked(self, check):
         active = check.get_active()
         self.expand = ui.wcal_eventsCount_expand = active
-        self.wcal.set_child_packing(self, active, active, 0, Gtk.PACK_START)
+        self.wcal.set_child_packing(self, active, active, 0, gtk.PACK_START)
         self.queue_draw()
     def getDayTextData(self, i):
         n = len(self.wcal.status[i].eventsData)
@@ -489,19 +489,19 @@ class EventsTextColumn(Column):
         Column.__init__(self, wcal)
         self.connect('draw', self.onExposeEvent)
         #####
-        hbox = Gtk.HBox()
-        check = Gtk.CheckButton(_('Show Description'))
+        hbox = gtk.HBox()
+        check = gtk.CheckButton(_('Show Description'))
         check.set_active(ui.wcal_eventsText_showDesc)
         hbox.pack_start(check, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         check.connect('clicked', self.descCheckClicked)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ##
-        hbox = Gtk.HBox()
-        check = Gtk.CheckButton(_('Colorize'))
+        hbox = gtk.HBox()
+        check = gtk.CheckButton(_('Colorize'))
         check.set_active(ui.wcal_eventsText_colorize)
         hbox.pack_start(check, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         check.connect('clicked', self.colorizeCheckClicked)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ##
@@ -598,20 +598,20 @@ class EventsBoxColumn(Column):
             self.drawBox(cr, box)
 
 
-class WcalTypeParamBox(Gtk.HBox):
+class WcalTypeParamBox(gtk.HBox):
     def __init__(self, wcal, index, mode, params, sgroupLabel, sgroupFont):
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         self.wcal = wcal
         self.index = index
         self.mode = mode
         ######
-        label = Gtk.Label(label=_(calTypes[mode].desc)+'  ')
+        label = gtk.Label(label=_(calTypes[mode].desc)+'  ')
         label.set_alignment(0, 0.5)
         self.pack_start(label, 0, 0, 0)
         sgroupLabel.add_widget(label)
         ###
-        self.fontCheck = Gtk.CheckButton(_('Font'))
-        self.pack_start(Gtk.Label(''), 1, 1, 0)
+        self.fontCheck = gtk.CheckButton(_('Font'))
+        self.pack_start(gtk.Label(''), 1, 1, 0)
         self.pack_start(self.fontCheck, 0, 0, 0)
         ###
         self.fontb = MyFontButton(wcal)
@@ -669,7 +669,7 @@ class DaysOfMonthColumn(Column):
         self.drawCursorFg(cr)
 
 @registerSignals
-class DaysOfMonthColumnGroup(Gtk.HBox, CustomizableCalBox, ColumnBase):
+class DaysOfMonthColumnGroup(gtk.HBox, CustomizableCalBox, ColumnBase):
     _name = 'daysOfMonth'
     desc = _('Days of Month')
     customizeWidth = True
@@ -678,24 +678,24 @@ class DaysOfMonthColumnGroup(Gtk.HBox, CustomizableCalBox, ColumnBase):
     )
     updateDir = lambda self: self.set_direction(ud.textDirDict[ui.wcal_daysOfMonth_dir])
     def __init__(self, wcal):
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         self.initVars()
         self.wcal = wcal
         self.updateCols()
         self.updateDir()
         self.show()
         #####
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Direction')), 0, 0, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Direction')), 0, 0, 0)
         combo = DirectionComboBox()
         hbox.pack_start(combo, 0, 0, 0)
         combo.setValue(ui.wcal_daysOfMonth_dir)
         combo.connect('changed', self.dirComboChanged)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ####
-        frame = Gtk.Frame()
+        frame = gtk.Frame()
         frame.set_label(_('Calendars'))
-        self.typeParamsVbox = Gtk.VBox()
+        self.typeParamsVbox = gtk.VBox()
         frame.add(self.typeParamsVbox)
         frame.show_all()
         self.optionsWidget.pack_start(frame, 0, 0, 0)
@@ -709,7 +709,7 @@ class DaysOfMonthColumnGroup(Gtk.HBox, CustomizableCalBox, ColumnBase):
         ui.wcal_daysOfMonth_dir = combo.getValue()
         self.updateDir()
     def updateCols(self):
-        #self.foreach(Gtk.DrawingArea.destroy)## Couses crash tray icon in gnome3
+        #self.foreach(gtk.DrawingArea.destroy)## Couses crash tray icon in gnome3
         #self.foreach(lambda child: self.remove(child))## Couses crash tray icon in gnome3
         ########
         columns = self.get_children()
@@ -743,8 +743,8 @@ class DaysOfMonthColumnGroup(Gtk.HBox, CustomizableCalBox, ColumnBase):
             ui.wcalTypeParams.append({
                 'font': None,
             })
-        sgroupLabel = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
-        sgroupFont = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        sgroupLabel = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
+        sgroupFont = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
         for i, mode in enumerate(calTypes.active):
             #try:
             params = ui.wcalTypeParams[i]
@@ -763,7 +763,7 @@ class DaysOfMonthColumnGroup(Gtk.HBox, CustomizableCalBox, ColumnBase):
 
 
 @registerSignals
-class WeekCal(Gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
+class WeekCal(gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
     _name = 'weekCal'
     desc = _('Week Calendar')
     params = (
@@ -783,12 +783,12 @@ class WeekCal(Gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
         #'f10', 'm',
     )
     def __init__(self):
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
 
         self.add_events(
-            Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.FOCUS_CHANGE_MASK | Gdk.EventMask.BUTTON_MOTION_MASK |
-            Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.SCROLL_MASK |
-            Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.VISIBILITY_NOTIFY_MASK | Gdk.EventMask.EXPOSURE_MASK
+            gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.FOCUS_CHANGE_MASK | gdk.EventMask.BUTTON_MOTION_MASK |
+            gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK | gdk.EventMask.SCROLL_MASK |
+            gdk.EventMask.KEY_PRESS_MASK | gdk.EventMask.VISIBILITY_NOTIFY_MASK | gdk.EventMask.EXPOSURE_MASK
         )
 
 
@@ -826,23 +826,23 @@ class WeekCal(Gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
             item.enable = False
             self.appendItem(item)
         #####
-        hbox = Gtk.HBox()
+        hbox = gtk.HBox()
         spin = IntSpinButton(1, 9999)
         spin.set_value(ui.wcalHeight)
         spin.connect('changed', self.heightSpinChanged)
-        hbox.pack_start(Gtk.Label(_('Height')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Height')), 0, 0, 0)
         hbox.pack_start(spin, 0, 0, 0)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = Gtk.HBox()
+        hbox = gtk.HBox()
         spin = FloatSpinButton(0.01, 1, 2)
         spin.set_value(ui.wcalTextSizeScale)
         spin.connect('changed', self.textSizeScaleSpinChanged)
-        hbox.pack_start(Gtk.Label(_('Text Size Scale')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(_('Text Size Scale')), 0, 0, 0)
         hbox.pack_start(spin, 0, 0, 0)
         self.optionsWidget.pack_start(hbox, 0, 0, 0)
         ########
-        hbox = Gtk.HBox(spacing=3)
+        hbox = gtk.HBox(spacing=3)
         ####
         item = CheckPrefItem(ui, 'wcalGrid', _('Grid'))
         item.updateWidget()
@@ -910,7 +910,7 @@ class WeekCal(Gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
         i = int(event.y * 7.0 / self.get_allocation().height)
         cell = self.status[i]
         self.gotoJd(cell.jd)
-        if event.type==getattr(Gdk.EventType, '2BUTTON_PRESS'):
+        if event.type==getattr(gdk.EventType, '2BUTTON_PRESS'):
             self.emit('2button-press')
         if b == 3:
             self.emit('popup-menu-cell', event.time, x, y)
@@ -918,7 +918,7 @@ class WeekCal(Gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
     def keyPress(self, arg, event):
         if CalBase.keyPress(self, arg, event):
             return True
-        kname = Gdk.keyval_name(event.keyval).lower()
+        kname = gdk.keyval_name(event.keyval).lower()
         if kname=='up':
             self.jdPlus(-1)
         elif kname=='down':
@@ -930,7 +930,7 @@ class WeekCal(Gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
         elif kname in ('page_down', 'j', 'n'):
             self.jdPlus(7)
         #elif kname in ('f10', 'm'):
-        #    if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
+        #    if event.get_state() & gdk.ModifierType.SHIFT_MASK:
         #        # Simulate right click (key beside Right-Ctrl)
         #        self.emit('popup-menu-cell', event.time, *self.getCellPos())
         #    else:
@@ -960,12 +960,12 @@ class WeekCal(Gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
 
 
 if __name__=='__main__':
-    win = Gtk.Dialog()
+    win = gtk.Dialog()
     cal = WeekCal()
     win.add_events(
-        Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.FOCUS_CHANGE_MASK | Gdk.EventMask.BUTTON_MOTION_MASK |
-        Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.SCROLL_MASK |
-        Gdk.EventMask.KEY_PRESS_MASK | Gdk.EventMask.VISIBILITY_NOTIFY_MASK | Gdk.EventMask.EXPOSURE_MASK
+        gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.FOCUS_CHANGE_MASK | gdk.EventMask.BUTTON_MOTION_MASK |
+        gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK | gdk.EventMask.SCROLL_MASK |
+        gdk.EventMask.KEY_PRESS_MASK | gdk.EventMask.VISIBILITY_NOTIFY_MASK | gdk.EventMask.EXPOSURE_MASK
     )
     win.vbox.pack_start(cal, 1, 1, 0)
     win.vbox.show_all()

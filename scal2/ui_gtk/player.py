@@ -23,7 +23,7 @@ from time import sleep
 import sys, os, re
 
 from gi.repository import GObject
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 try:
     import fcntl
@@ -217,7 +217,7 @@ class MPlayer:
         GObject.source_remove(self.statusQuery)
 
 
-class PlayerBox(Gtk.HBox):
+class PlayerBox(gtk.HBox):
     adjustvol = 0
     vollevel0 = 100
     vollevel1 = 50
@@ -236,8 +236,8 @@ class PlayerBox(Gtk.HBox):
     ###############
     forbid = [102, 100]
     def __init__(self, hasVol=False):
-        Gtk.HBox.__init__(self)
-        self.fcb = Gtk.FileChooserButton(title='Select Sound')
+        gtk.HBox.__init__(self)
+        self.fcb = gtk.FileChooserButton(title='Select Sound')
         self.fcb.set_property('width-request', 150)
         self.pack_start(self.fcb, 0, 0, 0)
         self.mplayer = MPlayer(self)
@@ -246,20 +246,20 @@ class PlayerBox(Gtk.HBox):
         #self.connect('destroy', lambda obj, event=None: self.mplayer.close())#??????????
         ##self.toolbar.connect('key-press-event', self.toolbarKey)#??????????
         ##############
-        self.playPauseBut = Gtk.Button()
-        self.playPauseBut.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_MEDIA_PLAY,Gtk.IconSize.SMALL_TOOLBAR))
+        self.playPauseBut = gtk.Button()
+        self.playPauseBut.set_image(gtk.Image.new_from_stock(gtk.STOCK_MEDIA_PLAY,gtk.IconSize.SMALL_TOOLBAR))
         self.playPauseBut.connect('clicked', self.playPause)
         self.pack_start(self.playPauseBut, 0, 0, 0)
         #######
-        stopBut = Gtk.Button()
-        stopBut.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_MEDIA_STOP,Gtk.IconSize.SMALL_TOOLBAR))
+        stopBut = gtk.Button()
+        stopBut.set_image(gtk.Image.new_from_stock(gtk.STOCK_MEDIA_STOP,gtk.IconSize.SMALL_TOOLBAR))
         stopBut.connect('clicked', self.stop)
         self.pack_start(stopBut, 0, 0, 0)
         ##############
-        self.seekAdj = Gtk.Adjustment(0, 0, 100, 1, 10, 0)
+        self.seekAdj = gtk.Adjustment(0, 0, 100, 1, 10, 0)
         #self.seekAdj.connect('value_changed', self.seekAdjChanged)#??????????????????
-        self.seekBar = Gtk.HScale(self.seekAdj)
-        self.seekBar.set_value_pos(Gtk.PositionType.TOP)
+        self.seekBar = gtk.HScale(self.seekAdj)
+        self.seekBar.set_value_pos(gtk.PositionType.TOP)
         self.seekBar.set_sensitive(False)
         self.seekBar.connect('key-press-event', self.divert)
         self.seekBar.set_draw_value(False)
@@ -270,15 +270,15 @@ class PlayerBox(Gtk.HBox):
         self.hasVol = hasVol
         if hasVol:
             if self.adjustvol:
-                self.volAdj = Gtk.Adjustment(self.vollevel1, 0, 100, 5, 10, 0)
+                self.volAdj = gtk.Adjustment(self.vollevel1, 0, 100, 5, 10, 0)
                 self.mplayer.setVolume(self.vollevel1)
             else:
-                self.volAdj = Gtk.Adjustment(self.vollevel0, 0, 100, 5, 10, 0)
+                self.volAdj = gtk.Adjustment(self.vollevel0, 0, 100, 5, 10, 0)
                 self.mplayer.setVolume(self.vollevel0)
             self.volAdj.connect('value_changed', self.setVolume)
-            scale = Gtk.HScale(self.volAdj)
+            scale = gtk.HScale(self.volAdj)
             scale.set_size_request(50, -1)
-            scale.set_value_pos(Gtk.PositionType.TOP)
+            scale.set_value_pos(gtk.PositionType.TOP)
             scale.connect('format-value', self.displayVolString)
             scale.connect('key-press-event', self.divert)
             self.pack_start(scale, False, False, 5)
@@ -311,7 +311,7 @@ class PlayerBox(Gtk.HBox):
             print 'abc'
             sleep(0.05)
             self.seekAdj.value = 100
-            #self.playPauseBut.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_MEDIA_PLAY,Gtk.IconSize.SMALL_TOOLBAR))
+            #self.playPauseBut.set_image(gtk.Image.new_from_stock(gtk.STOCK_MEDIA_PLAY,gtk.IconSize.SMALL_TOOLBAR))
         else:
             self.mplayer.seek(int(self.seekAdj.value), 1)
     def displayVolString(self, scale, value):# Return formatted volume string
@@ -325,24 +325,24 @@ class PlayerBox(Gtk.HBox):
             self.vollevel0 = int(adj.value)
             self.mplayer.setVolume(self.vollevel0)
     def playPause(self, button=None):
-        icon = Gtk.STOCK_MEDIA_PLAY
+        icon = gtk.STOCK_MEDIA_PLAY
         if self.mplayer.mplayerIn:
             if not self.mplayer.paused:
-                icon = Gtk.STOCK_MEDIA_PAUSE
+                icon = gtk.STOCK_MEDIA_PAUSE
             self.mplayer.pause()
         else:
-            icon = Gtk.STOCK_MEDIA_PAUSE
+            icon = gtk.STOCK_MEDIA_PAUSE
             path = self.fcb.get_filename()
             if path==None:
                 return
             self.mplayer.play(path)
-        self.playPauseBut.set_image(Gtk.Image.new_from_stock(icon, Gtk.IconSize.SMALL_TOOLBAR))
+        self.playPauseBut.set_image(gtk.Image.new_from_stock(icon, gtk.IconSize.SMALL_TOOLBAR))
         playing = bool(self.mplayer.mplayerIn)
         self.fcb.set_sensitive(not playing)
         self.seekBar.set_sensitive(playing)
     def stop(self, button):# Stop mplayer if it's running
         self.mplayer.close()
-        self.playPauseBut.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_MEDIA_PLAY,Gtk.IconSize.SMALL_TOOLBAR))
+        self.playPauseBut.set_image(gtk.Image.new_from_stock(gtk.STOCK_MEDIA_PLAY,gtk.IconSize.SMALL_TOOLBAR))
         self.fcb.set_sensitive(self.mplayer.mplayerIn==None)
         self.seekBar.set_sensitive(self.mplayer.mplayerIn!=None)
     def decVol(self, widget):
@@ -356,13 +356,13 @@ class PlayerBox(Gtk.HBox):
         return False
     def quit(self, event = None):
         self.mplayer.close()
-        Gtk.main_quit()
+        gtk.main_quit()
     def openFile(self, path, startPlaying=True):
         self.fcb.set_filename(path)
         if startPlaying:
             self.playPause()
         #self.mplayer.play(path)
-        #self.playPauseBut.set_image(Gtk.Image.new_from_stock(Gtk.STOCK_MEDIA_PAUSE,Gtk.IconSize.SMALL_TOOLBAR))
+        #self.playPauseBut.set_image(gtk.Image.new_from_stock(gtk.STOCK_MEDIA_PAUSE,gtk.IconSize.SMALL_TOOLBAR))
         #self.fcb.set_sensitive(self.mplayer.mplayerIn==None)
         #self.seekBar.set_sensitive(self.mplayer.mplayerIn!=None)
     def getFile(self):
@@ -371,9 +371,9 @@ class PlayerBox(Gtk.HBox):
 
 
 if __name__=='__main__':
-    window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
+    window = gtk.Window(gtk.WindowType.TOPLEVEL)
     window.set_title('Simple PyGTK Interface for MPlayer')
-    mainVbox = Gtk.VBox(False, 0)
+    mainVbox = gtk.VBox(False, 0)
     pbox = PlayerBox()
     mainVbox.pack_start(pbox, 0, 0, 0)
     window.connect('destroy', pbox.quit)
@@ -382,7 +382,7 @@ if __name__=='__main__':
     window.show()
     if len(sys.argv)>1:
         pbox.openFile(sys.argv[1])
-    Gtk.main()
+    gtk.main()
 
 
 

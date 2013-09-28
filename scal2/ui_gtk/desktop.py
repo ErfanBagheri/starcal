@@ -20,16 +20,16 @@
 # Also avalable in /usr/share/common-licenses/GPL on Debian systems
 # or /usr/share/licenses/common/GPL3/license.txt on ArchLinux
 
-from gi.repository import Gtk
-root = Gdk.get_default_root_window()
+from gi.repository import Gtk as gtk
+root = gdk.get_default_root_window()
 wid = 0
 
 #
 # Restricts the given coordinates to visible values.
 #
 def _crop_coords(x, y, w, h):
-    sw = Gdk.Screen.width()
-    sh = Gdk.Screen.height()
+    sw = gdk.Screen.width()
+    sh = gdk.Screen.height()
     x = min(x, sw-1)
     y = min(y, sh-1)
     return (x, y, min(sw-x, w), min(sh-y, h))
@@ -47,7 +47,7 @@ def get_wallcolor(width, height):
     color = value.get_string()
 
     pbuf = GdkPixbuf.Pixbuf(0, 1, 8, width, height)
-    c = Gdk.color_parse(color)
+    c = gdk.color_parse(color)
     fillr = (c.red / 256) << 24
     fillg = (c.green / 256) << 16
     fillb = (c.blue / 256) << 8
@@ -80,10 +80,10 @@ def get_wallpaper(x, y, width, height):
 
     # get wallpaper
     pmap_id = get_wallpaper_id()
-    if hasattr(Gtk.gdk, "gdk_pixmap_foreign_new"):
-        pmap = Gdk.gdk_pixmap_foreign_new(pmap_id)
+    if hasattr(gtk.gdk, "gdk_pixmap_foreign_new"):
+        pmap = gdk.gdk_pixmap_foreign_new(pmap_id)
     else:
-        pmap = Gdk.pixmap_foreign_new(pmap_id)
+        pmap = gdk.pixmap_foreign_new(pmap_id)
     pwidth, pheight = pmap.get_size()
 
     # create pixbuf

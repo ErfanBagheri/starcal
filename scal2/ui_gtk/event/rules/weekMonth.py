@@ -6,18 +6,18 @@ from scal2.locale_man import tr as _
 
 
 from scal2 import event_lib
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.utils import WeekDayComboBox, MonthComboBox
 
-class RuleWidget(Gtk.HBox):
+class RuleWidget(gtk.HBox):
     def __init__(self, rule):
         self.rule = rule
         #####
-        Gtk.HBox.__init__(self)
+        gtk.HBox.__init__(self)
         ###
-        combo = Gtk.ComboBoxText()
+        combo = gtk.ComboBoxText()
         for item in rule.wmIndexNames:
             combo.append_text(item)
         self.pack_start(combo, 0, 0, 0)
@@ -27,7 +27,7 @@ class RuleWidget(Gtk.HBox):
         self.pack_start(combo, 0, 0, 0)
         self.weekDayCombo = combo
         ###
-        self.pack_start(Gtk.Label(_(' of ')), 0, 0, 0)
+        self.pack_start(gtk.Label(_(' of ')), 0, 0, 0)
         ###
         combo = MonthComboBox(True)
         combo.build(rule.getMode())

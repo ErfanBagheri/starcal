@@ -8,8 +8,8 @@ from scal2 import event_lib
 from scal2 import ui
 from scal2.ui_gtk.event import common
 
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.mywidgets.multi_spin_button import IntSpinButton
 
@@ -20,10 +20,10 @@ class EventWidget(common.EventWidget):
     def __init__(self, event):## FIXME
         common.EventWidget.__init__(self, event)
         ######
-        sizeGroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        sizeGroup = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
         ######
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Scale'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Scale'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
@@ -31,8 +31,8 @@ class EventWidget(common.EventWidget):
         hbox.pack_start(self.scaleCombo, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         ####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Start'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Start'))
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
@@ -41,8 +41,8 @@ class EventWidget(common.EventWidget):
         hbox.pack_start(self.startSpin, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         ####
-        hbox = Gtk.HBox()
-        self.endRelCombo = Gtk.ComboBoxText()
+        hbox = gtk.HBox()
+        self.endRelCombo = gtk.ComboBoxText()
         for item in ('Duration', 'End'):
             self.endRelCombo.append_text(_(item))
         self.endRelCombo.connect('changed', self.endRelComboChanged)
@@ -84,7 +84,7 @@ class EventWidget(common.EventWidget):
 if __name__=='__main__':
     combo = Scale10PowerComboBox()
     combo.set_value(200)
-    win = Gtk.Dialog()
+    win = gtk.Dialog()
     win.vbox.pack_start(combo)
     win.vbox.show_all()
     win.run()

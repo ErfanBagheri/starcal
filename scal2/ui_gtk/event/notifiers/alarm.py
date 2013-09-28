@@ -6,8 +6,8 @@ from scal2 import core
 from scal2.locale_man import tr as _
 
 from scal2 import event_lib
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk import player
 from subprocess import Popen, PIPE
@@ -22,10 +22,10 @@ from subprocess import Popen, PIPE
 #    def updateVars(self):
 #        self.notifier.alarmSound = self.getFile()
 
-class NotifierWidget(Gtk.FileChooserButton):
+class NotifierWidget(gtk.FileChooserButton):
     def __init__(self, notifier):
         self.notifier = notifier
-        Gtk.FileChooserButton.__init__(self, _('Select Sound'))
+        gtk.FileChooserButton.__init__(self, _('Select Sound'))
     def updateWidget(self):
         if self.notifier.alarmSound:
             self.set_filename(self.notifier.alarmSound)

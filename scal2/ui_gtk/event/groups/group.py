@@ -7,7 +7,7 @@ from scal2.ui_gtk.event.groups.base import BaseGroupWidget
 from scal2.ui_gtk.mywidgets.multi_spin_button import DateButton
 
 
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 from scal2.ui_gtk.mywidgets import MyColorButton
 
@@ -15,8 +15,8 @@ class GroupWidget(BaseGroupWidget):
     def __init__(self, group):
         BaseGroupWidget.__init__(self, group)
         ####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Start'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Start'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)
@@ -24,8 +24,8 @@ class GroupWidget(BaseGroupWidget):
         hbox.pack_start(self.startDateInput, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('End'))
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('End'))
         label.set_alignment(0, 0.5)
         hbox.pack_start(label, 0, 0, 0)
         self.sizeGroup.add_widget(label)

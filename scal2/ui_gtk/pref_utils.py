@@ -30,9 +30,9 @@ from scal2 import core
 
 from scal2 import ui
 
-from gi.repository import Gdk
+from gi.repository import Gdk as gdk
 from gi.repository import GdkPixbuf
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 from scal2.ui_gtk.mywidgets import MyFontButton, MyColorButton
 from scal2.ui_gtk.mywidgets.multi_spin_button import IntSpinButton, FloatSpinButton
@@ -56,25 +56,25 @@ class ModuleOptionItem:
         self.module = module
         self.type = t
         self.var_name = opt[0]
-        hbox = Gtk.HBox()
+        hbox = gtk.HBox()
         if t==bool:
-            w = Gtk.CheckButton(_(opt[2]))
+            w = gtk.CheckButton(_(opt[2]))
             self.get_value = w.get_active
             self.set_value = w.set_active
         elif t==list:
-            hbox.pack_start(Gtk.Label(_(opt[2])), 0, 0, 0)
-            w = Gtk.ComboBoxText() ### or RadioButton
+            hbox.pack_start(gtk.Label(_(opt[2])), 0, 0, 0)
+            w = gtk.ComboBoxText() ### or RadioButton
             for s in opt[3]:
                 w.append_text(_(s))
             self.get_value = w.get_active
             self.set_value = w.set_active
         elif t==int:
-            hbox.pack_start(Gtk.Label(_(opt[2])), 0, 0, 0)
+            hbox.pack_start(gtk.Label(_(opt[2])), 0, 0, 0)
             w = IntSpinButton(opt[3], opt[4])
             self.get_value = w.get_value
             self.set_value = w.set_value
         elif t==float:
-            hbox.pack_start(Gtk.Label(_(opt[2])), 0, 0, 0)
+            hbox.pack_start(gtk.Label(_(opt[2])), 0, 0, 0)
             w = FloatSpinButton(opt[3], opt[4], opt[5])
             self.get_value = w.get_value
             self.set_value = w.set_value
@@ -92,8 +92,8 @@ class ModuleOptionButton:
     def __init__(self, opt):
         funcName = opt[2]
         clickedFunc = getattr(__import__('scal2.ui_gtk.%s'%opt[1], fromlist=[funcName]), funcName)
-        hbox = Gtk.HBox()
-        button = Gtk.Button(_(opt[0]))
+        hbox = gtk.HBox()
+        button = gtk.Button(_(opt[0]))
         button.connect('clicked', clickedFunc)
         hbox.pack_start(button, 0, 0, 0)
         self._widget = hbox
@@ -123,7 +123,7 @@ class ComboTextPrefItem(PrefItem):
     def __init__(self, module, varName, items=[]):## items is a list of strings
         self.module = module
         self.varName = varName
-        w = Gtk.ComboBoxText()
+        w = gtk.ComboBoxText()
         self._widget = w
         for s in items:
             w.append_text(s)
@@ -137,7 +137,7 @@ class ComboEntryTextPrefItem(PrefItem):
     def __init__(self, module, varName, items=[]):## items is a list of strings
         self.module = module
         self.varName = varName
-        w = Gtk.ComboBoxText.new_with_entry()
+        w = gtk.ComboBoxText.new_with_entry()
         self._widget = w
         for s in items:
             w.append_text(s)
@@ -149,14 +149,14 @@ class ComboImageTextPrefItem(PrefItem):
         self.module = module
         self.varName = varName
         ###
-        ls = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
-        combo = Gtk.ComboBox(ls)
+        ls = gtk.ListStore(GdkPixbuf.Pixbuf, str)
+        combo = gtk.ComboBox(ls)
         ###
-        cell = Gtk.CellRendererPixbuf()
+        cell = gtk.CellRendererPixbuf()
         combo.pack_start(cell, False)
         combo.add_attribute(cell, 'pixbuf', 0)
         ###
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         combo.pack_start(cell, True)
         combo.add_attribute(cell, 'text', 1)
         ###
@@ -189,7 +189,7 @@ class CheckPrefItem(PrefItem):
     def __init__(self, module, varName, label='', tooltip=None):
         self.module = module
         self.varName = varName
-        w = Gtk.CheckButton(label)
+        w = gtk.CheckButton(label)
         if tooltip!=None:
             set_tooltip(w, tooltip)
         self._widget = w
@@ -243,21 +243,21 @@ class RadioListPrefItem(PrefItem):
         self.module = module
         self.varName = varName
         if vertical:
-            box = Gtk.VBox()
+            box = gtk.VBox()
         else:
-            box = Gtk.HBox()
+            box = gtk.HBox()
         self._widget = box
-        self.radios = [Gtk.RadioButton(label=_(s)) for s in texts]
+        self.radios = [gtk.RadioButton(label=_(s)) for s in texts]
         first = self.radios[0]
         if label!=None:
-            box.pack_start(Gtk.Label(label), 0, 0, 0)
-            box.pack_start(Gtk.Label(''), 1, 1, 0)
+            box.pack_start(gtk.Label(label), 0, 0, 0)
+            box.pack_start(gtk.Label(''), 1, 1, 0)
         box.pack_start(first, 0, 0, 0)
         for r in self.radios[1:]:
-            box.pack_start(Gtk.Label(''), 1, 1, 0)
+            box.pack_start(gtk.Label(''), 1, 1, 0)
             box.pack_start(r, 0, 0, 0)
             r.set_group(first)
-        box.pack_start(Gtk.Label(''), 1, 1, 0) ## FIXME
+        box.pack_start(gtk.Label(''), 1, 1, 0) ## FIXME
     def get(self):
         for i in range(self.num):
             if self.radios[i].get_active():
@@ -279,9 +279,9 @@ class ListPrefItem(PrefItem):
         self.module = module
         self.varName = varName
         if vertical:
-            box = Gtk.VBox()
+            box = gtk.VBox()
         else:
-            box = Gtk.HBox()
+            box = gtk.HBox()
         for item in items:
             box.pack_start(item._widget, 0, 0, 0)
         self.num = len(items)
@@ -310,12 +310,12 @@ class WeekDayCheckListPrefItem(PrefItem):
         self.module = module
         self.varName = varName
         if vertical:
-            box = Gtk.VBox()
+            box = gtk.VBox()
         else:
-            box = Gtk.HBox()
+            box = gtk.HBox()
         box.set_homogeneous(homo)
         nameList = core.weekDayNameAb if abbreviateNames else core.weekDayName
-        ls = [Gtk.ToggleButton(item) for item in nameList]
+        ls = [gtk.ToggleButton(item) for item in nameList]
         s = core.firstWeekDay
         for i in range(7):
             box.pack_start(ls[(s+i)%7], 1, 1, 0)
@@ -349,7 +349,7 @@ class ToolbarIconSizePrefItem(PrefItem):
         self.module = module
         self.varName = varName
         ####
-        self._widget = Gtk.ComboBoxText()
+        self._widget = gtk.ComboBoxText()
         for item in iconSizeList:
             self._widget.append_text(item[0])
     def get(self):
@@ -368,15 +368,15 @@ class LangPrefItem(PrefItem):
         self.module = locale_man
         self.varName = 'lang'
         ###
-        ls = Gtk.ListStore(GdkPixbuf.Pixbuf, str)
-        combo = Gtk.ComboBox()
+        ls = gtk.ListStore(GdkPixbuf.Pixbuf, str)
+        combo = gtk.ComboBox()
         combo.set_model(ls)
         ###
-        cell = Gtk.CellRendererPixbuf()
+        cell = gtk.CellRendererPixbuf()
         combo.pack_start(cell, False)
         combo.add_attribute(cell, 'pixbuf', 0)
         ###
-        cell = Gtk.CellRendererText()
+        cell = gtk.CellRendererText()
         combo.pack_start(cell, True)
         combo.add_attribute(cell, 'text', 1)
         ###
@@ -415,7 +415,7 @@ class LangPrefItem(PrefItem):
 
 class CheckStartupPrefItem():## FIXME
     def __init__(self):
-        w = Gtk.CheckButton(_('Run on session startup'))
+        w = gtk.CheckButton(_('Run on session startup'))
         set_tooltip(w, 'Run on startup of Gnome, KDE, Xfce, LXDE, ...\nFile: %s'%ui.comDesk)
         self._widget = w
         self.get = w.get_active
@@ -433,30 +433,30 @@ class CheckStartupPrefItem():## FIXME
         self.set(ui.checkStartup())
     confStr = lambda self: ''
 
-class AICalsTreeview(Gtk.TreeView):
+class AICalsTreeview(gtk.TreeView):
     def __init__(self):
-        Gtk.TreeView.__init__(self)
+        gtk.TreeView.__init__(self)
         self.set_headers_clickable(False)
-        self.set_model(Gtk.ListStore(str, str))
+        self.set_model(gtk.ListStore(str, str))
         ###
         self.enable_model_drag_source(
-            Gdk.ModifierType.BUTTON1_MASK,
+            gdk.ModifierType.BUTTON1_MASK,
             [
-                ('row', Gtk.TargetFlags.SAME_APP, self.dragId),
+                ('row', gtk.TargetFlags.SAME_APP, self.dragId),
             ],
-            Gdk.DragAction.MOVE,
+            gdk.DragAction.MOVE,
         )
         self.enable_model_drag_dest(
             [
-                ('row', Gtk.TargetFlags.SAME_APP, self.dragId),
+                ('row', gtk.TargetFlags.SAME_APP, self.dragId),
             ],
-            Gdk.DragAction.MOVE,
+            gdk.DragAction.MOVE,
         )
         self.connect('drag-data-get', self.dragDataGet)
         self.connect('drag_data_received', self.dragDataReceived)
         ####
-        cell = Gtk.CellRendererText()
-        col = Gtk.TreeViewColumn(self.title, cell, text=1)
+        cell = gtk.CellRendererText()
+        col = gtk.TreeViewColumn(self.title, cell, text=1)
         col.set_resizable(True)
         self.append_column(col)
         self.set_search_column(1)
@@ -480,7 +480,7 @@ class AICalsTreeview(Gtk.TreeView):
             i = path[0]
             if dest is None:
                 model.move_after(model.get_iter(i), model.get_iter(len(model)-1))
-            elif dest[1] in (Gtk.TreeViewDropPosition.BEFORE, Gtk.TreeViewDropPosition.INTO_OR_BEFORE):
+            elif dest[1] in (gtk.TreeViewDropPosition.BEFORE, gtk.TreeViewDropPosition.INTO_OR_BEFORE):
                 model.move_before(model.get_iter(i), model.get_iter(dest[0][0]))
             else:
                 model.move_after(model.get_iter(i), model.get_iter(dest[0][0]))
@@ -491,14 +491,14 @@ class AICalsTreeview(Gtk.TreeView):
             smodel.remove(sIter)
             if dest is None:
                 model.append(row)
-            elif dest[1] in (Gtk.TreeViewDropPosition.BEFORE, Gtk.TreeViewDropPosition.INTO_OR_BEFORE):
+            elif dest[1] in (gtk.TreeViewDropPosition.BEFORE, gtk.TreeViewDropPosition.INTO_OR_BEFORE):
                 model.insert_before(model.get_iter(dest[0]), row)
             else:
                 model.insert_after(model.get_iter(dest[0]), row)
     def makeSwin(self):
-        swin = Gtk.ScrolledWindow()
+        swin = gtk.ScrolledWindow()
         swin.add(self)
-        swin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
         swin.set_property('width-request', 200)
         return swin
 
@@ -517,11 +517,11 @@ class InactiveCalsTreeView(AICalsTreeview):
 
 class AICalsPrefItem():
     def __init__(self):
-        self._widget = Gtk.HBox()
-        size = Gtk.IconSize.SMALL_TOOLBAR
+        self._widget = gtk.HBox()
+        size = gtk.IconSize.SMALL_TOOLBAR
         ######
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
         ########
         treev = ActiveCalsTreeView()
         treev.connect('row-activated', self.activeTreevRActivate)
@@ -533,23 +533,23 @@ class AICalsPrefItem():
         self.activeTreev = treev
         self.activeTrees = treev.get_model()
         ########
-        toolbar = Gtk.Toolbar()
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
+        toolbar = gtk.Toolbar()
+        toolbar.set_orientation(gtk.Orientation.VERTICAL)
         ####
-        tb = Gtk.ToolButton()
-        tb.set_direction(Gtk.TextDirection.LTR)
+        tb = gtk.ToolButton()
+        tb.set_direction(gtk.TextDirection.LTR)
         tb.action = ''
         self.leftRightButton = tb
         set_tooltip(tb, _('Activate/Inactivate'))
         tb.connect('clicked', self.leftRightClicked)
         toolbar.insert(tb, -1)
         ####
-        tb = toolButtonFromStock(Gtk.STOCK_GO_UP, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_UP, size)
         set_tooltip(tb, _('Move up'))
         tb.connect('clicked', self.upClicked)
         toolbar.insert(tb, -1)
         ##
-        tb = toolButtonFromStock(Gtk.STOCK_GO_DOWN, size)
+        tb = toolButtonFromStock(gtk.STOCK_GO_DOWN, size)
         set_tooltip(tb, _('Move down'))
         tb.connect('clicked', self.downClicked)
         toolbar.insert(tb, -1)
@@ -573,9 +573,9 @@ class AICalsPrefItem():
             tb.action = ''
         else:
             tb.set_label_widget(
-                Gtk.Image.new_from_stock(
-                    Gtk.STOCK_GO_FORWARD if isRight ^ rtl else Gtk.STOCK_GO_BACK,
-                    Gtk.IconSize.SMALL_TOOLBAR,
+                gtk.Image.new_from_stock(
+                    gtk.STOCK_GO_FORWARD if isRight ^ rtl else gtk.STOCK_GO_BACK,
+                    gtk.IconSize.SMALL_TOOLBAR,
                 )
             )
             tb.action = 'inactivate' if isRight else 'activate'

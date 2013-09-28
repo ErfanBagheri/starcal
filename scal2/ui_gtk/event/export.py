@@ -7,30 +7,30 @@ from scal2 import core
 from scal2.core import DATE_GREG
 from scal2 import ui
 
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 from scal2.ui_gtk.utils import dialog_add_button
 from scal2.ui_gtk.event.common import GroupsTreeCheckList
 
 
-class SingleGroupExportDialog(Gtk.Dialog):
+class SingleGroupExportDialog(gtk.Dialog):
     def __init__(self, group):
         self._group = group
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Export Group'))
         ####
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
-        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.ResponseType.CANCEL)
+        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.ResponseType.OK)
         self.connect('response', lambda w, e: self.hide())
         ####
-        hbox = Gtk.HBox()
-        frame = Gtk.Frame()
+        hbox = gtk.HBox()
+        frame = gtk.Frame()
         frame.set_label(_('Format'))
-        radioBox = Gtk.VBox()
+        radioBox = gtk.VBox()
         ##
-        self.radioIcs = Gtk.RadioButton(label='iCalendar')
-        self.radioJsonCompact = Gtk.RadioButton(label=_('Compact JSON (StarCalendar)'), group=self.radioIcs)
-        self.radioJsonPretty = Gtk.RadioButton(label=_('Pretty JSON (StarCalendar)'), group=self.radioIcs)
+        self.radioIcs = gtk.RadioButton(label='iCalendar')
+        self.radioJsonCompact = gtk.RadioButton(label=_('Compact JSON (StarCalendar)'), group=self.radioIcs)
+        self.radioJsonPretty = gtk.RadioButton(label=_('Pretty JSON (StarCalendar)'), group=self.radioIcs)
         ##
         radioBox.pack_start(self.radioJsonCompact, 0, 0, 0)
         radioBox.pack_start(self.radioJsonPretty, 0, 0, 0)
@@ -43,10 +43,10 @@ class SingleGroupExportDialog(Gtk.Dialog):
         ##
         frame.add(radioBox)
         hbox.pack_start(frame, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ########
-        self.fcw = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.SAVE)
+        self.fcw = gtk.FileChooserWidget(action=gtk.FileChooserAction.SAVE)
         try:
             self.fcw.set_current_folder(deskDir)
         except AttributeError:## PyGTK < 2.4
@@ -81,29 +81,29 @@ class SingleGroupExportDialog(Gtk.Dialog):
         elif self.radioIcs.get_active():
             ui.eventGroups.exportToIcs(fpath, [self._group.id])
     def run(self):
-        if Gtk.Dialog.run(self)==Gtk.ResponseType.OK:
+        if gtk.Dialog.run(self)==gtk.ResponseType.OK:
             self.save()
         self.destroy()
 
 
-class MultiGroupExportDialog(Gtk.Dialog):
+class MultiGroupExportDialog(gtk.Dialog):
     def __init__(self):
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Export'))
         self.vbox.set_spacing(10)
         ####
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
-        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.ResponseType.CANCEL)
+        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.ResponseType.OK)
         self.connect('response', lambda w, e: self.hide())
         ####
-        hbox = Gtk.HBox()
-        frame = Gtk.Frame()
+        hbox = gtk.HBox()
+        frame = gtk.Frame()
         frame.set_label(_('Format'))
-        radioBox = Gtk.VBox()
+        radioBox = gtk.VBox()
         ##
-        self.radioIcs = Gtk.RadioButton(label='iCalendar')
-        self.radioJsonCompact = Gtk.RadioButton(label=_('Compact JSON (StarCalendar)'), group=self.radioIcs)
-        self.radioJsonPretty = Gtk.RadioButton(label=_('Pretty JSON (StarCalendar)'), group=self.radioIcs)
+        self.radioIcs = gtk.RadioButton(label='iCalendar')
+        self.radioJsonCompact = gtk.RadioButton(label=_('Compact JSON (StarCalendar)'), group=self.radioIcs)
+        self.radioJsonPretty = gtk.RadioButton(label=_('Pretty JSON (StarCalendar)'), group=self.radioIcs)
         ##
         radioBox.pack_start(self.radioJsonCompact, 0, 0, 0)
         radioBox.pack_start(self.radioJsonPretty, 0, 0, 0)
@@ -116,20 +116,20 @@ class MultiGroupExportDialog(Gtk.Dialog):
         ##
         frame.add(radioBox)
         hbox.pack_start(frame, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ########
-        hbox = Gtk.HBox(spacing=2)
-        hbox.pack_start(Gtk.Label(_('File')+':'), 0, 0, 0)
-        self.fpathEntry = Gtk.Entry()
+        hbox = gtk.HBox(spacing=2)
+        hbox.pack_start(gtk.Label(_('File')+':'), 0, 0, 0)
+        self.fpathEntry = gtk.Entry()
         self.fpathEntry.set_text(join(deskDir, 'events-%.4d-%.2d-%.2d'%core.getSysDate(DATE_GREG)))
         hbox.pack_start(self.fpathEntry, 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ####
         self.groupSelect = GroupsTreeCheckList()
-        swin = Gtk.ScrolledWindow()
+        swin = gtk.ScrolledWindow()
         swin.add(self.groupSelect)
-        swin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        swin.set_policy(gtk.PolicyType.AUTOMATIC, gtk.PolicyType.AUTOMATIC)
         self.vbox.pack_start(swin, 1, 1, 0)
         ####
         self.vbox.show_all()
@@ -165,7 +165,7 @@ class MultiGroupExportDialog(Gtk.Dialog):
                 raise RuntimeError
             open(fpath, 'w').write(text)
     def run(self):
-        if Gtk.Dialog.run(self)==Gtk.ResponseType.OK:
+        if gtk.Dialog.run(self)==gtk.ResponseType.OK:
             self.save()
         self.destroy()
 

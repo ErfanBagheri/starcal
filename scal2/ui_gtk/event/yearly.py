@@ -23,8 +23,8 @@ from scal2.core import convert
 from scal2.locale_man import tr as _
 
 from scal2 import event_lib
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.utils import MonthComboBox
 from scal2.ui_gtk.mywidgets.multi_spin_button import YearSpinButton, DaySpinButton
@@ -35,27 +35,27 @@ class EventWidget(common.EventWidget):
     def __init__(self, event):## FIXME
         common.EventWidget.__init__(self, event)
         ################
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Month')), 0, 0, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Month')), 0, 0, 0)
         self.monthCombo = MonthComboBox()
         self.monthCombo.build(event.mode)
         hbox.pack_start(self.monthCombo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         #self.pack_start(hbox, 0, 0, 0)
         ###
-        #hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Day')), 0, 0, 0)
+        #hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Day')), 0, 0, 0)
         self.daySpin = DaySpinButton()
         hbox.pack_start(self.daySpin, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = Gtk.HBox()
-        self.startYearCheck = Gtk.CheckButton(_('Start Year'))
+        hbox = gtk.HBox()
+        self.startYearCheck = gtk.CheckButton(_('Start Year'))
         hbox.pack_start(self.startYearCheck, 0, 0, 0)
         self.startYearSpin = YearSpinButton()
         hbox.pack_start(self.startYearSpin, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.pack_start(hbox, 0, 0, 0)
         self.startYearCheck.connect('clicked', self.startYearCheckClicked)
         ####

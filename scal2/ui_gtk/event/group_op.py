@@ -2,46 +2,46 @@ import pytz
 
 from scal2.locale_man import tr as _
 
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 from scal2.ui_gtk.utils import DateTypeCombo, dialog_add_button, TimeZoneComboBoxEntry
 from scal2.ui_gtk.mywidgets import TextFrame
 from scal2.ui_gtk.mywidgets.icon import IconSelectButton
 
-class GroupSortDialog(Gtk.Dialog):
+class GroupSortDialog(gtk.Dialog):
     def __init__(self, group):
         self._group = group
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Sort Events'))
         ####
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
-        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.ResponseType.CANCEL)
+        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.ResponseType.OK)
         ##
         self.connect('response', lambda w, e: self.hide())
         ####
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Sort events of group "%s"')%group.title), 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Sort events of group "%s"')%group.title), 0, 0, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Based on')+' '), 0, 0, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Based on')+' '), 0, 0, 0)
         self.sortByNames = []
-        self.sortByCombo = Gtk.ComboBoxText()
+        self.sortByCombo = gtk.ComboBoxText()
         sortByDefault, sortBys = group.getSortBys()
         for item in sortBys:
             self.sortByNames.append(item[0])
             self.sortByCombo.append_text(item[1])
         self.sortByCombo.set_active(self.sortByNames.index(sortByDefault))## FIXME
         hbox.pack_start(self.sortByCombo, 0, 0, 0)
-        self.reverseCheck = Gtk.CheckButton(_('Descending'))
+        self.reverseCheck = gtk.CheckButton(_('Descending'))
         hbox.pack_start(self.reverseCheck, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ####
         self.vbox.show_all()
     def run(self):
-        if Gtk.Dialog.run(self)==Gtk.ResponseType.OK:
+        if gtk.Dialog.run(self)==gtk.ResponseType.OK:
             self._group.sort(
                 self.sortByNames[self.sortByCombo.get_active()],
                 self.reverseCheck.get_active(),
@@ -52,36 +52,36 @@ class GroupSortDialog(Gtk.Dialog):
 
 
 
-class GroupConvertModeDialog(Gtk.Dialog):
+class GroupConvertModeDialog(gtk.Dialog):
     def __init__(self, group):
         self._group = group
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Convert Calendar Type'))
         ####
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
-        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.ResponseType.CANCEL)
+        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.ResponseType.OK)
         ##
         self.connect('response', lambda w, e: self.hide())
         ####
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('This is going to convert calendar types of all events inside group \"%s\" to a specific type. This operation does not work for Yearly events and also some of Custom events. You have to edit those events manually to change calendar type.')%group.title)
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('This is going to convert calendar types of all events inside group \"%s\" to a specific type. This operation does not work for Yearly events and also some of Custom events. You have to edit those events manually to change calendar type.')%group.title)
         label.set_line_wrap(True)
         hbox.pack_start(label, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ###
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('Calendar Type')+':'), 0, 0, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('Calendar Type')+':'), 0, 0, 0)
         combo = DateTypeCombo()
         combo.set_active(group.mode)
         hbox.pack_start(combo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.modeCombo = combo
         self.vbox.pack_start(hbox, 0, 0, 0)
         ####
         self.vbox.show_all()
     def run(self):
-        if Gtk.Dialog.run(self)==Gtk.ResponseType.OK:
+        if gtk.Dialog.run(self)==gtk.ResponseType.OK:
             mode = self.modeCombo.get_active()
             failedSummaryList = []
             for event in self._group:
@@ -94,29 +94,29 @@ class GroupConvertModeDialog(Gtk.Dialog):
         self.destroy()
 
 
-class GroupBulkEditDialog(Gtk.Dialog):
+class GroupBulkEditDialog(gtk.Dialog):
     def __init__(self, group):
         self._group = group
-        Gtk.Dialog.__init__(self)
+        gtk.Dialog.__init__(self)
         self.set_title(_('Bulk Edit Events'))
         ####
-        dialog_add_button(self, Gtk.STOCK_CANCEL, _('_Cancel'), Gtk.ResponseType.CANCEL)
-        dialog_add_button(self, Gtk.STOCK_OK, _('_OK'), Gtk.ResponseType.OK)
+        dialog_add_button(self, gtk.STOCK_CANCEL, _('_Cancel'), gtk.ResponseType.CANCEL)
+        dialog_add_button(self, gtk.STOCK_OK, _('_OK'), gtk.ResponseType.OK)
         ##
         self.connect('response', lambda w, e: self.hide())
         ####
-        label = Gtk.Label(label=_('Here you are going to modify all events inside group "%s" at once. You better make a backup from you events before doing this. Just right click on group and select "Export" (or a full backup: menu File -> Export)')%group.title+'\n\n')
+        label = gtk.Label(label=_('Here you are going to modify all events inside group "%s" at once. You better make a backup from you events before doing this. Just right click on group and select "Export" (or a full backup: menu File -> Export)')%group.title+'\n\n')
         label.set_line_wrap(True)
         self.vbox.pack_start(label, 0, 0, 0)
         ####
-        hbox = Gtk.HBox()
-        self.iconRadio = Gtk.RadioButton(label=_('Icon'))
+        hbox = gtk.HBox()
+        self.iconRadio = gtk.RadioButton(label=_('Icon'))
         hbox.pack_start(self.iconRadio, 1, 1, 0)
-        self.summaryRadio = Gtk.RadioButton(label=_('Summary'), group=self.iconRadio)
+        self.summaryRadio = gtk.RadioButton(label=_('Summary'), group=self.iconRadio)
         hbox.pack_start(self.summaryRadio, 1, 1, 0)
-        self.descriptionRadio = Gtk.RadioButton(label=_('Description'), group=self.iconRadio)
+        self.descriptionRadio = gtk.RadioButton(label=_('Description'), group=self.iconRadio)
         hbox.pack_start(self.descriptionRadio, 1, 1, 0)
-        self.timeZoneRadio = Gtk.RadioButton(label=_('Time Zone'), group=self.iconRadio)
+        self.timeZoneRadio = gtk.RadioButton(label=_('Time Zone'), group=self.iconRadio)
         hbox.pack_start(self.timeZoneRadio, 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         ###
@@ -125,40 +125,40 @@ class GroupBulkEditDialog(Gtk.Dialog):
         self.descriptionRadio.connect('clicked', self.firstRadioChanged)
         self.timeZoneRadio.connect('clicked', self.firstRadioChanged)
         ####
-        hbox = Gtk.HBox()
-        self.iconChangeCombo = Gtk.ComboBoxText()
+        hbox = gtk.HBox()
+        self.iconChangeCombo = gtk.ComboBoxText()
         self.iconChangeCombo.append_text('----')
         self.iconChangeCombo.append_text(_('Change'))
         self.iconChangeCombo.append_text(_('Change if empty'))
         hbox.pack_start(self.iconChangeCombo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label('  '), 0, 0, 0)
+        hbox.pack_start(gtk.Label('  '), 0, 0, 0)
         self.iconSelect = IconSelectButton()
         self.iconSelect.set_filename(group.icon)
         hbox.pack_start(self.iconSelect, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.vbox.pack_start(hbox, 0, 0, 0)
         self.iconHbox = hbox
         ####
-        self.textVbox = Gtk.VBox()
+        self.textVbox = gtk.VBox()
         ###
-        hbox = Gtk.HBox()
-        self.textChangeCombo = Gtk.ComboBoxText()
+        hbox = gtk.HBox()
+        self.textChangeCombo = gtk.ComboBoxText()
         self.textChangeCombo.append_text('----')
         self.textChangeCombo.append_text(_('Add to beginning'))
         self.textChangeCombo.append_text(_('Add to end'))
         self.textChangeCombo.append_text(_('Replace text'))
         self.textChangeCombo.connect('changed', self.textChangeComboChanged)
         hbox.pack_start(self.textChangeCombo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         ## CheckButton(_('Regexp'))
         self.textVbox.pack_start(hbox, 0, 0, 0)
         ###
         self.textInput1 = TextFrame()
         self.textVbox.pack_start(self.textInput1, 1, 1, 0)
         ###
-        hbox = Gtk.HBox()
-        hbox.pack_start(Gtk.Label(_('with')), 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox = gtk.HBox()
+        hbox.pack_start(gtk.Label(_('with')), 0, 0, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.textVbox.pack_start(hbox, 1, 1, 0)
         self.withHbox = hbox
         ###
@@ -167,15 +167,15 @@ class GroupBulkEditDialog(Gtk.Dialog):
         ####
         self.vbox.pack_start(self.textVbox, 1, 1, 0)
         ####
-        hbox = Gtk.HBox()
-        self.timeZoneChangeCombo = Gtk.ComboBoxText()
+        hbox = gtk.HBox()
+        self.timeZoneChangeCombo = gtk.ComboBoxText()
         self.timeZoneChangeCombo.append_text('----')
         self.timeZoneChangeCombo.append_text(_('Change'))
         hbox.pack_start(self.timeZoneChangeCombo, 0, 0, 0)
-        hbox.pack_start(Gtk.Label('  '), 0, 0, 0)
+        hbox.pack_start(gtk.Label('  '), 0, 0, 0)
         self.timeZoneInput = TimeZoneComboBoxEntry()
         hbox.pack_start(self.timeZoneInput, 0, 0, 0)
-        hbox.pack_start(Gtk.Label(''), 1, 1, 0)
+        hbox.pack_start(gtk.Label(''), 1, 1, 0)
         self.vbox.pack_start(hbox, 1, 1, 0)
         self.timeZoneHbox = hbox
         ####

@@ -26,13 +26,13 @@ from scal2.ui_gtk.mywidgets.ymd import YearMonthDayBox
 
 from scal2.ui_gtk.event import common
 
-from gi.repository import Gtk
+from gi.repository import Gtk as gtk
 
 class EventWidget(common.EventWidget):
     def __init__(self, event):## FIXME
         common.EventWidget.__init__(self, event)
         ######
-        sizeGroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        sizeGroup = gtk.SizeGroup(gtk.SizeGroupMode.HORIZONTAL)
         ######
         try:
             seperated = event.parent.showSeperatedYmdInputs
@@ -45,16 +45,16 @@ class EventWidget(common.EventWidget):
             self.startDateInput = DateButton()
             self.endDateInput = DateButton()
         ######
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('Start')+': ')
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('Start')+': ')
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)
         hbox.pack_start(self.startDateInput, 0, 0, 0)
         self.pack_start(hbox, 0, 0, 0)
         ######
-        hbox = Gtk.HBox()
-        label = Gtk.Label(label=_('End')+': ')
+        hbox = gtk.HBox()
+        label = gtk.Label(label=_('End')+': ')
         label.set_alignment(0, 0.5)
         sizeGroup.add_widget(label)
         hbox.pack_start(label, 0, 0, 0)

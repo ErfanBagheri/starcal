@@ -4,8 +4,8 @@ from scal2 import core
 from scal2.locale_man import tr as _
 
 from scal2 import event_lib
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk as gtk
+from gi.repository import Gdk as gdk
 
 from scal2.ui_gtk.mywidgets.num_ranges_entry import NumRangesEntry
 
