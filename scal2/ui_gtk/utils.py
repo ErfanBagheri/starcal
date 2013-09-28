@@ -371,17 +371,22 @@ class DateTypeCombo(gtk.ComboBox):
             return
         return self.get_model()[i][0]
 
-class TimeZoneComboBoxEntry(gtk.ComboBoxText):
+class TimeZoneComboBoxEntry(gtk.HBox):
     def __init__(self):
+        gtk.HBox.__init__(self)
         model = gtk.TreeStore(str, bool)
-        gtk.ComboBoxText.new_with_entry(self)
-        gtk.ComboBoxText.__init__(self, model, 0)
-        self.add_attribute(self.get_cells()[0], 'sensitive', 1)
-        self.connect('changed', self.onChanged)
-        self.get_child().set_text(str(core.localTz))
+        self.c = gtk.ComboBoxText.new_with_entry()
+        #gtk.ComboBoxText.__init__(self)
+        self.c.set_model(model)
+        self.c.set_entry_text_column(0)
+        self.c.add_attribute(self.c.get_cells()[0], 'sensitive', 1)
+        self.c.connect('changed', self.onChanged)
         ###
-        self.get_text = self.get_child().get_text
-        self.set_text = self.get_child().set_text
+        self.get_text = self.c.get_active_text
+        self.set_text = self.c.get_child().set_text
+        ###
+        self.set_text(str(core.localTz))
+        ###
         #####
         recentIter = model.append(None, [
             _('Recent...'),
@@ -397,7 +402,7 @@ class TimeZoneComboBoxEntry(gtk.ComboBoxText):
             ),
         )
     def appendOrderedDict(self, parentIter, dct):
-        model = self.get_model()
+        model = self.c.get_model()
         for key, value in dct.items():
             if isinstance(value, dict):
                 itr = model.append(parentIter, [key, False])
@@ -405,8 +410,8 @@ class TimeZoneComboBoxEntry(gtk.ComboBoxText):
             else:
                 itr = model.append(parentIter, [key, True])
     def onChanged(self, widget):
-        model = self.get_model()
-        itr = self.get_active_iter()
+        model = self.c.get_model()
+        itr = self.c.get_active_iter()
         if itr is None:
             return
         path = model.get_path(itr)
