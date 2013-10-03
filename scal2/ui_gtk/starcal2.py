@@ -495,7 +495,8 @@ class MainWinVbox(gtk.VBox, CustomizableCalBox):
 
 
 @registerSignals
-class MainWin(gtk.ApplicationWindow, ud.IntegratedCalObj):
+#class MainWin(gtk.ApplicationWindow, ud.IntegratedCalObj):
+class MainWin(gtk.Window, ud.IntegratedCalObj):
     _name = 'mainWin'
     desc = _('Main Window')
     timeout = 1 ## second
@@ -524,17 +525,11 @@ class MainWin(gtk.ApplicationWindow, ud.IntegratedCalObj):
     #def maximize(self):
     #    pass
     def __init__(self, trayMode=2):
-        self.app = gtk.Application(application_id="apps.starcal")
-        self.app.register(Gio.Cancellable.new())
-        gtk.ApplicationWindow.__init__(self, application=self.app)
-
-        self.add_events(
-            gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.FOCUS_CHANGE_MASK | gdk.EventMask.BUTTON_MOTION_MASK |
-            gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK | gdk.EventMask.SCROLL_MASK |
-            gdk.EventMask.KEY_PRESS_MASK | gdk.EventMask.VISIBILITY_NOTIFY_MASK | gdk.EventMask.EXPOSURE_MASK
-        )
-
-
+        #self.app = gtk.Application(application_id="apps.starcal")
+        #self.app.register(Gio.Cancellable.new())
+        #gtk.ApplicationWindow.__init__(self, application=self.app)
+        gtk.Window.__init__(self)
+        self.add_events(gdk.EventMask.ALL_EVENTS_MASK)
         self.initVars()
         ud.windowList.appendItem(self)
         ui.mainWin = self
@@ -576,11 +571,11 @@ class MainWin(gtk.ApplicationWindow, ud.IntegratedCalObj):
         except:
             pass
         #############################################################
-        self.connect('focus-in-event', self.focusIn, 'Main')
-        self.connect('focus-out-event', self.focusOut, 'Main')
-        self.connect('button-press-event', self.buttonPress)
-        self.connect('key-press-event', self.keyPress)
-        self.connect('configure-event', self.configureEvent)
+        #self.connect('focus-in-event', self.focusIn, 'Main')
+        #self.connect('focus-out-event', self.focusOut, 'Main')
+        #self.connect('button-press-event', self.buttonPress)
+        #self.connect('key-press-event', self.keyPress)
+        #self.connect('configure-event', self.configureEvent)
         self.connect('destroy', self.quit)
         #############################################################
         """
@@ -1282,8 +1277,8 @@ def main():
     if action=='show' or not mainWin.sicon:
         mainWin.present()
     ##ud.rootWindow.set_cursor(gdk.Cursor.new(gdk.CursorType.LEFT_PTR))#???????????
-    #return gtk.main()
-    return mainWin.app.run(None)
+    #mainWin.app.run(None)
+    gtk.main()
 
 
 if __name__ == '__main__':## this file may be called from starcal-gnome2-applet

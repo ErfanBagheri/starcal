@@ -131,6 +131,7 @@ class Column(gtk.DrawingArea, ColumnBase):
     truncateText = False
     def __init__(self, wcal):
         gtk.DrawingArea.__init__(self)
+        self.add_events(gdk.EventMask.ALL_EVENTS_MASK)
         self.initVars()
         #self.connect('button-press-event', self.buttonPress)
         #self.connect('event', show_event)
@@ -262,10 +263,10 @@ class MainMenuToolbarItem(ToolbarItem):
         self.set_property('label-widget', imageFromFile(ui.wcal_toolbar_mainMenu_icon))
         self.show_all()
     def onClicked(self, widget=None):
-        wcal = self.parent.parent
+        wcal = self.get_parent().get_parent()
         w = self.get_allocation().width
         h = self.get_allocation().height
-        x0, y0 = self.translate_coordinates(wcal, 0, 0, 0)
+        x0, y0 = self.translate_coordinates(wcal, 0, 0)
         wcal.emit(
             'popup-menu-main',
             0,
@@ -784,15 +785,7 @@ class WeekCal(gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
     )
     def __init__(self):
         gtk.HBox.__init__(self)
-
-        self.add_events(
-            gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.FOCUS_CHANGE_MASK | gdk.EventMask.BUTTON_MOTION_MASK |
-            gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK | gdk.EventMask.SCROLL_MASK |
-            gdk.EventMask.KEY_PRESS_MASK | gdk.EventMask.VISIBILITY_NOTIFY_MASK | gdk.EventMask.EXPOSURE_MASK
-        )
-
-
-
+        self.add_events(gdk.EventMask.ALL_EVENTS_MASK)
         self.initCal()
         self.set_property('height-request', ui.wcalHeight)
         ######################
@@ -893,7 +886,7 @@ class WeekCal(gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
     def goForward4(self, obj=None):
         self.jdPlus(28)
     def buttonPress(self, widget, event):
-        col = event.get_window().get_user_data()
+        col = event.window
         while not isinstance(col, ColumnBase):
             col = col.get_parent()
             if col is None:
@@ -916,9 +909,11 @@ class WeekCal(gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
             self.emit('popup-menu-cell', event.time, x, y)
         return True
     def keyPress(self, arg, event):
+        print 'keyPress'
         if CalBase.keyPress(self, arg, event):
             return True
         kname = gdk.keyval_name(event.keyval).lower()
+        print 'keyPress', kname
         if kname=='up':
             self.jdPlus(-1)
         elif kname=='down':
@@ -962,11 +957,7 @@ class WeekCal(gtk.HBox, CustomizableCalBox, ColumnBase, CalBase):
 if __name__=='__main__':
     win = gtk.Dialog()
     cal = WeekCal()
-    win.add_events(
-        gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.FOCUS_CHANGE_MASK | gdk.EventMask.BUTTON_MOTION_MASK |
-        gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK | gdk.EventMask.SCROLL_MASK |
-        gdk.EventMask.KEY_PRESS_MASK | gdk.EventMask.VISIBILITY_NOTIFY_MASK | gdk.EventMask.EXPOSURE_MASK
-    )
+    win.add_events(gdk.EventMask.ALL_EVENTS_MASK)
     win.vbox.pack_start(cal, 1, 1, 0)
     win.vbox.show_all()
     win.resize(600, 400)

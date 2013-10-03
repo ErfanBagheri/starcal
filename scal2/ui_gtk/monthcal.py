@@ -169,6 +169,7 @@ class MonthCal(gtk.DrawingArea, CalBase):
         vbox.show_all()
     def __init__(self):
         gtk.DrawingArea.__init__(self)
+        self.add_events(gdk.EventMask.ALL_EVENTS_MASK)
         self.initCal()
         self.set_property('height-request', ui.mcalHeight)
         ######
@@ -583,11 +584,7 @@ class MonthCal(gtk.DrawingArea, CalBase):
 if __name__=='__main__':
     win = gtk.Dialog()
     cal = MonthCal()
-    win.add_events(
-        gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.FOCUS_CHANGE_MASK | gdk.EventMask.BUTTON_MOTION_MASK |
-        gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK | gdk.EventMask.SCROLL_MASK |
-        gdk.EventMask.KEY_PRESS_MASK | gdk.EventMask.VISIBILITY_NOTIFY_MASK | gdk.EventMask.EXPOSURE_MASK
-    )
+    win.add_events(gdk.EventMask.ALL_EVENTS_MASK)
     win.vbox.pack_start(cal, 1, 1, 0)
     win.vbox.show_all()
     win.resize(600, 400)

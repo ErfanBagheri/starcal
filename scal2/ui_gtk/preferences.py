@@ -1139,9 +1139,9 @@ class PrefDialog(gtk.Dialog):
 
 
 
-
-
-
-
+if __name__=='__main__':
+    dialog = PrefDialog(0)
+    dialog.updatePrefGui()
+    dialog.run()
 
 
