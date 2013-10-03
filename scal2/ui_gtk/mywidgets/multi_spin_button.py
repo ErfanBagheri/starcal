@@ -93,9 +93,9 @@ class MultiSpinButton(gtk.SpinButton):
         self.set_text(self.field.getText())
         self.set_position(pos)
     def insertText(self, s, clearSeceltion=True):
-        selection = self.get_selection_bounds()
-        if selection and clearSeceltion:
-            start, end = selection
+        start, end = self.get_property('selection-bound'), self.get_property('cursor-position')
+        start, end = min(start, end), max(start, end)
+        if start < end and clearSeceltion:
             text = toUnicode(self.get_text())
             text = text[:start] + s + text[end:]
             self.set_text(text)
@@ -315,6 +315,7 @@ class FloatSpinButton(MultiSpinButton):
         #print value, v1, v2
         MultiSpinButton.set_value(self, (v1, v2))
     def entry_plus(self, p):
+        print 'entry_plus', p
         self.set_value(self.get_value()+float(p)/self.digDec)
 
 class DateButton(MultiSpinButton):
