@@ -508,9 +508,11 @@ class MonthCal(gtk.DrawingArea, CalBase):
         ui.monthPlus(p)
         self.onDateChange()
     def keyPress(self, arg, event):
+        print 'keyPress'
         if CalBase.keyPress(self, arg, event):
             return True
         kname = gdk.keyval_name(event.keyval).lower()
+        print 'keyPress', kname
         #if kname.startswith('alt'):
         #    return True
         ## How to disable Alt+Space of metacity ?????????????????????
