@@ -590,5 +590,6 @@ if __name__=='__main__':
     win.vbox.pack_start(cal, 1, 1, 0)
     win.vbox.show_all()
     win.resize(600, 400)
+    win.set_title(cal.desc)
     win.run()
 
