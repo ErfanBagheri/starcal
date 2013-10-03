@@ -63,12 +63,14 @@ class MultiSpinButton(gtk.SpinButton):
         self.set_digits(0)
         gtk.SpinButton.set_range(self, -2, 2)
         self.set_increments(1, page_inc)
+        ###
+        self.add_events(gdk.EventMask.ALL_EVENTS_MASK)
         #self.connect('activate', lambda obj: self.update())
         self.connect('activate', self._entry_activate)
         self.connect('key-press-event', self._key_press)
         self.connect('scroll-event', self._scroll)
-        #self.connect('button-press-event', self._button_press)
-        #self.connect('button-release-event', self._button_release)
+        self.connect('button-press-event', self._button_press)
+        self.connect('button-release-event', self._button_release)
         self.connect('output', lambda obj: True)##Disable auto-numeric-validating(the entry text is not a numebr)
         ####
         #self.select_region(0, 0)
@@ -163,7 +165,7 @@ class MultiSpinButton(gtk.SpinButton):
             return False
     def _button_press(self, widget, gevent):## FIXME not working on gtk3
         gwin = gevent.window
-        #print gwin.get_data('name')
+        #print type(gwin)
         #r = self.get_allocation() ; print 'allocation', r[0], r[2]
         if not self.has_focus():
             self.grab_focus()
@@ -173,24 +175,32 @@ class MultiSpinButton(gtk.SpinButton):
         width = size.width
         height = size.height
         step_inc, page_inc = self.get_increments()
-        if gwin.get_position()[1] == 0:## the panel window (containing up and down arrows)
-            ## gwin.xid == self.get_window().get_children()[0].xid ## the same as _gtk_spin_button_get_panel
-            if gevent.y*2 < height:
-                if gevent.button==1:
-                    self._arrow_press(step_inc)
-                elif gevent.button==2:
-                    self._arrow_press(page_inc)
+        ######
+        index = gwin.get_toplevel().get_children().index(gwin)
+        ## index = 1    PLUS
+        ## index = 2    MINUS
+        ## index = 3    TEXT
+        if index == 1:
+            if gevent.button==1:
+                self._arrow_press(step_inc)
+            elif gevent.button==2:
+                self._arrow_press(page_inc)
+        elif index == 2:
+            if gevent.button==1:
+                self._arrow_press(-step_inc)
             else:
-                if gevent.button==1:
-                    self._arrow_press(-step_inc)
-                else:
-                    self._arrow_press(-page_inc)
-            return True
-        else:
+                self._arrow_press(-page_inc)
+        elif index == 3:
             if gevent.type==getattr(gdk.EventType, '2BUTTON_PRESS'):
                 pass ## FIXME
                 ## select the numeric part containing cursor
                 #return True
+        '''
+        #print dir(gwin)
+        #print self.get_allocation().width-gwin.get_origin()[1]+gwin.get_toplevel().get_origin()[1]## 15, 31, BIGER
+        #print gwin.get_toplevel().get_width()-gwin.get_origin()[1]+gwin.get_toplevel().get_origin()[1]## 19, 35, BIGER
+        #print gwin.get_parent().get_width()-gwin.get_origin()[1]+gwin.get_parent().get_origin()[1]## 19, 35, BIGER
+        '''
         return False
     def _scroll(self, widget, event):
         d = event.direction.value_nick
