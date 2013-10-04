@@ -501,27 +501,6 @@ class MainWin(gtk.Window, ud.IntegratedCalObj):
     desc = _('Main Window')
     timeout = 1 ## second
     setMinHeight = lambda self: self.resize(ui.winWidth, 2)
-
-    '''    
-    def do_realize(self):
-        #self.set_state_flags(self.get_state_flags() | gtk.REALIZED)
-        self.window = gdk.Window(
-            self.get_parent_window(),
-            width=self.get_allocation().width,
-            height=self.get_allocation().height,
-            window_type=gdk.WINDOW_TOPLEVEL,
-            wclass=gdk.INPUT_OUTPUT,
-            event_mask=self.get_events() \
-                | gdk.EventMask.EXPOSURE_MASK | gdk.EventMask.BUTTON1_MOTION_MASK | gdk.EventMask.BUTTON_PRESS_MASK
-                | gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.POINTER_MOTION_HINT_MASK
-        )
-        self.get_window().set_user_data(self)
-        self.style.attach(self.window)#?????? Needed??
-        self.style.set_background(self.window, gtk.StateType.NORMAL)
-        self.get_window().move_resize(*self.get_allocation())
-        self.get_window().set_decorations(gdk.DECORE_CLOSE)
-        self.get_window().set_functions(gdk.FUNC_CLOSE)
-    '''
     #def maximize(self):
     #    pass
     def __init__(self, trayMode=2):

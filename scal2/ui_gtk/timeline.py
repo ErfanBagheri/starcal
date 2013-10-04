@@ -101,26 +101,6 @@ class TimeLine(gtk.DrawingArea, ud.IntegratedCalObj):
         ## editType=0   moving
         ## editType=-1  resizing to left
         ## editType=+1  resizing to right
-    '''
-    def do_realize(self):
-        #self.set_flags(self.flags() | gtk.REALIZED)
-        self.window = gdk.Window(
-            self.get_parent_window(),
-            width=self.get_allocation().width,
-            height=self.get_allocation().height,
-            window_type=gdk.WINDOW_CHILD,
-            wclass=gdk.INPUT_OUTPUT,
-            event_mask=self.get_events() | gdk.EventMask.EXPOSURE_MASK
-            | gdk.EventMask.BUTTON1_MOTION_MASK | gdk.EventMask.BUTTON_PRESS_MASK | gdk.EventMask.BUTTON_RELEASE_MASK
-            | gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.POINTER_MOTION_HINT_MASK)
-            #colormap=self.get_screen().get_rgba_colormap())
-        #self.get_window().set_composited(True)
-        self.get_window().set_user_data(self)
-        self.style.attach(self.window)#?????? Needed??
-        self.style.set_background(self.window, gtk.StateType.NORMAL)
-        self.get_window().move_resize(*self.get_allocation())
-        self.currentTimeUpdate()
-    '''
     def currentTimeUpdate(self):
         tm = now()
         timeout_add(int(1000*(1.01-tm%1)), self.currentTimeUpdate)

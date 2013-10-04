@@ -132,22 +132,6 @@ class FClockWidget(gtk.DrawingArea): ## Time is in Local
         self.clear()
         #self.set_from_image(pmap.get_image(0, 0, w, h), mask)
         self.set_from_pixmap(pmap, mask)
-
-    def do_realize(self):
-        self.set_flags(self.flags() | gtk.REALIZED)
-        self.window = gdk.Window(
-                                                         self.get_parent_window(),
-                                                         width=self.get_allocation().width,
-                                                         height=self.get_allocation().height,
-                                                         window_type=gdk.WINDOW_CHILD,
-                                                         wclass=gdk.INPUT_OUTPUT,
-                                                         event_mask=self.get_events() | gdk.EventMask.EXPOSURE_MASK
-                                                         | gdk.EventMask.BUTTON1_MOTION_MASK | gdk.EventMask.BUTTON_PRESS_MASK
-                                                         | gdk.EventMask.POINTER_MOTION_MASK | gdk.EventMask.POINTER_MOTION_HINT_MASK)
-        self.get_window().set_user_data(self)
-        self.style.attach(self.window)
-        self.style.set_background(self.window, gtk.StateType.NORMAL)
-        self.get_window().move_resize(*self.get_allocation())
         """
 
 
