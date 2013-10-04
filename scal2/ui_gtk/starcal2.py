@@ -916,15 +916,16 @@ class MainWin(gtk.Window, ud.IntegratedCalObj):
         getMenuPos = lambda w, e: (ud.screenW, 0, True)
         self.menuMain.popup(None, None, getMenuPos, None, 3, 0)
         self.menuMain.hide()
+    def setClipboard(self, text):
+        text = toStr(text)
+        self.clipboard.set_text(text, len(text))
+        #self.clipboard.store() ## ?????? No need!
     def copyDate(self, obj=None, event=None):
-        self.clipboard.set_text(ui.cell.format(ud.dateFormatBin))
-        #self.clipboard.store() ## ?????? No need!
+        self.setClipboard(ui.cell.format(ud.dateFormatBin))
     def copyDateToday(self, obj=None, event=None):
-        self.clipboard.set_text(ui.todayCell.format(ud.dateFormatBin))
-        #self.clipboard.store() ## ?????? No need!
+        self.setClipboard(ui.todayCell.format(ud.dateFormatBin))
     def copyTime(self, obj=None, event=None):
-        self.clipboard.set_text(ui.todayCell.format(ud.clockFormatBin, tm=localtime()[3:6]))
-        #self.clipboard.store() ## ?????? No need!
+        self.setClipboard(ui.todayCell.format(ud.clockFormatBin, tm=localtime()[3:6]))
     """
     def updateToolbarClock(self):
         if ui.showDigClockTb:
