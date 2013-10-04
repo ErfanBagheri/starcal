@@ -70,6 +70,7 @@ class TimeLine(gtk.DrawingArea, ud.IntegratedCalObj):
         self.queue_draw()
     def __init__(self, closeFunc):
         gtk.DrawingArea.__init__(self)
+        self.add_events(gdk.EventMask.ALL_EVENTS_MASK)
         self.initVars()
         ###
         self.closeFunc = closeFunc
@@ -261,7 +262,7 @@ class TimeLine(gtk.DrawingArea, ud.IntegratedCalObj):
         #t2 = now()
         #print 'drawing time / data calc time: %.2f'%((t2-t1)/(t1-t0))
     def onScroll(self, widget, event):
-        print 'onScroll', event.direction.value_nick
+        #print 'onScroll', event.direction.value_nick
         isUp = event.direction.value_nick=='up'
         if event.get_state() & gdk.ModifierType.CONTROL_MASK:
             self.zoom(
@@ -558,7 +559,7 @@ class TimeLineWindow(gtk.Window, ud.IntegratedCalObj):
         return True
     def buttonPress(self, obj, event):
         if event.button==1:
-            px, py, mask = ud.rootWindow.get_pointer()
+            foo, px, py, mask = ud.rootWindow.get_pointer()
             self.begin_move_drag(event.button, px, py, event.time)
             return True
         return False
